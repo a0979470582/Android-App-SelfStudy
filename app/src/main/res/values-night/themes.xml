@@ -12,5 +12,9 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionBarItemBackground">@color/colorPrimary</item>
+        <item name="actionModeBackground">@color/colorAccent</item>
+        <item name="actionModeCloseDrawable">@drawable/baseline_account_box_black_18</item>
     </style>
 </resources>

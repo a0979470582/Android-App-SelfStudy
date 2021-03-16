@@ -12,7 +12,7 @@ interface WordDao {
     fun findWordsByName(name:String): List<Word>
 
     @Query("SELECT * FROM Word WHERE bookId=:bookId AND name LIKE :name")
-    fun findWordsByNameAndBookId(name:String, bookId:Int): List<Word>
+    fun findWordsByNameAndBookId(name:String, bookId:Long): List<Word>
 
     @Update
     fun updateWords(vararg words: Word):Int

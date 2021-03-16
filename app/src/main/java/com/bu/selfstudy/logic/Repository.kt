@@ -15,11 +15,15 @@ object Repository {
         //Result.failure(RuntimeException("books is ${books}"))
     }
 
-
     fun loadWordsByBookId(bookId: Long)= fire(Dispatchers.IO) {
         val words = getDatabase().wordDao().loadWordsByBookId(bookId)
         Result.success(words)
         //Result.failure(RuntimeException("books is ${books}"))
+    }
+
+    fun findWordsByNameAndBookId(name:String, bookId:Long) = fire(Dispatchers.IO){
+        val words = getDatabase().wordDao().findWordsByNameAndBookId(name, bookId)
+        Result.success(words)
     }
 
 

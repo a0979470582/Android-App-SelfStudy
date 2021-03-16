@@ -31,7 +31,7 @@ class BookFragment : Fragment() {
 
         //Toolbar
         binding.toolbar.title = "SelfStudy"
-        binding.toolbar.inflateMenu(R.menu.toolbar)
+        binding.toolbar.inflateMenu(R.menu.book_toolbar)
         binding.toolbar.setNavigationIcon(R.drawable.baseline_account_box_24)
         binding.toolbar.setNavigationOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
