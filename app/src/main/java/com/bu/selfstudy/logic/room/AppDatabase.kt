@@ -13,6 +13,7 @@ import com.bu.selfstudy.logic.dao.WordDao
 import com.bu.selfstudy.logic.model.Book
 import com.bu.selfstudy.logic.model.Member
 import com.bu.selfstudy.logic.model.Word
+import kotlinx.coroutines.runBlocking
 
 @Database(version = 1, entities = [Member::class, Book::class, Word::class])
 @TypeConverters(Converters::class)
@@ -29,13 +30,14 @@ abstract class AppDatabase : RoomDatabase() {
                 return it
             }
             return Room.databaseBuilder(context, AppDatabase::class.java, "app_database")
-                    .createFromAsset("database/app_database.db")
+                    .createFromAsset("database/app_database")
                     .build().apply {
                         instance = this
                         //initialize()
                 }
         }
     }
+/*
     private fun initialize(){
         val repos = arrayOf("我的第一本題庫", "我的第二本題庫", "我的第三本題庫")
         val words = arrayOf("reserve", "particular", "humor")
@@ -91,13 +93,15 @@ abstract class AppDatabase : RoomDatabase() {
         )
 
         val member = Member()
-        member.id = memberDao().insertMember(member)
+        runBlocking{member.id = memberDao().insertMember(member)}
 
         var bookArray = arrayOf<Book>()
         repeat(12){
             bookArray = bookArray.plus(Book(bookName = repos[it%3], memberId = member.id))
         }
-        val bookIds = bookDao().insertBooks(*bookArray)
+        var bookIds:List<Long> = ArrayList()
+        runBlocking{bookIds = bookDao().insertBooks(*bookArray)}
+
         for (i in bookIds.indices){
             bookArray[i].id = bookIds[i]
         }
@@ -117,6 +121,7 @@ abstract class AppDatabase : RoomDatabase() {
                 wordArray = wordArray.plus(word)
             }
         }
-        wordDao().insertWords(*wordArray)
-    }
+        runBlocking { wordDao().insertWords(*wordArray) }
+
+    }*/
 }

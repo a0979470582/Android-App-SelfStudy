@@ -32,7 +32,7 @@ class BookFragment : Fragment() {
         //Toolbar
         binding.toolbar.title = "SelfStudy"
         binding.toolbar.inflateMenu(R.menu.book_toolbar)
-        binding.toolbar.setNavigationIcon(R.drawable.baseline_account_box_24)
+        binding.toolbar.setNavigationIcon(R.drawable.round_menu_24)
         binding.toolbar.setNavigationOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
@@ -62,15 +62,13 @@ class BookFragment : Fragment() {
         //main
         loadBooks()
         viewModel.bookListLiveData.observe(viewLifecycleOwner,  Observer{ result ->
-            val books = result.getOrNull()
-            if (books != null) {
+            if (result != null) {
                 viewModel.bookList.clear()
-                viewModel.bookList.addAll(books)
+                viewModel.bookList.addAll(result)
                 adapter.notifyDataSetChanged()
                 "已刷新成功".showToast()
             } else {
                 "沒有獲取Book".showToast()
-                result.exceptionOrNull()?.printStackTrace()
             }
             binding.swipeRefresh.isRefreshing = false
         })

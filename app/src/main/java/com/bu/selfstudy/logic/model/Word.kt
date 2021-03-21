@@ -19,5 +19,6 @@ data class Word(
     var example: String ?= null,
     var description: String ?= null,
     var dictionaryUri: String ?= null,
-    var timestamp: Date = Date()
+    var timestamp: Date = Date(),
+    var isTrash:Boolean = false
 )

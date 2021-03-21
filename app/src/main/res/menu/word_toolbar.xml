@@ -4,7 +4,7 @@
     <item
         android:id="@+id/action_search"
         android:orderInCategory="90"
-        android:icon="@drawable/baseline_search_24"
+        android:icon="@drawable/round_search_24"
         android:title="搜尋"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always|collapseActionView"/>

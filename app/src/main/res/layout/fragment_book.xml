@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            android:src="@drawable/baseline_add_white_18"/>
+            android:src="@drawable/round_add_24_1"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

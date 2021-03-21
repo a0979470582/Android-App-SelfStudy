@@ -15,6 +15,6 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="actionBarItemBackground">@color/colorPrimary</item>
         <item name="actionModeBackground">@color/colorAccent</item>
-        <item name="actionModeCloseDrawable">@drawable/baseline_account_box_black_18</item>
+        <item name="actionModeCloseDrawable">@drawable/abc_vector_test</item>
     </style>
 </resources>

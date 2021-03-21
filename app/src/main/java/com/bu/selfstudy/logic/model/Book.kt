@@ -10,6 +10,7 @@ data class Book(
     var id:Long=0,
     var memberId: Long =0,
     var bookName: String = "我的第一本題庫",
-    var timestamp: Date = Date()
+    var timestamp: Date = Date(),
+    var isTrash:Boolean = false
 )
 

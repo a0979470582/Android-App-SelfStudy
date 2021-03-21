@@ -53,7 +53,7 @@
                         android:id="@+id/soundBtn"
                         android:layout_width="22dp"
                         android:layout_height="22dp"
-                        android:src="@drawable/baseline_add_white_18" />
+                        android:src="@drawable/round_add_20" />
                 </LinearLayout>
                 <TextView
                     android:id="@+id/translationTxV"

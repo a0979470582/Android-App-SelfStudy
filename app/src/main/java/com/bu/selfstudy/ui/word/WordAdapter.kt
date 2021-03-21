@@ -12,7 +12,7 @@ import com.bu.selfstudy.logic.model.Word
 import com.bu.selfstudy.showToast
 import java.text.DateFormat
 
-class WordAdapter(private val wordList: List<Word>) : RecyclerView.Adapter<WordAdapter.ViewHolder>() {
+class WordAdapter(private val wordList: ArrayList<Word> = ArrayList<Word>()) : RecyclerView.Adapter<WordAdapter.ViewHolder>() {
     var tracker: SelectionTracker<Long>? = null
 
     inner class ViewHolder(val binding: WordItemBinding) : RecyclerView.ViewHolder(binding.root){
@@ -49,5 +49,8 @@ class WordAdapter(private val wordList: List<Word>) : RecyclerView.Adapter<WordA
     internal fun getPosition(key: Long): Int = wordList.indexOfFirst {
         it.id == key
     }
-
+    fun setWordList(words: List<Word>){
+        wordList.clear()
+        wordList.addAll(words)
+    }
 }
