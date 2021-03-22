@@ -12,6 +12,6 @@ object Repository {
     fun loadWords(bookId: Long, query: String) = wordDao.loadWords(bookId, query)
 
     suspend fun insertWords(words: List<Word>) = wordDao.insertWords(*words.toTypedArray())
-    suspend fun updateWords(words: List<Word>) { wordDao.updateWords(*words.toTypedArray())}
+    suspend fun updateWords(words: List<Word>) = wordDao.updateWords(*words.toTypedArray())
     suspend fun deleteWords(words: List<Word>) = wordDao.deleteWords(*words.toTypedArray())
 }

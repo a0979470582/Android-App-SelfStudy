@@ -4,6 +4,9 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import com.bu.selfstudy.logic.Repository
+import com.bu.selfstudy.logic.model.Word
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
@@ -21,17 +24,15 @@ fun String.showToast(duration:Int = Toast.LENGTH_SHORT){
 fun Int.showToast(duration:Int = Toast.LENGTH_SHORT){
     Toast.makeText(SelfStudyApplication.context, this, duration).show()
 }
-fun main() = runBlocking {
-    val channel = Channel<Int>()
-    launch {
-        repeat(5){
-            delay(1000)
-            channel.send(it)
-            if(it==4)channel.close()
-        }
-    }
-    for(n in channel){
-        println(n)
-    }
-    println("done")
+fun main(){
+    val wordList = ArrayList<Long>(mutableListOf(1,2,3,4,5,6))
+    val wordList2 = ArrayList<Long>(mutableListOf(5,6))
+    val newWordList:List<Long> = wordList
+            .filter { wordList2.contains(it) }
+            .map{
+                it->it*10
+            }
+    println(wordList)
+    println(wordList2)
+    println(newWordList)
 }
