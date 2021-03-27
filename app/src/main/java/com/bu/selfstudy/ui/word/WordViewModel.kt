@@ -3,6 +3,7 @@ package com.bu.selfstudy.ui.word
 import android.util.Log
 import androidx.lifecycle.*
 import com.bu.selfstudy.logic.Repository
+import com.bu.selfstudy.logic.model.Book
 import com.bu.selfstudy.logic.model.Word
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,7 +15,7 @@ class WordViewModel(val bookId:Long, val bookName:String ) : ViewModel(){
         Repository.loadWords(bookId, query).asLiveData()
     }
     //觸發第一次取值, 想一下bookList的架構
-    val bookListLD = Repository.loadBooks().asLiveData()
+    val bookListLD: LiveData<List<Book>> = Repository.loadBooks().asLiveData()
 
     fun deleteWords(ids: List<Long>){
         viewModelScope.launch(Dispatchers.IO){
@@ -36,7 +37,8 @@ class WordViewModel(val bookId:Long, val bookName:String ) : ViewModel(){
             Repository.updateWords(getWordList(ids).onEach { it.bookId = bookId })
         }
     }
-    fun getWordList(ids: List<Long>) = wordListLD.value!!.filter { ids.contains(it.id) }
+
+    private fun getWordList(wordIds: List<Long>) = wordListLD.value!!.filter { wordIds.contains(it.id) }
 
 
     companion object {

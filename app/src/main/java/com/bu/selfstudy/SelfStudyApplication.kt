@@ -8,7 +8,7 @@ class SelfStudyApplication : Application() {
     companion object{
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
-        var memberId = 1
+        var memberId = 1L
     }
     override fun onCreate() {
         super.onCreate()

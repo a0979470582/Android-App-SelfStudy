@@ -8,21 +8,17 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BookDao {
-
-    @Query("SELECT * FROM Book WHERE id IN (:bookIds)")
-    fun loadBooksByIds(bookIds: IntArray): Flow<List<Book>>
-
     @Query("SELECT * FROM Book WHERE memberID =:memberId")
-    fun loadBooksByMemberId(memberId: Int=SelfStudyApplication.memberId): Flow<List<Book>>
+    fun loadBooks(memberId: Long=SelfStudyApplication.memberId): Flow<List<Book>>
 
     @Update
     suspend fun updateBook(book: Book):Int
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertBook(book: Book):Long
 
-    @Insert
-    suspend fun insertBooks(vararg books: Book):List<Long>
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertBooks(vararg book:Book):List<Long>
 
     @Delete
     suspend fun deleteBook(book: Book):Int

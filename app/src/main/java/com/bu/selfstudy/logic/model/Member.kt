@@ -7,12 +7,11 @@ import java.util.*
 data class Member(
     @PrimaryKey(autoGenerate = true)
     var id:Long = 0,
-    var email: String = "default",
-    var password: String = "default",
-    var userName: String = "default",
-    var sex: Int = 2,//012:男女無
-    var iconUri: String ?= "content://...",//TODO
+    var email: String,
+    var password: String,
+    var userName: String = "",
+    var sex: String = "N",
+    var iconUri: String = "content://",
     var timestamp: Date = Date(),
     var isTrash:Boolean = false
-
 )

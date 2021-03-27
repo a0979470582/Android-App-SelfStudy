@@ -4,31 +4,32 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_book"
+            android:id="@+id/bookFragment"
             android:icon="@drawable/round_menu_book_20"
+            android:checked="true"
             android:title="@string/menu_book" />
         <item
-            android:id="@+id/nav_account"
+            android:id="@+id/accountFragment"
             android:icon="@drawable/round_account_box_20"
             android:title="@string/menu_account" />
         <item
-            android:id="@+id/nav_theme"
+            android:id="@+id/themeFragment"
             android:icon="@drawable/round_color_lens_20"
             android:title="@string/menu_theme" />
         <item
-            android:id="@+id/nav_setting"
+            android:id="@+id/settingFragment"
             android:icon="@drawable/round_settings_20"
             android:title="@string/menu_setting" />
         <item
-            android:id="@+id/nav_recycler"
+            android:id="@+id/trashFragment"
             android:icon="@drawable/round_restore_from_trash_20"
             android:title="@string/menu_recycler" />
         <item
-            android:id="@+id/nav_subscription"
+            android:id="@+id/subscriptionFragment"
             android:icon="@drawable/round_shopping_cart_20"
             android:title="@string/menu_subscription" />
         <item
-            android:id="@+id/nav_suggest"
+            android:id="@+id/suggestFragment"
             android:icon="@drawable/round_contact_mail_20"
             android:title="@string/menu_suggest" />
     </group>

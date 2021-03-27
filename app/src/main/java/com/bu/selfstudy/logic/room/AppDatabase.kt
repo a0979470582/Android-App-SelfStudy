@@ -13,6 +13,9 @@ import com.bu.selfstudy.logic.dao.WordDao
 import com.bu.selfstudy.logic.model.Book
 import com.bu.selfstudy.logic.model.Member
 import com.bu.selfstudy.logic.model.Word
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 @Database(version = 1, entities = [Member::class, Book::class, Word::class])
@@ -92,36 +95,66 @@ abstract class AppDatabase : RoomDatabase() {
             "同義詞 n.幽默感；幽默 wit, pleasantry, comedy"
         )
 
-        val member = Member()
+        val dictionaryUri = arrayOf(
+            "https://tw.dictionary.search.yahoo.com/search?p=reserve",
+            "https://tw.dictionary.search.yahoo.com/search?p=particular",
+            "https://tw.dictionary.search.yahoo.com/search?p=humor"
+        )
+        val pronounceUri = arrayOf(
+            "reserve.mp3",
+            "particular.mp3",
+            "humor.mp3"
+        )
+
+
+
+        val member = Member(
+            email = "a0979470582@gmail.com",
+            password = "123456789",
+            userName = "LuLu",
+            sex = "F",
+            iconUri = "icon.jpg"
+        )
         runBlocking{member.id = memberDao().insertMember(member)}
 
-        var bookArray = arrayOf<Book>()
+        var bookList = ArrayList<Book>()
         repeat(12){
-            bookArray = bookArray.plus(Book(bookName = repos[it%3], memberId = member.id))
+            bookList.add(Book(bookName = repos[it%3], memberId = member.id))
         }
-        var bookIds:List<Long> = ArrayList()
-        runBlocking{bookIds = bookDao().insertBooks(*bookArray)}
+        var bookIds:List<Long>
+        runBlocking{bookIds = bookDao().insertBooks(*bookList.toTypedArray())}
 
         for (i in bookIds.indices){
-            bookArray[i].id = bookIds[i]
+            bookList[i].id = bookIds[i]
         }
 
-        var wordArray = arrayOf<Word>()
 
-        repeat(15){
+        var wordListData = ArrayList<Word>()
+        repeat(3){
             val index = it%3
-            for(book in bookArray){
-                val word = Word(wordName = words[index],
-                        translation = translations[index],
-                        variation = variations[index],
-                        example = examples[index],
-                        description = descriptions[index]
-                )
-                word.bookId = book.id
-                wordArray = wordArray.plus(word)
-            }
+            val word = Word(wordName = words[index],
+                translation = translations[index],
+                variation = variations[index],
+                example = examples[index],
+                description = descriptions[index],
+                dictionaryUri = dictionaryUri[index],
+                pronounceUri = pronounceUri[index],
+                bookId = 0//Pending
+            )
+            wordListData.add(word)
         }
-        runBlocking { wordDao().insertWords(*wordArray) }
 
+        var wordList = ArrayList<Word>()
+        for((index, book) in bookList.withIndex()){
+            repeat((index+1)*15){
+                val word = wordListData[it%3]
+                word.bookId = book.id
+                wordList.add(word)
+            }
+            runBlocking{
+                wordDao().insertWords(*wordList.toTypedArray())
+            }
+            wordList.clear()
+        }
     }*/
 }

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "aebc5d9b6863df81524d1e6a672f3cb8",
+    "identityHash": "dc37e9b42625bdc756d87ebd7ea13f34",
     "entities": [
       {
         "tableName": "Member",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `email` TEXT NOT NULL, `password` TEXT NOT NULL, `userName` TEXT NOT NULL, `sex` INTEGER NOT NULL, `iconUri` TEXT, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `email` TEXT NOT NULL, `password` TEXT NOT NULL, `userName` TEXT NOT NULL, `sex` TEXT NOT NULL, `iconUri` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -35,14 +35,14 @@
           {
             "fieldPath": "sex",
             "columnName": "sex",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "iconUri",
             "columnName": "iconUri",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "timestamp",
@@ -68,7 +68,7 @@
       },
       {
         "tableName": "Book",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `memberId` INTEGER NOT NULL, `bookName` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `memberId` INTEGER NOT NULL, `bookName` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL, FOREIGN KEY(`memberId`) REFERENCES `Member`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -108,11 +108,23 @@
           "autoGenerate": true
         },
         "indices": [],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "Member",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "memberId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       },
       {
         "tableName": "Word",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bookId` INTEGER NOT NULL, `name` TEXT NOT NULL, `pronounceUri` TEXT, `translation` TEXT, `variation` TEXT, `example` TEXT, `description` TEXT, `dictionaryUri` TEXT, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bookId` INTEGER NOT NULL, `wordName` TEXT NOT NULL, `pronounceUri` TEXT NOT NULL, `translation` TEXT NOT NULL, `variation` TEXT NOT NULL, `example` TEXT NOT NULL, `description` TEXT NOT NULL, `dictionaryUri` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL, FOREIGN KEY(`bookId`) REFERENCES `Book`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -128,7 +140,7 @@
           },
           {
             "fieldPath": "wordName",
-            "columnName": "name",
+            "columnName": "wordName",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -136,37 +148,37 @@
             "fieldPath": "pronounceUri",
             "columnName": "pronounceUri",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "translation",
             "columnName": "translation",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "variation",
             "columnName": "variation",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "example",
             "columnName": "example",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "description",
             "columnName": "description",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "dictionaryUri",
             "columnName": "dictionaryUri",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "timestamp",
@@ -187,14 +199,67 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
-        "foreignKeys": []
+        "indices": [
+          {
+            "name": "index_Word_wordName",
+            "unique": false,
+            "columnNames": [
+              "wordName"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Word_wordName` ON `${TABLE_NAME}` (`wordName`)"
+          },
+          {
+            "name": "index_Word_translation",
+            "unique": false,
+            "columnNames": [
+              "translation"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Word_translation` ON `${TABLE_NAME}` (`translation`)"
+          },
+          {
+            "name": "index_Word_variation",
+            "unique": false,
+            "columnNames": [
+              "variation"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Word_variation` ON `${TABLE_NAME}` (`variation`)"
+          },
+          {
+            "name": "index_Word_example",
+            "unique": false,
+            "columnNames": [
+              "example"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Word_example` ON `${TABLE_NAME}` (`example`)"
+          },
+          {
+            "name": "index_Word_description",
+            "unique": false,
+            "columnNames": [
+              "description"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Word_description` ON `${TABLE_NAME}` (`description`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "Book",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "bookId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'aebc5d9b6863df81524d1e6a672f3cb8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dc37e9b42625bdc756d87ebd7ea13f34')"
     ]
   }
 }

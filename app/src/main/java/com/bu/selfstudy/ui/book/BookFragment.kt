@@ -1,63 +1,67 @@
 package com.bu.selfstudy.ui.book
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bu.selfstudy.R
 import com.bu.selfstudy.databinding.FragmentBookBinding
 import com.bu.selfstudy.showToast
+import com.bu.selfstudy.ui.word.WordAdapter
+import com.bu.selfstudy.ui.word.WordFragmentArgs
 
 class BookFragment : Fragment() {
-    private val viewModel by lazy { ViewModelProvider(this).get(BookViewModel::class.java) }
 
     private var _binding : FragmentBookBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var adapter: BookAdapter
+    //等待登入功能製作, 才需要參數
+    //private val args: BookFragmentArgs by navArgs()
+    private val viewModel:BookViewModel by viewModels()
 
+    private val adapter =  BookAdapter()
+    private lateinit var tracker: SelectionTracker<Long>
+    private var searchView: SearchView? = null
+    private var actionMode: ActionMode? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentBookBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        //Toolbar
-        binding.toolbar.title = "SelfStudy"
-        binding.toolbar.inflateMenu(R.menu.book_toolbar)
-        binding.toolbar.setNavigationIcon(R.drawable.round_menu_24)
-        binding.toolbar.setNavigationOnClickListener {
-            binding.drawerLayout.openDrawer(GravityCompat.START)
-        }
-        binding.toolbar.setOnMenuItemClickListener{true}
-
-        //nav
-        binding.navView.setCheckedItem(R.id.nav_book)//設為默認選中
-        binding.navView.setNavigationItemSelectedListener { //菜單點擊事件
-            binding.drawerLayout.closeDrawers()
-            true
-        }
 
         //swipeRefresh
         binding.swipeRefresh.setColorSchemeResources(R.color.colorPrimary)//三色輪流
         binding.swipeRefresh.setOnRefreshListener {loadBooks()}
 
         //recyclerView
-        adapter = BookAdapter(this, viewModel.bookList)
         binding.recyclerView.layoutManager = LinearLayoutManager(activity)
         binding.recyclerView.adapter = adapter
 
-        //FAB
-        binding.fab.setOnClickListener {
-            "FAB clicked".showToast()
-        }
+
 
         //main
         loadBooks()
