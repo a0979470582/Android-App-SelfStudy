@@ -3,89 +3,115 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/bookFragment">
+    app:startDestination="@id/wordFragment">
 
-    <fragment
-        android:id="@+id/bookFragment"
-        android:name="com.bu.selfstudy.ui.book.BookFragment"
-        android:label="@string/app_name"
-        tools:layout="@layout/fragment_book">
-        <action
-            android:id="@+id/action_bookFragment_to_wordFragment"
-            app:destination="@id/wordFragment" />
-        <action
-            android:id="@+id/action_bookFragment_to_subscriptionFragment"
-            app:destination="@id/subscriptionFragment" />
-        <action
-            android:id="@+id/action_bookFragment_to_suggestFragment"
-            app:destination="@id/suggestFragment" />
-        <action
-            android:id="@+id/action_bookFragment_to_trashFragment"
-            app:destination="@id/trashFragment" />
-        <action
-            android:id="@+id/action_bookFragment_to_settingFragment"
-            app:destination="@id/settingFragment" />
-        <action
-            android:id="@+id/action_bookFragment_to_themeFragment"
-            app:destination="@id/themeFragment" />
-        <action
-            android:id="@+id/action_bookFragment_to_accountFragment"
-            app:destination="@id/accountFragment" />
-    </fragment>
     <fragment
         android:id="@+id/wordFragment"
         android:name="com.bu.selfstudy.ui.word.WordFragment"
-        android:label="{bookName}"
         tools:layout="@layout/fragment_word">
-        <argument
-            android:name="bookId"
-            app:argType="long" />
-        <argument
-            android:name="bookName"
-            app:argType="string" />
+        <action
+            android:id="@+id/action_wordFragment_to_accountFragment"
+            app:destination="@id/accountFragment" />
+        <action
+            android:id="@+id/action_wordFragment_to_themeFragment"
+            app:destination="@id/themeFragment" />
+        <action
+            android:id="@+id/action_wordFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
+        <action
+            android:id="@+id/action_wordFragment_to_trashFragment"
+            app:destination="@id/trashFragment" />
+        <action
+            android:id="@+id/action_wordFragment_to_subscriptionFragment"
+            app:destination="@id/subscriptionFragment" />
+        <action
+            android:id="@+id/action_wordFragment_to_suggestFragment"
+            app:destination="@id/suggestFragment" />
     </fragment>
-    <dialog
-        android:id="@+id/addWordDialogFragment"
-        android:name="com.bu.selfstudy.ui.word.AddWordDialogFragment"
-        android:label="AddWordDialogFragment"
-        tools:layout="@layout/add_word"/>
+
     <fragment
         android:id="@+id/subscriptionFragment"
         android:name="com.bu.selfstudy.ui.SubscriptionFragment"
-        android:label="SubscriptionFragment"
+        android:label="升級您的應用程式"
         tools:layout="@layout/fragment_subscription"/>
     <fragment
         android:id="@+id/suggestFragment"
         android:name="com.bu.selfstudy.ui.SuggestFragment"
-        android:label="SuggestFragment"
+        android:label="使用者建議"
         tools:layout="@layout/fragment_suggest"/>
     <fragment
         android:id="@+id/trashFragment"
         android:name="com.bu.selfstudy.ui.TrashFragment"
-        android:label="TrashFragment"
+        android:label="單字回收箱"
         tools:layout="@layout/fragment_trash"/>
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.bu.selfstudy.ui.SettingFragment"
-        android:label="fragment_setting"
+        android:label="設定"
         tools:layout="@layout/fragment_setting" />
     <fragment
         android:id="@+id/themeFragment"
         android:name="com.bu.selfstudy.ui.ThemeFragment"
-        android:label="ThemeFragment"
+        android:label="更換主題"
         tools:layout="@layout/fragment_theme"/>
     <fragment
         android:id="@+id/accountFragment"
         android:name="com.bu.selfstudy.ui.AccountFragment"
-        android:label="fragment_account"
+        android:label="個人資訊"
         tools:layout="@layout/fragment_account"/>
-    <action android:id="@+id/action_global_addWordDialogFragment" app:destination="@id/addWordDialogFragment" />
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.bu.selfstudy.ui.LoginFragment"
-        android:label="LoginFragment" >
-        <action
-            android:id="@+id/action_loginFragment_to_bookFragment"
-            app:destination="@id/bookFragment" />
+        android:label="使用者登入"
+        tools:layout="@layout/fragment_login"/>
+    <dialog
+        android:id="@+id/chooseBookDialog"
+        android:name="com.bu.selfstudy.ui.dialog.ChooseBookDialog"
+        android:label="選擇一個題庫" >
+        <argument
+            android:name="bookNames"
+            app:argType="string[]" />
+        <argument
+            android:name="bookIds"
+            app:argType="long[]" />
+        <argument
+            android:name="message"
+            app:argType="string" />
+        <argument
+            android:name="action"
+            app:argType="string" />
+    </dialog>
+    <action android:id="@+id/action_global_chooseBookDialog"
+            app:destination="@id/chooseBookDialog" />
+
+    <dialog
+        android:id="@+id/toDeleteDialog"
+        android:name="com.bu.selfstudy.ui.dialog.ToDeleteDialog"
+        android:label="ToDeleteDialog" >
+        <argument
+            android:name="message"
+            app:argType="string" />
+    </dialog>
+    <action android:id="@+id/action_global_toDeleteDialog"
+            app:destination="@id/toDeleteDialog" />
+
+    <fragment
+        android:id="@+id/addWordFragment"
+        android:name="com.bu.selfstudy.ui.dialog.AddWordFragment"
+        android:label="加入單字"
+        tools:layout="@layout/fragment_add_word">
+        <argument
+            android:name="defaultBookId"
+            app:argType="long"
+            android:defaultValue="0L" />
+        <argument
+            android:name="bookNames"
+            app:argType="string[]" />
+        <argument
+            android:name="bookIds"
+            app:argType="long[]" />
     </fragment>
+    <action android:id="@+id/action_global_addWordFragment"
+            app:destination="@id/addWordFragment"/>
+
 </navigation>

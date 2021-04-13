@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primaryLightColor"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="單字: " />
+
+        <EditText
+            android:id="@+id/wordNameEdT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="ex. reserve"
+            android:maxLines="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:text="翻譯: " />
+
+        <EditText
+            android:id="@+id/translationEdT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="ex. vt.保存, 預訂"
+            android:maxLines="1" />
+    </LinearLayout>
+</LinearLayout>

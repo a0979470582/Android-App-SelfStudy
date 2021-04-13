@@ -1,11 +1,5 @@
 <resources>
     <string name="app_name">SelfStudy</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
 
     <string name="menu_book">題庫</string>
     <string name="menu_account">帳戶</string>
@@ -14,7 +8,18 @@
     <string name="menu_recycler">回收桶</string>
     <string name="menu_subscription">訂閱</string>
     <string name="menu_suggest">客戶建議</string>
-    <string name="title_activity_add_word">加入單字</string>
-    <string name="search_word">搜索英文單字</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="hint_search_word">搜索英文單字</string>
+
+    <string name="icon_pronounce">發音</string>
+    <string name="icon_search">搜尋</string>
+    <string name="icon_test">測驗</string>
+    <string name="icon_background">切換背景</string>
+    <string name="icon_send">保存</string>
+
+    <string name="title_translation">釋義</string>
+    <string name="title_variation">變化形</string>
+    <string name="title_example">例句</string>
+    <string name="title_note">註記</string>
+
 </resources>

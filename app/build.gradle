@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'androidx.navigation.safeargs.kotlin'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -45,6 +46,8 @@ android {
 }
 
 dependencies {
+    implementation 'com.github.hakobast:dropdown-textview:0.1.1'
+    implementation "com.leinardi.android:speed-dial:3.1.1"
     implementation 'androidx.recyclerview:recyclerview-selection:1.1.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.4'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.4'

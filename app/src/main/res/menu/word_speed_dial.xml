@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_add"
+        android:icon="@drawable/ic_baseline_add_24"
+        android:title="新增" />
+
+    <item
+        android:id="@+id/action_edit"
+        android:icon="@drawable/ic_round_edit_24"
+        android:title="編輯" />
+    <item
+        android:id="@+id/action_delete"
+        android:icon="@drawable/ic_round_delete_24"
+        android:title="刪除"/>
+    <item
+        android:id="@+id/action_star"
+        android:icon="@drawable/ic_round_star_border_24"
+        android:title="標記" />
+
+    <item
+        android:id="@+id/action_copy"
+        android:icon="@drawable/ic_baseline_drive_file_move_24"
+        android:title="移至"
+        app:showAsAction="never"/>
+</menu>

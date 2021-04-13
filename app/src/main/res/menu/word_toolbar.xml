@@ -3,9 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_search"
-        android:orderInCategory="90"
-        android:icon="@drawable/round_search_24"
-        android:title="搜尋"
+        android:icon="@drawable/ic_baseline_search_24"
+        android:title="@string/icon_search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="always|collapseActionView"/>
+        app:showAsAction="ifRoom|collapseActionView"/>
+    <item
+        android:id="@+id/action_test"
+        android:icon="@drawable/ic_round_pending_actions_24"
+        android:title="@string/icon_test"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_change_photo"
+        android:icon="@drawable/ic_round_color_lens_24"
+        android:title="@string/icon_background"
+        app:showAsAction="never"/>
 </menu>
