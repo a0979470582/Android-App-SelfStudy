@@ -20,10 +20,12 @@ data class Book(
     var id:Long=0,
     var memberId: Long,
     var bookName: String,
+
+    var initialWordId:Long= 0,
+    var sortState:String = "time_asc",//time, letter, proficiency
+    var displayMode:String = "one",//one, list, grid
+
     var timestamp: Date = Date(),
-    var currentWordId:Long= 0,
-    var sortState:String = "id_asc",
-    var photoPosition:Int = 0,
     var isTrash:Boolean = false
 ):Parcelable
 

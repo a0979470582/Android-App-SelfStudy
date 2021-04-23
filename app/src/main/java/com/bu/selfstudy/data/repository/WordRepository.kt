@@ -14,13 +14,13 @@ object WordRepository {
     fun loadWords(bookId: Long, query: String) =
         wordDao.loadWordsDistinctUntilChanged(bookId, query)
 
-    suspend fun insertWords(words: List<Word>) = withContext(Dispatchers.IO){
-        wordDao.insert(*words.toTypedArray())
+    suspend fun insertWords(vararg word: Word) = withContext(Dispatchers.IO){
+        wordDao.insert(*word)
     }
-    suspend fun updateWords(words: List<Word>) = withContext(Dispatchers.IO){
-        wordDao.update(*words.toTypedArray())
+    suspend fun updateWords(vararg word: Word) = withContext(Dispatchers.IO){
+        wordDao.update(*word)
     }
-    suspend fun deleteWords(words: List<Word>) = withContext(Dispatchers.IO){
-        wordDao.delete(*words.toTypedArray())
+    suspend fun deleteWords(vararg word: Word) = withContext(Dispatchers.IO){
+        wordDao.delete(*word)
     }
 }

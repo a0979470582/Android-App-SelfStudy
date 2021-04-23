@@ -3,12 +3,13 @@ package com.bu.selfstudy.ui.dialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.navArgs
 import com.bu.selfstudy.tools.setDialogResult
 import com.bu.selfstudy.tools.setNavigationResult
 
-class ToDeleteDialog() : DialogFragment() {
+class ToDeleteDialog() : AppCompatDialogFragment() {
     private val args: ToDeleteDialogArgs by navArgs()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog{

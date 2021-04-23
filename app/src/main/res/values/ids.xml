@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="fab_add_word" type="id"/>
+    <item name="fab_edit_word" type="id"/>
+    <item name="fab_delete_word" type="id"/>
+    <item name="fab_mark_word" type="id"/>
+    <item name="fab_dis_mark_word" type="id"/>
+</resources>

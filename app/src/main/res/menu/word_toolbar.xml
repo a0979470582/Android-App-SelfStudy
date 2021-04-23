@@ -11,7 +11,14 @@
         android:id="@+id/action_test"
         android:icon="@drawable/ic_round_pending_actions_24"
         android:title="@string/icon_test"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_full"
+        android:icon="@drawable/ic_baseline_view_headline_24"
+        android:title="@string/icon_full"
         app:showAsAction="never"/>
+
     <item
         android:id="@+id/action_change_photo"
         android:icon="@drawable/ic_round_color_lens_24"

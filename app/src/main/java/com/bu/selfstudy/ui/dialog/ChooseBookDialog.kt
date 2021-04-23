@@ -5,6 +5,7 @@ import android.app.usage.UsageEvents
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
@@ -12,7 +13,7 @@ import androidx.navigation.fragment.navArgs
 import com.bu.selfstudy.tools.setDialogResult
 import com.bu.selfstudy.tools.setNavigationResult
 
-class ChooseBookDialog : DialogFragment() {
+class ChooseBookDialog : AppCompatDialogFragment() {
     private val args: ChooseBookDialogArgs by navArgs()
     private var position = 0
 

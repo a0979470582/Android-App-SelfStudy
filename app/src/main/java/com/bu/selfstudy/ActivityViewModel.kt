@@ -1,9 +1,6 @@
 package com.bu.selfstudy.ui
 
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.model.Member
 import com.bu.selfstudy.data.repository.BookRepository
@@ -14,23 +11,16 @@ import kotlinx.coroutines.launch
 class ActivityViewModel : ViewModel() {
     val memberLiveData = MemberRepository.loadMember().asLiveData()
     val bookListLiveData = BookRepository.loadBooks().asLiveData()
-    var bookList = ArrayList<Book>()
 
-    val currentBookIdLiveData = MediatorLiveData<Long>()
-
-
-    init {
-        currentBookIdLiveData.addSource(bookListLiveData){bookList->
-            memberLiveData.value?.let{member->
-                currentBookIdLiveData.value = combineBookId(member, bookList)
-            }
+    val bookLiveData = MediatorLiveData<Book>().apply {
+        addSource(bookListLiveData){bookList->
+            memberLiveData.value?.let { value = combineBook(it, bookList) }
         }
-        currentBookIdLiveData.addSource(memberLiveData){member->
-            bookListLiveData.value?.let{bookList->
-                currentBookIdLiveData.value = combineBookId(member, bookList)
-            }
+        addSource(memberLiveData){member->
+            bookListLiveData.value?.let { value = combineBook(member, it) }
         }
     }
+
 
     fun updateMember(member: Member){
         viewModelScope.launch {
@@ -38,9 +28,7 @@ class ActivityViewModel : ViewModel() {
         }
     }
 
-    private fun combineBookId(member: Member, bookList:List<Book>) =
-        if(bookList.any { it.id == member.currentBookId })
-            member.currentBookId
-        else
-            bookList[0].id
+    private fun combineBook(member: Member, bookList:List<Book>) =
+        bookList.firstOrNull { it.id == member.initialBookId }?: bookList[0]
+
 }

@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
+//登入流程必須從此處開始處理
 @Entity
 @Parcelize
 data class Member(
@@ -13,9 +14,12 @@ data class Member(
     var email: String,
     var password: String,
     var userName: String = "",
-    var iconUri: String = "content://",
     var sex:String = "N",
+
+    var initialBookId: Long = 0,
+    var backgroundImageIndex:Int = 0,
+    var iconPath: String = "",
+
     var timestamp: Date = Date(),
-    var currentBookId: Long = 0,
     var isTrash:Boolean = false
 ):Parcelable

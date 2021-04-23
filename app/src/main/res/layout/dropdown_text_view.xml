@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dropdown_title_background"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/panelView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/arrowImg"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:paddingStart="16dp"
+            android:textColor="@color/secondaryTextColor"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:maxLines="1"
+            tools:text="釋義"/>
+
+        <View
+            android:id="@+id/arrowImg"
+            android:layout_width="@dimen/arrow_default_size"
+            android:layout_height="@dimen/arrow_default_size"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/ic_arrow"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/contentTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingStart="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:textColor="@color/secondaryTextColor"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        tools:text="這是一個很棒的內容"/>
+
+</LinearLayout>

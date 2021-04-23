@@ -1,12 +1,11 @@
 package com.bu.selfstudy.ui.word
 
 
-import android.app.SearchManager
-import android.content.Context.SEARCH_SERVICE
 import android.os.Bundle
 import android.view.*
-import android.widget.ArrayAdapter
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.doOnAttach
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -14,6 +13,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.bu.selfstudy.MainActivity
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Word
@@ -21,6 +22,8 @@ import com.bu.selfstudy.databinding.FragmentWordBinding
 import com.bu.selfstudy.tools.showToast
 import com.bu.selfstudy.tools.*
 import com.bu.selfstudy.ui.ActivityViewModel
+import com.leinardi.android.speeddial.SpeedDialActionItem
+import com.leinardi.android.speeddial.SpeedDialView
 
 class WordFragment : Fragment() {
     private val viewModel: WordViewModel by viewModels()
@@ -29,16 +32,17 @@ class WordFragment : Fragment() {
     private val binding: FragmentWordBinding by viewBinding()
 
     private val adapter = WordAdapter()
+    private val slideAdapter = WordSlideAdapter()
     private lateinit var tracker: SelectionTracker<Long>
     private var searchView: SearchView? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        binding.viewModel = viewModel
+        binding.slideAdapter = slideAdapter
         binding.lifecycleOwner = this
 
         return binding.root
@@ -46,44 +50,148 @@ class WordFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
-
-        activityViewModel.currentBookIdLiveData.observe(viewLifecycleOwner){
-            viewModel.currentBookIdLiveData.value = it
+        initSpeedDial(savedInstanceState == null)
+        /**
+         activityViewModel的生命週期為整個APP, 它儲存在導覽抽屜顯示的會員資料,
+         取出單字所需的題庫列表, 他們佔用內存不多
+         */
+        activityViewModel.bookLiveData.observe(viewLifecycleOwner){
+                viewModel.bookLiveData.value = it
         }
 
         viewModel.wordListLiveData.observe(viewLifecycleOwner){
-            it.size.log()
+            slideAdapter.setWordList(it)
         }
 
-        binding.translationTextView.setTitleText("釋義")
-        binding.translationTextView
-            .setContentText("adj. 特殊的；特定的；特別的；特有的，獨特的；異常的" +
-                    "\nn. 投擲；投距，射程")
-        binding.variationTextView.setTitleText("變化形")
-        binding.variationTextView.setContentText("Plurals：sounds\nConjugation ：sounded sounded sounding")
 
-        binding.exampleTextView.setTitleText("例句")
-        binding.exampleTextView.setContentText("\"形容詞\n" +
-                "1.特殊的；特定的；特別的\n" +
-                "The teacher showed particular concern for the disabled child. 老師特別關心那個殘疾兒童。\n" +
-                "2.特有的，獨特的；異常的\n" +
-                "Her particular way of smiling left a good impression on me. 她特有的微笑給我留下了美好的印象。\n" +
-                "3.（過於）講究的；苛求的，挑剔的[（+about/over）][（+wh-）]\n" +
-                "She is particular about what she eats. 她過分講究吃。\n" +
-                "4.細緻的，詳細的\n" +
-                "The witness gave us a particular account of what happened. 目擊者把發生的事情詳細地對我們說了一遍。\n" +
-                "n.名詞\n" +
-                "1.個別的項目，細目\n" +
-                "The particular may have to be satisfied to the general. 為顧全總體個別的項目也許不得不放棄。\n" +
-                "2.詳細情況\n" +
-                "I suppose the secretary knows the particulars of the plan. 我想那位祕書知道這一計畫的詳細情況。\n" +
-                "3.特點，特色\" ")
+        /**
+            這裡流程為
+            positionLiveData(0)
+            initialPositionLiveData(4)
+            positionLiveData(4)
+            onPageSelected(4)
+            positionLiveData(4)
 
-        binding.noteTextView.setTitleText("註記")
-        binding.noteTextView.setContentText("這是一個很棒的單字 !")
+            1. 一旦開始observe, 系統底層使用異步讀取SQLite, 而只有positionLiveData
+                保存初始值為0, 因此他最先被觀察到, 他等於viewpager的預設item也就是0,
+                因此不執行setCurrentItem
+            2. 接著initialPositionLiveData從SQLite返回某值(例如4), 將isInitial關閉,
+                接著設置positionLiveData並使它被觀察到, 這時positionLiveData就不是0而是4,
+                它與viewPager目前的item(0)不一樣, 因此執行setCurrentItem
+            3. viewPager被設定Page(也就是執行setCurrentItem), 會同步到positionLiveData,
+                因此又觸發一次positionLiveData的觀察, 但這時它等於viewPager目前的item, 不會重複
+                執行setCurrentItem
+         */
+        viewModel.initialPositionLiveData.observe(viewLifecycleOwner){
+            if(viewModel.isInitial){
+                viewModel.isInitial = false
+                viewModel.positionLiveData.value = it
+            }
+        }
+
+        viewModel.positionLiveData.observe(viewLifecycleOwner){
+            if (binding.viewPager.currentItem != it)
+                binding.viewPager.setCurrentItem(it, false)
+        }
 
 
+        binding.viewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback(){
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                viewModel.positionLiveData.value = position
+            }
+        })
     }
+
+
+    private fun initSpeedDial(addActionItems: Boolean) {
+        if (addActionItems) {
+            val doMark = SpeedDialActionItem.Builder(R.id.fab_mark_word, R.drawable
+                    .ic_round_star_border_24)
+                    .setLabel("標記")
+                    .setLabelClickable(false)
+                    .create()
+
+            val disMark = SpeedDialActionItem.Builder(R.id.fab_dis_mark_word, R.drawable
+                    .ic_baseline_star_24)
+                    .setLabel("取消標記")
+                    .setLabelClickable(false)
+                    .create()
+
+
+
+            binding.speedDial
+                    .addActionItem(SpeedDialActionItem.Builder(R.id.fab_add_word, R.drawable
+                            .ic_baseline_add_24)
+                    .setLabel("新增")
+                    .setLabelClickable(false)
+                    .create())
+
+            binding.speedDial
+                    .addActionItem(SpeedDialActionItem.Builder(R.id.fab_edit_word, R.drawable
+                            .ic_outline_text_snippet_24)
+                            .setLabel("編輯")
+                            .setLabelClickable(false)
+                            .create())
+
+            binding.speedDial
+                    .addActionItem(SpeedDialActionItem.Builder(R.id.fab_delete_word, R.drawable
+                            .ic_round_delete_24)
+                            .setLabel("刪除")
+                            .setLabelClickable(false)
+                            .create())
+
+            binding.speedDial.addActionItem(doMark)
+        }
+
+        // Set option fabs clicklisteners.
+        binding.speedDial.setOnActionSelectedListener(SpeedDialView.OnActionSelectedListener { actionItem ->
+
+            val doMark = SpeedDialActionItem.Builder(R.id.fab_mark_word, R.drawable
+                    .ic_round_star_border_24)
+                    .setLabel("標記")
+                    .setLabelClickable(false)
+                    .create()
+
+            val disMark = SpeedDialActionItem.Builder(R.id.fab_dis_mark_word, R.drawable
+                    .ic_baseline_star_24)
+                    .setLabel("取消標記")
+                    .setLabelClickable(false)
+                    .create()
+            when (actionItem.id) {
+                R.id.fab_add_word -> {
+                    "新增被點了".showToast()
+                    return@OnActionSelectedListener false // false will close it without animation
+                }
+                R.id.fab_edit_word -> {
+                    "編輯".showToast()
+                    return@OnActionSelectedListener false // false will close it without animation
+                }
+                R.id.fab_delete_word -> {
+                    "刪除".showToast()
+                    return@OnActionSelectedListener false // false will close it without animation
+                }
+                R.id.fab_mark_word -> {
+                    binding.speedDial.replaceActionItem(actionItem, disMark)
+                    "標記成功".showToast()
+                    return@OnActionSelectedListener true // false will close it without animation
+                }
+                R.id.fab_dis_mark_word->{
+                    binding.speedDial.replaceActionItem(actionItem, doMark)
+                    "取消標記".showToast()
+                    return@OnActionSelectedListener true
+                }
+            }
+            true // To keep the Speed Dial open
+        })
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if(!viewModel.isInitial)
+            viewModel.updateInitialWordId()
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.action_search->{
@@ -96,6 +204,8 @@ class WordFragment : Fragment() {
         inflater.inflate(R.menu.word_toolbar, menu)
 
     }
+
+
 }
         /*
         binding.recyclerView.let {

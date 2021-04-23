@@ -13,14 +13,14 @@ object BookRepository {
 
     fun loadBooks(memberId:Long=SelfStudyApplication.memberId) = bookDao.loadDistinctBooks(memberId)
 
-    suspend fun insertBooks(books: List<Book>) = withContext(Dispatchers.IO){
-        bookDao.insert(*books.toTypedArray())
+    suspend fun insertBook(vararg book: Book) = withContext(Dispatchers.IO){
+        bookDao.insert(*book)
     }
-    suspend fun updateBooks(books: List<Book>) = withContext(Dispatchers.IO){
-        bookDao.update(*books.toTypedArray())
+    suspend fun updateBook(vararg book: Book) = withContext(Dispatchers.IO){
+        bookDao.update(*book)
     }
-    suspend fun deleteBooks(books: List<Book>) = withContext(Dispatchers.IO){
-        bookDao.delete(*books.toTypedArray())
+    suspend fun deleteBook(vararg book: Book) = withContext(Dispatchers.IO){
+        bookDao.delete(*book)
     }
 
 }

@@ -1,6 +1,5 @@
 package com.bu.selfstudy.data.model
 
-import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.*
 import kotlinx.android.parcel.Parcelize
@@ -25,13 +24,14 @@ data class Word(
     var id:Long = 0,
     var bookId: Long,
     var wordName: String,
-    var pronounceString: String="",
-    var pronounceUri: String="",
+    var pronunciation: String="",
     var translation: String="",
     var variation: String="",
     var example: String="",
-    var dictionaryUri: String="",
     var note: String = "",
+    var audioPath:String = "",
+    var dictionaryPath: String="",//a file about complete word data from api
+
     var timestamp: Date = Date(),
     var isTrash:Boolean = false
 ):Parcelable

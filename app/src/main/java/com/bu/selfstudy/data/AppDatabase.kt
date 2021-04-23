@@ -17,7 +17,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
-@Database(version = 5, entities = [Member::class, Book::class, Word::class])
+@Database(version = 9, entities = [Member::class, Book::class, Word::class])
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun memberDao(): MemberDao
@@ -34,17 +34,17 @@ abstract class AppDatabase : RoomDatabase() {
             return Room.databaseBuilder(context, AppDatabase::class.java, "app_database")
                     .fallbackToDestructiveMigration()
                     //.createFromAsset("database/app_database")
-                    .addCallback(object : Callback() {
+                    /*.addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
                             Executors.newSingleThreadExecutor().execute {
                                 instance?.initialize()
                             }
                         }
-                    })
+                    })*/
                     .build().apply {
                         instance = this
-                        //initialize()
+                        initialize()
                 }
 
         }
@@ -58,6 +58,13 @@ abstract class AppDatabase : RoomDatabase() {
             "adj.特別的, 細緻的\nn.細目",
             "n.幽默感[U]；幽默[U]"
         )
+        val pronunciations = arrayOf(
+                "[rɪˋzɝv]",
+                "[pɚˋtɪkjəlɚ]",
+                "[ˋhjumɚ]"
+        )
+
+
         val variations = arrayOf(
             "過去式：reserved 過去分詞：reserved 現在分詞：reserving\n名詞複數：reserves",
             "名詞複數：particulars",
@@ -98,7 +105,7 @@ abstract class AppDatabase : RoomDatabase() {
                     "2.心情，情緒[S]\n" +
                     "The boss is in no humor to talk to you right now. 此刻老板沒有心情同你說話。"
         )
-        val descriptions = arrayOf(
+        val notes = arrayOf(
             "to fall back on one's reserves 依靠自己的儲備\noil/capital reserves 石油／資金儲備",
             "同義詞 a.特別的 special, unusual, different",
             "同義詞 n.幽默感；幽默 wit, pleasantry, comedy"
@@ -122,7 +129,7 @@ abstract class AppDatabase : RoomDatabase() {
             password = "123456789",
             userName = "LuLu",
             sex = "F",
-            iconUri = "icon.jpg"
+            iconPath = "icon.jpg"
         )
         runBlocking{member.id = memberDao().insert(member)[0]}
 
@@ -145,8 +152,10 @@ abstract class AppDatabase : RoomDatabase() {
                 translation = translations[index],
                 variation = variations[index],
                 example = examples[index],
-                dictionaryUri = dictionaryUri[index],
-                pronounceUri = pronounceUri[index],
+                dictionaryPath = dictionaryUri[index],
+                audioPath = pronounceUri[index],
+                pronunciation = pronunciations[index],
+                note = notes[index],
                 bookId = 0//Pending
             )
             wordListData.add(word)
