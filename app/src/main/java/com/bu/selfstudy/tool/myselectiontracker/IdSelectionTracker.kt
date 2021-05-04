@@ -1,49 +1,18 @@
-package com.bu.selfstudy.tools
+package com.bu.selfstudy.tool.myselectiontracker
 
 import android.view.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.selection.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.MainActivity
 import com.bu.selfstudy.R
-import com.bu.selfstudy.ui.word.WordAdapter
-import com.bu.selfstudy.ui.word.WordFragmentDirections
+import com.bu.selfstudy.tool.closeKeyboard
 
-class IdItemDetails(private val id: Long, private val _position: Int)
-    : ItemDetailsLookup.ItemDetails<Long>() {
-    override fun getPosition() = _position
-    override fun getSelectionKey() = id
-}
-
-class IdItemDetailsLookup(
-        private val recyclerView: RecyclerView,
-        private val idList: List<Long>
-) : ItemDetailsLookup<Long>() {
-    override fun getItemDetails(event: MotionEvent): ItemDetails<Long>? {
-        val view = recyclerView.findChildViewUnder(event.x, event.y)
-        if (view != null) {
-            recyclerView.getChildViewHolder(view).adapterPosition.let {
-                return IdItemDetails(idList[it], it)
-            }
-        }
-        return null
-    }
-}
-
- class IdItemKeyProvider(private val idList: List<Long>) : ItemKeyProvider<Long>(SCOPE_CACHED) {
-    override fun getKey(position: Int): Long = idList[position]
-    override fun getPosition(key: Long): Int = idList.indexOf(key)
-}
-
-
-fun Fragment.buildSelectionTracker(
+fun Fragment.buildIdSelectionTracker(
         recyclerView: RecyclerView,
         idList: List<Long>,
-        predicate: SelectionTracker.SelectionPredicate<Long>,
         actionModeMenuRes: Int,
-        onActionItemClicked: (itemId:Int)->Unit
+        actionModeMenuCallback: (itemId:Int)->Unit
 ): SelectionTracker<Long> {
 
     val activity = this.requireActivity()
@@ -55,23 +24,25 @@ fun Fragment.buildSelectionTracker(
             IdItemKeyProvider(idList),
             IdItemDetailsLookup(recyclerView, idList),
             StorageStrategy.createLongStorage()
-    ).withSelectionPredicate(predicate).build()
+        ).withSelectionPredicate(SelectionPredicates.createSelectAnything())
+         .build()
 
     //set actionMode, for multiple selection
     val actionModeCallback = object : androidx.appcompat.view.ActionMode.Callback {
-        //對於搜尋結果進行操作, 會將ActionMode疊在SearchView上方, 此時鍵盤不會消失
-        //造成使用者能在看不到搜尋框時查詢, 因此ActionMode出現就必須關閉鍵盤
+        /**對於搜尋結果進行操作, 會將ActionMode疊在SearchView上方, 此時鍵盤不會消失
+           造成使用者能在看不到搜尋框時查詢, 因此ActionMode出現就必須關閉鍵盤
+         */
         override fun onCreateActionMode(mode: androidx.appcompat.view.ActionMode, menu: Menu): Boolean {
             val inflater: MenuInflater = mode.menuInflater
-            inflater.inflate(R.menu.word_action_mode, menu)
-            closeKeyboard()//tools
+            inflater.inflate(actionModeMenuRes, menu)
+            closeKeyboard()
             return true
         }
 
         override fun onPrepareActionMode(mode: androidx.appcompat.view.ActionMode, menu: Menu) = false
 
         override fun onActionItemClicked(mode: androidx.appcompat.view.ActionMode, item: MenuItem): Boolean {
-            onActionItemClicked(item?.itemId)
+            actionModeMenuCallback(item?.itemId)
             return true
         }
 
@@ -80,6 +51,7 @@ fun Fragment.buildSelectionTracker(
             actionMode = null
         }
     }
+
     val selectionObserver = object : SelectionTracker.SelectionObserver<Long>() {
         override fun onSelectionChanged() {
             super.onSelectionChanged()
@@ -94,5 +66,9 @@ fun Fragment.buildSelectionTracker(
             }
         }
     }
-    return tracker.also { it.addObserver(selectionObserver)}
+
+
+    tracker.addObserver(selectionObserver)
+
+    return tracker
 }

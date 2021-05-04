@@ -2,17 +2,18 @@ package com.bu.selfstudy.ui.book
 
 import androidx.lifecycle.*
 import com.bu.selfstudy.data.model.Book
-import com.bu.selfstudy.data.model.Word
-import com.bu.selfstudy.tools.DatabaseResultEvent
-import com.bu.selfstudy.tools.setDatabaseResult
 
 
-class BookViewModel : ViewModel(){}
+class BookViewModel : ViewModel(){
+
+
+}
+
 /*
 val searchQueryLD = MutableLiveData("")
 private val refreshLD = MutableLiveData<Int>(1)
 val bookListLD= refreshLD.switchMap{
-    Repository.loadBooks().asLiveData()
+    BookRepository.loadBooks().asLiveData()
 }
 val idList = ArrayList<Long>()
 
@@ -25,28 +26,23 @@ fun refresh() {
 
 fun insertBooks(books:List<Book>){
     setDatabaseResult(isLoadingLD, databaseEventLD, "新增"){
-        Repository.insertBooks(books).size
+        BookRepository.insertBook(*books.toTypedArray()).size
     }
 }
 
 fun deleteBooksToTrash(bookIds: List<Long>){
     setDatabaseResult(isLoadingLD, databaseEventLD, "刪除"){
-        Repository.updateBooks(
-                getBookList(bookIds).onEach { it.isTrash = true }
+        BookRepository.updateBook(
+                *getBookList(bookIds).onEach { it.isTrash = true }.toTypedArray()
         )
     }
 }
 
 fun insertWords(words:List<Word>){
     setDatabaseResult(isLoadingLD, databaseEventLD, "新增"){
-        Repository.insertWords(words).size
+        WordRepository.insertWord(*words.toTypedArray()).size
     }
 }
 
-fun setIdList(books: List<Book>) {
-    idList.clear()
-    idList.addAll(books.map { it.id })
-}
-
 private fun getBookList(bookIds: List<Long>) = bookListLD.value!!.filter { bookIds.contains(it.id) }
-}*/
+*/

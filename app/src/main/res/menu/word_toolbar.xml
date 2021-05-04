@@ -19,9 +19,4 @@
         android:title="@string/icon_full"
         app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/action_change_photo"
-        android:icon="@drawable/ic_round_color_lens_24"
-        android:title="@string/icon_background"
-        app:showAsAction="never"/>
 </menu>

@@ -24,7 +24,7 @@
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
             android:paddingStart="16dp"
-            android:textColor="@color/secondaryTextColor"
+            android:textColor="@color/black"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:maxLines="1"
             tools:text="釋義"/>
@@ -48,7 +48,7 @@
         android:paddingStart="16dp"
         android:clickable="true"
         android:focusable="true"
-        android:textColor="@color/secondaryTextColor"
+        android:textColor="@color/black"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         tools:text="這是一個很棒的內容"/>
 

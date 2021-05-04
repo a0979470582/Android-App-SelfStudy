@@ -1,7 +1,6 @@
-package com.bu.selfstudy.tools
+package com.bu.selfstudy.tool
 
 import android.app.Activity
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment

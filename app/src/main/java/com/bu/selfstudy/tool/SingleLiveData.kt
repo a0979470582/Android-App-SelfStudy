@@ -1,7 +1,6 @@
-package com.bu.selfstudy.tools
+package com.bu.selfstudy.tool
 
 
-import android.util.Log
 import androidx.annotation.MainThread
 import androidx.annotation.Nullable
 import androidx.lifecycle.LifecycleOwner
@@ -37,7 +36,7 @@ class SingleLiveData<T> : MutableLiveData<T?>() {
     @MainThread
     override fun setValue(@Nullable t: T?) {
         mPending.set(true)
-        super.setValue(t)
+        super.postValue(t)
     }
 
     @MainThread

@@ -15,6 +15,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- Circular progress indicator -->
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progressIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
@@ -33,7 +44,7 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <com.leinardi.android.speeddial.SpeedDialView
-            android:id="@+id/speedDial"
+            android:id="@+id/speedDialView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"

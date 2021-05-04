@@ -3,10 +3,9 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/bookFragment"
+            android:id="@+id/changeBookDialog"
             android:icon="@drawable/ic_baseline_library_books_24"
-            android:checked="true"
-            android:title="@string/menu_book" />
+            android:title="@string/menu_change_book" />
         <item
             android:id="@+id/accountFragment"
             android:icon="@drawable/ic_baseline_account_circle_24"

@@ -1,4 +1,4 @@
-package com.bu.selfstudy.tools
+package com.bu.selfstudy.tool
 
 import android.content.Context
 import android.os.Bundle
@@ -7,7 +7,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.Nullable
 import com.bu.selfstudy.R
 
 class DropdownTextView(context: Context, attrs: AttributeSet): LinearLayout(context, attrs){

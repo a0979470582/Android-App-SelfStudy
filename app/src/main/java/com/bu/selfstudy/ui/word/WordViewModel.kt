@@ -3,63 +3,45 @@ package com.bu.selfstudy.ui.word
 
 import androidx.lifecycle.*
 import com.bu.selfstudy.data.model.Book
-import com.bu.selfstudy.data.model.Member
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.repository.BookRepository
-import com.bu.selfstudy.data.repository.MemberRepository
 import com.bu.selfstudy.data.repository.WordRepository
-import com.bu.selfstudy.tools.SingleLiveData
-import com.bu.selfstudy.tools.log
 import kotlinx.coroutines.launch
 
-
+/**
+ * 更改資料庫中的wordList都會透過LiveData反應在目前的ViewPager, 例如新增,刪除,修改都會同步到資料庫,
+ * 接著透過LiveData傳回並在ViewPager看到更新, 而wordFragment的生命週期進入onStop時, 會同步目前使用者所
+ * 看到的單字頁(wordId)到資料庫
+ */
 class WordViewModel() : ViewModel() {
 
-    //book可能在導覽抽屜(某一個Fragment)那裡被切換
-    val bookLiveData = MutableLiveData<Book>()
+    val bookIdLiveData = MutableLiveData<Long>(0L)
 
-    //wordList會因book被切換, 或是本身單字新增刪除而改變
-    val wordListLiveData = bookLiveData.switchMap {
-        WordRepository.loadWords(it.id, "%").asLiveData()
+    val wordListLiveData = bookIdLiveData.switchMap {
+        WordRepository.loadWords(it, "%").asLiveData()
     }
 
-    /**
-       wordList的position問題, 在程式運行中, ViewPager2完成了大部份處理(例如刪除某一Page時,
-       ViewPager2內部的position也會更動), 並且頻繁的更動position,也不適合與資料庫同步,
-       因此只在切換題庫或離開程式時同步到資料庫, 但是Member底下的currentBookId並不會
-       頻繁更動, 因此可以每次切換題庫, 就和資料庫同步
-    */
+    var currentBook: Book? = null
+    var currentWord: Word? = null
+    var currentPosition:Int? = null
 
-    //該book初始顯示的Word, 若initialWordId不存在, 就使用wordList的第一個word
-    val initialWordLiveData = MediatorLiveData<Word>().apply {
-        addSource(bookLiveData){ book->
-            wordListLiveData.value?.let { value = combineWord(book.initialWordId, it) }
+
+    var isInitialPage = true
+    fun getInitialPosition():Int{
+        val initialPosition = wordListLiveData.value!!.indexOfFirst {
+            currentBook!!.initialWordId == it.id
         }
-        addSource(wordListLiveData){wordList->
-            bookLiveData.value?.let { value = combineWord(it.initialWordId, wordList) }
-        }
+        return if (initialPosition == -1) 0 else initialPosition
     }
 
-    //該book初始顯示wordList中的哪一個word(index)
-    val initialPositionLiveData = initialWordLiveData.map {
-        wordListLiveData.value!!.indexOf(it)
-    }
 
-    //是否讓界面控制器去讀取Book中的initialWordId
-    var isInitial = true
-
-    //純粹是ViewPager內部的position值, 為了處理配置改變而放在此處
-    val positionLiveData = MutableLiveData<Int>(0)
-
-    //別忘記切換題庫時, 儲存當前position值
+    //別忘記切換題庫時, 將當前頁面同步到資料庫
     fun updateInitialWordId(){
-        if(isInitial)
-            return
-        val position = positionLiveData.value!!
-        val wordId= wordListLiveData.value!![position].id
-        val book = bookLiveData.value!!.copy()
-        book.initialWordId = wordId
-        updateBook(book)
+        currentPosition?.let {
+            val currentBook = currentBook!!.copy()
+            currentBook.initialWordId = wordListLiveData.value!![currentPosition!!].id
+            updateBook(currentBook)
+        }
     }
 
     private fun updateBook(book: Book){
@@ -68,14 +50,19 @@ class WordViewModel() : ViewModel() {
         }
     }
 
-    private fun combineWord(initialWordId: Long, wordList:List<Word>) =
-            wordList.firstOrNull { it.id == initialWordId }?: wordList[0]
-
 }
 
 
 /*
+    val initialPositionLiveData = wordListLiveData.map {wordList->
+        val position = wordList.indexOfFirst {word->
+            word.id == bookLiveData.value!!.initialWordId
+        }
+        if(position==-1)
+            return@map 0
 
+        return@map position
+    }
 
 
     fun updateCurrentWordId(position: Int){

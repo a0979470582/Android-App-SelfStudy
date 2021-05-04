@@ -9,15 +9,18 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
 import com.bu.selfstudy.databinding.ActivityMainBinding
-import com.bu.selfstudy.tools.log
-import com.bu.selfstudy.tools.viewBinding
-import com.bu.selfstudy.ui.ActivityViewModel
+import com.bu.selfstudy.tool.viewBinding
+import com.bu.selfstudy.ActivityViewModel
+import com.bu.selfstudy.tool.log
+import com.bu.selfstudy.tool.showSnackbar
+import com.bu.selfstudy.tool.showToast
 
 
 class MainActivity : AppCompatActivity(){
     private val activityViewModel: ActivityViewModel by viewModels()
 
     private val binding : ActivityMainBinding by viewBinding()
+
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -31,22 +34,39 @@ class MainActivity : AppCompatActivity(){
         appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
 
         setSupportActionBar(binding.toolbar)
+
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         binding.navView.setupWithNavController(navController)
 
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-
         activityViewModel.memberLiveData.observe(this){
         }
 
-
-        activityViewModel.bookListLiveData.observe(this){
-        }
-
-
         activityViewModel.bookLiveData.observe(this){
+            activityViewModel.refreshData()
         }
+
+        activityViewModel.insertEvent.observe(this){
+            if(it!=null && it.isNotEmpty()){
+                binding.root.showSnackbar("已新增了${it.size}個單字", "檢視"){
+                    "正在檢視中...".showToast()
+                }
+            }
+        }
+        activityViewModel.deleteEvent.observe(this){
+            if(it!=null && it>0){
+                "已移除${it}個單字".showToast()
+            }
+        }
+        activityViewModel.deleteToTrashEvent.observe(this){
+            "ok".log()
+            if(it!=null && it>0){
+                binding.root.showSnackbar("已將${it}個單字移至回收桶", "回復"){
+                    "正在回復中...".showToast()
+                }
+            }
+        }
+
 
     }
 

@@ -13,7 +13,7 @@
         android:layout_marginTop="32dp"
         android:text="Particular"
         android:textAppearance="@style/TextAppearance.AppCompat.Display3"
-        android:textColor="@color/secondaryTextColor"
+        android:textColor="@color/black"
         android:textSize="48sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

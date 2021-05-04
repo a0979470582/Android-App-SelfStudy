@@ -4,10 +4,9 @@ import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
-import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.navArgs
-import com.bu.selfstudy.tools.setDialogResult
-import com.bu.selfstudy.tools.setNavigationResult
+import com.bu.selfstudy.tool.setDialogResult
+import com.bu.selfstudy.tool.setNavigationResult
 
 class ToDeleteDialog() : AppCompatDialogFragment() {
     private val args: ToDeleteDialogArgs by navArgs()
@@ -17,10 +16,9 @@ class ToDeleteDialog() : AppCompatDialogFragment() {
                 .setTitle("刪除")
                 .setMessage(args.message)
                 .setPositiveButton("確定") { dialog, which ->
-                    setDialogResult("isDelete" to true)
+                    setNavigationResult("isDelete", true)
                 }
                 .setNegativeButton("取消") { dialog, which ->
-                    setDialogResult("isDelete" to true ,isSuccessful = false)
                 }
                 .create()
     }

@@ -8,6 +8,7 @@
     <fragment
         android:id="@+id/wordFragment"
         android:name="com.bu.selfstudy.ui.word.WordFragment"
+        android:label=""
         tools:layout="@layout/fragment_word">
         <action
             android:id="@+id/action_wordFragment_to_accountFragment"
@@ -27,6 +28,9 @@
         <action
             android:id="@+id/action_wordFragment_to_suggestFragment"
             app:destination="@id/suggestFragment" />
+        <action
+            android:id="@+id/action_wordFragment_to_changeBookDialog"
+            app:destination="@id/changeBookDialog" />
     </fragment>
 
     <fragment
@@ -97,21 +101,14 @@
 
     <fragment
         android:id="@+id/addWordFragment"
-        android:name="com.bu.selfstudy.ui.dialog.AddWordFragment"
+        android:name="com.bu.selfstudy.ui.addword.AddWordFragment"
         android:label="加入單字"
-        tools:layout="@layout/fragment_add_word">
-        <argument
-            android:name="defaultBookId"
-            app:argType="long"
-            android:defaultValue="0L" />
-        <argument
-            android:name="bookNames"
-            app:argType="string[]" />
-        <argument
-            android:name="bookIds"
-            app:argType="long[]" />
-    </fragment>
+        tools:layout="@layout/fragment_add_word"/>
     <action android:id="@+id/action_global_addWordFragment"
             app:destination="@id/addWordFragment"/>
+
+    <dialog
+        android:id="@+id/changeBookDialog"
+        android:name="com.bu.selfstudy.ui.dialog.ChangeBookDialog"/>
 
 </navigation>

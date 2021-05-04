@@ -1,4 +1,4 @@
-package com.bu.selfstudy.tools
+package com.bu.selfstudy.tool
 
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment.findNavController

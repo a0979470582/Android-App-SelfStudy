@@ -32,14 +32,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:text="@{word.wordName}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
-            android:textSize="48sp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/pronounceTextView"
+            android:id="@+id/pronunciationTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{word.pronunciation}"
@@ -55,9 +54,9 @@
             android:background="@android:color/transparent"
             android:contentDescription="@string/icon_pronounce"
             android:src="@drawable/ic_baseline_volume_up_24"
-            app:layout_constraintBottom_toBottomOf="@+id/pronounceTextView"
-            app:layout_constraintStart_toEndOf="@+id/pronounceTextView"
-            app:layout_constraintTop_toTopOf="@+id/pronounceTextView" />
+            app:layout_constraintBottom_toBottomOf="@+id/pronunciationTextView"
+            app:layout_constraintStart_toEndOf="@+id/pronunciationTextView"
+            app:layout_constraintTop_toTopOf="@+id/pronunciationTextView" />
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/scrollView"
@@ -70,14 +69,14 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/pronounceTextView">
+            app:layout_constraintTop_toBottomOf="@id/pronunciationTextView">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/innerConstraintLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <com.bu.selfstudy.tools.DropdownTextView
+                <com.bu.selfstudy.tool.DropdownTextView
                     android:id="@+id/translationTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -89,7 +88,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
 
-                <com.bu.selfstudy.tools.DropdownTextView
+                <com.bu.selfstudy.tool.DropdownTextView
                     android:id="@+id/variationTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -101,7 +100,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/translationTextView" />
 
-                <com.bu.selfstudy.tools.DropdownTextView
+                <com.bu.selfstudy.tool.DropdownTextView
                     android:id="@+id/exampleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -112,7 +111,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/variationTextView" />
 
-                <com.bu.selfstudy.tools.DropdownTextView
+                <com.bu.selfstudy.tool.DropdownTextView
                     android:id="@+id/noteTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

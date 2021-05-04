@@ -44,7 +44,7 @@ abstract class AppDatabase : RoomDatabase() {
                     })*/
                     .build().apply {
                         instance = this
-                        initialize()
+                        //initialize()
                 }
 
         }
@@ -93,7 +93,7 @@ abstract class AppDatabase : RoomDatabase() {
                     "She is particular about what she eats. 她過分講究吃。\n" +
                     "4.細緻的，詳細的[B]\n" +
                     "The witness gave us a particular account of what happened. 目擊者把發生的事情詳細地對我們說了一遍。\n" +
-                    "n.名詞\n" +
+            "n.名詞\n" +
                     "1.個別的項目，細目[C]\n" +
                     "The particular may have to be satisfied to the general. 為顧全總體個別的項目也許不得不放棄。\n" +
                     "2.詳細情況[P]\n" +

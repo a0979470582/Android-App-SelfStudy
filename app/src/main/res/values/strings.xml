@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">SelfStudy</string>
 
-    <string name="menu_book">我的題庫</string>
+    <string name="menu_change_book">切換題庫</string>
     <string name="menu_account">我的帳戶</string>
-    <string name="menu_theme">切換主題</string>
+    <string name="menu_theme">選擇主題</string>
     <string name="menu_setting">設置</string>
     <string name="menu_recycler">回收桶</string>
     <string name="menu_subscription">訂閱</string>
@@ -23,5 +23,29 @@
     <string name="title_variation">變化形</string>
     <string name="title_example">例句</string>
     <string name="title_note">註記</string>
+
+    <string name="label_word">Word</string>
+    <string name="label_pronunciation">Pronunciation</string>
+    <string name="label_translation">Translation</string>
+    <string name="label_variation">Variation</string>
+    <string name="label_example">Example</string>
+    <string name="label_note">Note</string>
+
+    <string name="hint_input_word">i.e. particular</string>
+    <string name="hint_input_pronunciation">i.e. [pɚˋtɪkjəlɚ]</string>
+    <string name="hint_input_translation">i.e. adj.特別的, 細緻的 n.細目"</string>
+    <string name="hint_input_variation">i.e. 名詞複數：particulars</string>
+    <string name="hint_input_example">i.e. adj.形容詞 1.特殊的；特定的；特別的
+                    The teacher showed particular concern for the disabled child.
+                    老師特別關心那個殘疾兒童</string>
+    <string name="hint_input_note">i.e. particular有兩種意思, 可以簡單記為: 特別的細目</string>
+
+    <string name="helper_text_word">"輸入單字或片語    Required"</string>
+    <string name="helper_text_pronunciation">輸入發音音標</string>
+    <string name="helper_text_translation">輸入翻譯</string>
+    <string name="helper_text_variation">輸入變化形</string>
+    <string name="helper_text_example">輸入例句</string>
+    <string name="helper_text_note">輸入註記</string>
+
 
 </resources>

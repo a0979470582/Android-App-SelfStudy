@@ -5,9 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.WordSlideItemBinding
+import com.bu.selfstudy.tool.log
 
-class WordSlideAdapter(private val wordList: ArrayList<Word> = ArrayList()) :
+class WordSlideAdapter(val wordList: ArrayList<Word> = ArrayList()) :
     RecyclerView.Adapter<WordSlideAdapter.ViewHolder>() {
+
+    var realPosition:Int = 0
 
     inner class ViewHolder(val binding: WordSlideItemBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -19,11 +22,14 @@ class WordSlideAdapter(private val wordList: ArrayList<Word> = ArrayList()) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.word = wordList[position]
-        holder.binding.wordInfo.text = "${wordList[position].id}:$position/${wordList.size}"
+        realPosition = position%wordList.size
+        holder.binding.word = wordList[realPosition]
+        holder.binding.wordInfo.text = "${wordList[realPosition].id}:${realPosition+1}/${wordList.size}"
     }
 
-    override fun getItemCount() = wordList.size
+    //override fun getItemCount() = wordList.size
+    override fun getItemCount() = if(wordList.size == 0) 0 else Integer.MAX_VALUE
+
     override fun getItemId(position: Int): Long = wordList[position].id
 
     fun setWordList(words: List<Word>){

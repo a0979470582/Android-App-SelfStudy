@@ -1,34 +1,86 @@
-package com.bu.selfstudy.ui
+package com.bu.selfstudy
 
 import androidx.lifecycle.*
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.model.Member
+import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.data.repository.MemberRepository
+import com.bu.selfstudy.data.repository.WordRepository
+import com.bu.selfstudy.tool.SingleLiveData
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
+/**
+activityViewModel的生命週期為整個APP, 它儲存在導覽抽屜顯示的會員資料,
+取出單字所需的題庫列表, 他們佔用內存不多
+ */
 class ActivityViewModel : ViewModel() {
     val memberLiveData = MemberRepository.loadMember().asLiveData()
     val bookListLiveData = BookRepository.loadBooks().asLiveData()
 
+    //當前顯示的book, 這兩個來源都會影響到此變數
     val bookLiveData = MediatorLiveData<Book>().apply {
-        addSource(bookListLiveData){bookList->
-            memberLiveData.value?.let { value = combineBook(it, bookList) }
+        addSource(bookListLiveData){ bookList->
+            memberLiveData.value?.let { member->
+                value = combineBook(member, bookList)
+            }
         }
         addSource(memberLiveData){member->
-            bookListLiveData.value?.let { value = combineBook(member, it) }
+            bookListLiveData.value?.let { bookList->
+                value = combineBook(member, bookList)
+            }
+        }
+    }
+    private fun combineBook(member: Member, bookList:List<Book>) =
+        bookList.firstOrNull { it.id == member.initialBookId }?: bookList[0]
+
+
+    var book:Book? = null
+    val bookList = ArrayList<Book>()
+    var position = 0
+    fun refreshData(){
+        viewModelScope.launch(Dispatchers.Default) {
+            book = bookLiveData.value!!
+            bookList.clear()
+            bookList.addAll(bookListLiveData.value!!)
+            position = bookList.indexOf(book)
         }
     }
 
-
-    fun updateMember(member: Member){
-        viewModelScope.launch {
+    fun updateInitialBookId(bookId: Long){
+        viewModelScope.launch(Dispatchers.IO) {
+            val member = memberLiveData.value!!.copy()
+            member.initialBookId = bookId
             MemberRepository.updateMember(member)
         }
     }
 
-    private fun combineBook(member: Member, bookList:List<Book>) =
-        bookList.firstOrNull { it.id == member.initialBookId }?: bookList[0]
+
+    val insertEvent = SingleLiveData<List<Long>>()
+    val deleteEvent = SingleLiveData<Int>()
+    val deleteToTrashEvent = SingleLiveData<Int>()
+
+    fun insertWord(word: Word){
+        viewModelScope.launch(Dispatchers.IO) {
+            insertEvent.value = WordRepository.insertWord(word)
+        }
+    }
+
+
+    fun deleteWord(wordId: Long){
+        viewModelScope.launch(Dispatchers.IO) {
+            deleteEvent.value = WordRepository.deleteWord(wordId)
+        }
+    }
+
+    fun deleteWordToTrash(wordId: Long){
+        viewModelScope.launch(Dispatchers.IO) {
+            deleteToTrashEvent.value = WordRepository.deleteWordToTrash(wordId)
+        }
+    }
+
+
+
 
 }

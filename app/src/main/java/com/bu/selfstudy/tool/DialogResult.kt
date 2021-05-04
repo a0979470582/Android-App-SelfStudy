@@ -1,4 +1,4 @@
-package com.bu.selfstudy.tools
+package com.bu.selfstudy.tool
 
 import android.os.Bundle
 import android.os.Parcelable

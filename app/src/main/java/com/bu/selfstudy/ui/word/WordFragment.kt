@@ -4,26 +4,24 @@ package com.bu.selfstudy.ui.word
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.doOnAttach
-import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
-import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
-import com.bu.selfstudy.MainActivity
+import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.FragmentWordBinding
-import com.bu.selfstudy.tools.showToast
-import com.bu.selfstudy.tools.*
-import com.bu.selfstudy.ui.ActivityViewModel
+import com.bu.selfstudy.tool.*
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
+import kotlinx.coroutines.launch
+
 
 class WordFragment : Fragment() {
     private val viewModel: WordViewModel by viewModels()
@@ -36,6 +34,7 @@ class WordFragment : Fragment() {
     private lateinit var tracker: SelectionTracker<Long>
     private var searchView: SearchView? = null
 
+    private lateinit var viewPagerCallback: ViewPager2.OnPageChangeCallback
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,124 +42,150 @@ class WordFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding.slideAdapter = slideAdapter
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
-        initSpeedDial(savedInstanceState == null)
-        /**
-         activityViewModel的生命週期為整個APP, 它儲存在導覽抽屜顯示的會員資料,
-         取出單字所需的題庫列表, 他們佔用內存不多
-         */
-        activityViewModel.bookLiveData.observe(viewLifecycleOwner){
-                viewModel.bookLiveData.value = it
+
+        getNavigationResultLiveData<Boolean>("isDelete")?.observe(viewLifecycleOwner){
+            "getNavigationResultLiveData".log()
+            if(it) activityViewModel.deleteWordToTrash(viewModel.currentWord!!.id)
         }
 
-        viewModel.wordListLiveData.observe(viewLifecycleOwner){
+        viewLifecycleOwner.lifecycleScope.launch {
+            initSpeedDial(savedInstanceState == null)
+        }
+
+
+        /**
+         * ViewPager要特別處理三種情況
+         * 1. 第一次開啟此頁面
+         * 2. 配置變更
+         * 3. 題庫切換
+         */
+        activityViewModel.bookLiveData.observe(viewLifecycleOwner) { newBook ->
+            "newBook:${newBook}".log()
+            if(viewModel.currentBook == null){
+                viewModel.bookIdLiveData.value = newBook.id
+            }
+
+            //切換題庫的情況
+            viewModel.currentBook?.let {
+                if(it.id != newBook.id){
+                    viewModel.updateInitialWordId()//保存舊題庫
+                    viewModel.isInitialPage = true
+                    viewModel.bookIdLiveData.value = newBook.id
+                }
+            }
+            viewModel.currentBook = newBook
+        }
+
+        viewModel.wordListLiveData.observe(viewLifecycleOwner) {
             slideAdapter.setWordList(it)
-        }
-
-
-        /**
-            這裡流程為
-            positionLiveData(0)
-            initialPositionLiveData(4)
-            positionLiveData(4)
-            onPageSelected(4)
-            positionLiveData(4)
-
-            1. 一旦開始observe, 系統底層使用異步讀取SQLite, 而只有positionLiveData
-                保存初始值為0, 因此他最先被觀察到, 他等於viewpager的預設item也就是0,
-                因此不執行setCurrentItem
-            2. 接著initialPositionLiveData從SQLite返回某值(例如4), 將isInitial關閉,
-                接著設置positionLiveData並使它被觀察到, 這時positionLiveData就不是0而是4,
-                它與viewPager目前的item(0)不一樣, 因此執行setCurrentItem
-            3. viewPager被設定Page(也就是執行setCurrentItem), 會同步到positionLiveData,
-                因此又觸發一次positionLiveData的觀察, 但這時它等於viewPager目前的item, 不會重複
-                執行setCurrentItem
-         */
-        viewModel.initialPositionLiveData.observe(viewLifecycleOwner){
-            if(viewModel.isInitial){
-                viewModel.isInitial = false
-                viewModel.positionLiveData.value = it
+            "size:${it.size}".log()
+            if (viewModel.isInitialPage) {
+                viewModel.isInitialPage = false
+                val fakePosition: Int = it.size*100+viewModel.getInitialPosition()
+                binding.viewPager.post {
+                    fakePosition.log()
+                    binding.viewPager.setCurrentItem(fakePosition, false)
+                }
             }
         }
 
-        viewModel.positionLiveData.observe(viewLifecycleOwner){
-            if (binding.viewPager.currentItem != it)
-                binding.viewPager.setCurrentItem(it, false)
-        }
 
-
-        binding.viewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback(){
+        viewPagerCallback = object: ViewPager2.OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                viewModel.positionLiveData.value = position
+                if(binding.progressIndicator.visibility != View.GONE)
+                    binding.progressIndicator.visibility = View.GONE
+                val realPosition = position%slideAdapter.wordList.size
+                viewModel.currentPosition = realPosition
+                viewModel.currentWord = viewModel.wordListLiveData.value!![realPosition]
             }
-        })
+        }
+        binding.viewPager.registerOnPageChangeCallback(viewPagerCallback)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.viewPager.unregisterOnPageChangeCallback(viewPagerCallback)
     }
 
 
     private fun initSpeedDial(addActionItems: Boolean) {
         if (addActionItems) {
-            val doMark = SpeedDialActionItem.Builder(R.id.fab_mark_word, R.drawable
-                    .ic_round_star_border_24)
+            val doMark = SpeedDialActionItem.Builder(
+                R.id.fab_mark_word, R.drawable
+                    .ic_round_star_border_24
+            )
                     .setLabel("標記")
-                    .setLabelClickable(false)
                     .create()
 
-            val disMark = SpeedDialActionItem.Builder(R.id.fab_dis_mark_word, R.drawable
-                    .ic_baseline_star_24)
+            val disMark = SpeedDialActionItem.Builder(
+                R.id.fab_dis_mark_word, R.drawable
+                    .ic_baseline_star_24
+            )
                     .setLabel("取消標記")
-                    .setLabelClickable(false)
                     .create()
 
+            binding.speedDialView
+                    .addActionItem(
+                        SpeedDialActionItem.Builder(
+                            R.id.fab_add_word, R.drawable
+                                .ic_baseline_add_24
+                        )
+                            .setLabel("新增")
+                            .create()
+                    )
 
-
-            binding.speedDial
-                    .addActionItem(SpeedDialActionItem.Builder(R.id.fab_add_word, R.drawable
-                            .ic_baseline_add_24)
-                    .setLabel("新增")
-                    .setLabelClickable(false)
-                    .create())
-
-            binding.speedDial
-                    .addActionItem(SpeedDialActionItem.Builder(R.id.fab_edit_word, R.drawable
-                            .ic_outline_text_snippet_24)
+            binding.speedDialView
+                    .addActionItem(
+                        SpeedDialActionItem.Builder(
+                            R.id.fab_edit_word, R.drawable
+                                .ic_outline_text_snippet_24
+                        )
                             .setLabel("編輯")
-                            .setLabelClickable(false)
-                            .create())
+                            .create()
+                    )
 
-            binding.speedDial
-                    .addActionItem(SpeedDialActionItem.Builder(R.id.fab_delete_word, R.drawable
-                            .ic_round_delete_24)
+            binding.speedDialView
+                    .addActionItem(
+                        SpeedDialActionItem.Builder(
+                            R.id.fab_delete_word, R.drawable
+                                .ic_round_delete_24
+                        )
                             .setLabel("刪除")
-                            .setLabelClickable(false)
-                            .create())
+                            .create()
+                    )
 
-            binding.speedDial.addActionItem(doMark)
+            binding.speedDialView.addActionItem(doMark)
         }
 
-        // Set option fabs clicklisteners.
-        binding.speedDial.setOnActionSelectedListener(SpeedDialView.OnActionSelectedListener { actionItem ->
+        // Set option fabs click listeners.
+        binding.speedDialView.setOnActionSelectedListener(SpeedDialView.OnActionSelectedListener { actionItem ->
 
-            val doMark = SpeedDialActionItem.Builder(R.id.fab_mark_word, R.drawable
-                    .ic_round_star_border_24)
-                    .setLabel("標記")
-                    .setLabelClickable(false)
-                    .create()
+            val doMark = SpeedDialActionItem.Builder(
+                R.id.fab_mark_word, R.drawable
+                    .ic_round_star_border_24
+            )
+                .setLabel("標記")
+                .setLabelClickable(false)
+                .create()
 
-            val disMark = SpeedDialActionItem.Builder(R.id.fab_dis_mark_word, R.drawable
-                    .ic_baseline_star_24)
-                    .setLabel("取消標記")
-                    .setLabelClickable(false)
-                    .create()
+            val disMark = SpeedDialActionItem.Builder(
+                R.id.fab_dis_mark_word, R.drawable
+                    .ic_baseline_star_24
+            )
+                .setLabel("取消標記")
+                .setLabelClickable(false)
+                .create()
             when (actionItem.id) {
                 R.id.fab_add_word -> {
-                    "新增被點了".showToast()
+                    findNavController().navigate(R.id.addWordFragment)
                     return@OnActionSelectedListener false // false will close it without animation
                 }
                 R.id.fab_edit_word -> {
@@ -168,16 +193,17 @@ class WordFragment : Fragment() {
                     return@OnActionSelectedListener false // false will close it without animation
                 }
                 R.id.fab_delete_word -> {
-                    "刪除".showToast()
+                    val action = WordFragmentDirections.actionGlobalToDeleteDialog("刪除這 1 個單字?")
+                    findNavController().navigate(action)
                     return@OnActionSelectedListener false // false will close it without animation
                 }
                 R.id.fab_mark_word -> {
-                    binding.speedDial.replaceActionItem(actionItem, disMark)
+                    binding.speedDialView.replaceActionItem(actionItem, disMark)
                     "標記成功".showToast()
                     return@OnActionSelectedListener true // false will close it without animation
                 }
-                R.id.fab_dis_mark_word->{
-                    binding.speedDial.replaceActionItem(actionItem, doMark)
+                R.id.fab_dis_mark_word -> {
+                    binding.speedDialView.replaceActionItem(actionItem, doMark)
                     "取消標記".showToast()
                     return@OnActionSelectedListener true
                 }
@@ -186,15 +212,9 @@ class WordFragment : Fragment() {
         })
     }
 
-    override fun onStop() {
-        super.onStop()
-        if(!viewModel.isInitial)
-            viewModel.updateInitialWordId()
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.action_search->{
+            R.id.action_search -> {
             }
         }
         return super.onOptionsItemSelected(item)
@@ -205,8 +225,31 @@ class WordFragment : Fragment() {
 
     }
 
+    override fun onStop() {
+        super.onStop()
+        viewModel.updateInitialWordId()
+    }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        //tracker?.onSaveInstanceState(outState)
+        binding.viewPager.currentItem?.let {
+            outState.putInt("position", it)
+        }
+
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        //tracker?.onRestoreInstanceState(savedInstanceState)
+        savedInstanceState?.getInt("position")?.let {
+            binding.viewPager.post {
+                binding.viewPager.setCurrentItem(it, false)
+            }
+        }
+    }
 }
+
         /*
         binding.recyclerView.let {
             it.adapter = this.adapter
@@ -222,12 +265,7 @@ class WordFragment : Fragment() {
         ).also { adapter.tracker = it }
 
 
-        viewModel.wordListLD.observe(viewLifecycleOwner){ words ->
-            adapter.setWordList(words)
-            viewModel.setIdList(words)
-            viewModel.isLoadingLD.value = false
-        }
-        viewModel.bookListLD.observe(viewLifecycleOwner){}
+
 
         /**db event*/
         getDatabaseResult(viewModel.databaseEventLD){_, message, _ ->
@@ -366,4 +404,11 @@ class WordFragment : Fragment() {
         super.onViewStateRestored(savedInstanceState)
         tracker.onRestoreInstanceState(savedInstanceState)
     }
+}*/
+
+
+/*viewModel.positionLiveData.observe(viewLifecycleOwner){
+    "VWPosition:$it--currentItem:${binding.viewPager.currentItem}".log()
+    if (binding.viewPager.currentItem != it)
+        binding.viewPager.setCurrentItem(it, false)
 }*/
