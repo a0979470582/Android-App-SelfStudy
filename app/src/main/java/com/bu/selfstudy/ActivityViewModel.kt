@@ -8,6 +8,7 @@ import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.data.repository.MemberRepository
 import com.bu.selfstudy.data.repository.WordRepository
 import com.bu.selfstudy.tool.SingleLiveData
+import com.bu.selfstudy.tool.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -63,20 +64,29 @@ class ActivityViewModel : ViewModel() {
 
     fun insertWord(word: Word){
         viewModelScope.launch(Dispatchers.IO) {
-            insertEvent.value = WordRepository.insertWord(word)
+            WordRepository.insertWord(word).let {
+                if(it.isNotEmpty())
+                    insertEvent.postValue(it)
+            }
         }
     }
 
 
     fun deleteWord(wordId: Long){
         viewModelScope.launch(Dispatchers.IO) {
-            deleteEvent.value = WordRepository.deleteWord(wordId)
+            WordRepository.deleteWord(wordId).let {
+                if(it>0)
+                    deleteEvent.postValue(it)
+            }
         }
     }
 
     fun deleteWordToTrash(wordId: Long){
         viewModelScope.launch(Dispatchers.IO) {
-            deleteToTrashEvent.value = WordRepository.deleteWordToTrash(wordId)
+            WordRepository.deleteWordToTrash(wordId).let {
+                if(it>0)
+                    deleteToTrashEvent.postValue(it)
+            }
         }
     }
 

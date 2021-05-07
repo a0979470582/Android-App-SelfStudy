@@ -10,6 +10,7 @@ import androidx.navigation.fragment.navArgs
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.tool.setDialogResult
 import com.bu.selfstudy.tool.setNavigationResult
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class ChooseBookDialog : AppCompatDialogFragment() {
     private val activityViewModel: ActivityViewModel by activityViewModels()
@@ -22,7 +23,7 @@ class ChooseBookDialog : AppCompatDialogFragment() {
 
         val bookNames= bookList.map { it.bookName }.toTypedArray()
 
-        return AlertDialog.Builder(requireActivity())
+        return MaterialAlertDialogBuilder(requireActivity())
             .setTitle("選擇加入的題庫")
             .setSingleChoiceItems(bookNames, defaultPosition){_, which->
                 position = which

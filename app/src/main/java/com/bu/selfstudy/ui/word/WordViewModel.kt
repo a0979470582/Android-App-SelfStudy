@@ -26,20 +26,36 @@ class WordViewModel() : ViewModel() {
     var currentPosition:Int? = null
 
 
-    var isInitialPage = true
     fun getInitialPosition():Int{
+        if(wordListLiveData.value == null || currentBook == null)
+            return 0
+
+        //初始化, 題庫切換的情況
         val initialPosition = wordListLiveData.value!!.indexOfFirst {
             currentBook!!.initialWordId == it.id
         }
-        return if (initialPosition == -1) 0 else initialPosition
+
+        if (initialPosition != -1)
+            return initialPosition
+
+        //刪除單字的情況
+        currentPosition?.let {
+            val maxPosition = wordListLiveData.value!!.size-1
+            return if(it > maxPosition)
+                maxPosition
+            else
+                it
+        }
+
+        return 0
     }
 
 
-    //別忘記切換題庫時, 將當前頁面同步到資料庫
+    //將當前頁面同步到資料庫
     fun updateInitialWordId(){
-        currentPosition?.let {
+        currentWord?.let {
             val currentBook = currentBook!!.copy()
-            currentBook.initialWordId = wordListLiveData.value!![currentPosition!!].id
+            currentBook.initialWordId = it.id
             updateBook(currentBook)
         }
     }

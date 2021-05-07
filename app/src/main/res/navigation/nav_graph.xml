@@ -95,6 +95,9 @@
         <argument
             android:name="message"
             app:argType="string" />
+        <argument
+            android:name="wordId"
+            app:argType="long" />
     </dialog>
     <action android:id="@+id/action_global_toDeleteDialog"
             app:destination="@id/toDeleteDialog" />

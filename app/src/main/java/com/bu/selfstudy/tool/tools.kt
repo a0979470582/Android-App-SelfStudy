@@ -25,7 +25,7 @@ fun <T:Any> T.showToast(duration:Int = Toast.LENGTH_SHORT){
     Toast.makeText(SelfStudyApplication.context, this.toString(), duration).show()
 }
 
-fun View.showSnackbar(text: String, actionText: String? = null, duration: Int = Snackbar.LENGTH_SHORT, block: (() -> Unit)? = null) {
+fun View.showSnackbar(text: String, actionText: String? = null, duration: Int = Snackbar.LENGTH_LONG, block: (() -> Unit)? = null) {
     val snackbar = Snackbar.make(this, text, duration)
     if (actionText != null && block != null) {
         snackbar.setAction(actionText) {

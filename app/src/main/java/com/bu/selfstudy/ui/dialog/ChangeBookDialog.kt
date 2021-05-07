@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.tool.setDialogResult
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class ChangeBookDialog : AppCompatDialogFragment() {
     private val activityViewModel: ActivityViewModel by activityViewModels()
@@ -29,7 +30,7 @@ class ChangeBookDialog : AppCompatDialogFragment() {
 
         val bookNames= bookList.map { it.bookName }.toTypedArray()
 
-        return AlertDialog.Builder(requireActivity())
+        return MaterialAlertDialogBuilder(requireActivity())
                 .setTitle("切換至題庫")
                 .setSingleChoiceItems(bookNames, defaultPosition){_, which->
                     position = which

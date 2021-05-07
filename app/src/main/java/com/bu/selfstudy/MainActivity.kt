@@ -2,9 +2,11 @@ package com.bu.selfstudy
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
@@ -14,6 +16,9 @@ import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.tool.log
 import com.bu.selfstudy.tool.showSnackbar
 import com.bu.selfstudy.tool.showToast
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity(){
@@ -47,28 +52,22 @@ class MainActivity : AppCompatActivity(){
         }
 
         activityViewModel.insertEvent.observe(this){
-            if(it!=null && it.isNotEmpty()){
-                binding.root.showSnackbar("已新增了${it.size}個單字", "檢視"){
-                    "正在檢視中...".showToast()
-                }
+            binding.root.showSnackbar("已新增了${it!!.size}個單字", "檢視"){
+                "正在檢視中...".showToast()
             }
         }
         activityViewModel.deleteEvent.observe(this){
-            if(it!=null && it>0){
-                "已移除${it}個單字".showToast()
-            }
+            "已移除${it}個單字".showToast()
         }
         activityViewModel.deleteToTrashEvent.observe(this){
-            "ok".log()
-            if(it!=null && it>0){
-                binding.root.showSnackbar("已將${it}個單字移至回收桶", "回復"){
-                    "正在回復中...".showToast()
-                }
+            binding.root.showSnackbar("已將${it}個單字移至回收桶", "回復"){
+                "正在回復中...".showToast()
             }
         }
 
 
     }
+
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarConfiguration)

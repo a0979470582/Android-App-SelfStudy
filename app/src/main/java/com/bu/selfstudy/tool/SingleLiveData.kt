@@ -36,6 +36,11 @@ class SingleLiveData<T> : MutableLiveData<T?>() {
     @MainThread
     override fun setValue(@Nullable t: T?) {
         mPending.set(true)
+        super.setValue(t)
+    }
+
+    override fun postValue(@Nullable t: T?) {
+        mPending.set(true)
         super.postValue(t)
     }
 

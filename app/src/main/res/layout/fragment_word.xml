@@ -16,6 +16,17 @@
         android:layout_height="match_parent">
 
         <!-- Circular progress indicator -->
+        <TextView
+            android:id="@+id/explainView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:text="目前這裡還沒有單字唷~ 可以點擊右下角的按鈕來新增單字"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progressIndicator"
             android:layout_width="wrap_content"
@@ -34,25 +45,27 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" >
+
+        </androidx.viewpager2.widget.ViewPager2>
 
         <com.leinardi.android.speeddial.SpeedDialOverlayLayout
             android:id="@+id/overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:clickable_overlay="true"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            app:clickable_overlay="true" />
 
         <com.leinardi.android.speeddial.SpeedDialView
             android:id="@+id/speedDialView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_gravity="end|bottom"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:sdMainFabClosedSrc="@drawable/ic_baseline_edit_24"
             app:sdMainFabOpenedSrc="@drawable/ic_baseline_close_24"
-            app:sdOverlayLayout="@id/overlay"
-            />
+            app:sdOverlayLayout="@id/overlay" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

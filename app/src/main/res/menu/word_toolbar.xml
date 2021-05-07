@@ -19,4 +19,9 @@
         android:title="@string/icon_full"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/action_import_word"
+        android:title="@string/icon_import_word"
+        app:showAsAction="never"/>
+
 </menu>

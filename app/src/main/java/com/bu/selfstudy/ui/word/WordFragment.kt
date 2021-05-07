@@ -1,8 +1,13 @@
 package com.bu.selfstudy.ui.word
 
 
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -14,12 +19,14 @@ import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.bu.selfstudy.ActivityViewModel
+import com.bu.selfstudy.MainActivity
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.FragmentWordBinding
 import com.bu.selfstudy.tool.*
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -47,18 +54,13 @@ class WordFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
-
-        getNavigationResultLiveData<Boolean>("isDelete")?.observe(viewLifecycleOwner){
-            "getNavigationResultLiveData".log()
-            if(it) activityViewModel.deleteWordToTrash(viewModel.currentWord!!.id)
-        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             initSpeedDial(savedInstanceState == null)
         }
-
 
         /**
          * ViewPager要特別處理三種情況
@@ -67,16 +69,8 @@ class WordFragment : Fragment() {
          * 3. 題庫切換
          */
         activityViewModel.bookLiveData.observe(viewLifecycleOwner) { newBook ->
-            "newBook:${newBook}".log()
-            if(viewModel.currentBook == null){
-                viewModel.bookIdLiveData.value = newBook.id
-            }
-
-            //切換題庫的情況
-            viewModel.currentBook?.let {
-                if(it.id != newBook.id){
-                    viewModel.updateInitialWordId()//保存舊題庫
-                    viewModel.isInitialPage = true
+            viewModel.currentBook.let {
+                if(it==null || it.id!=newBook.id){//初始和切換題庫的情況下
                     viewModel.bookIdLiveData.value = newBook.id
                 }
             }
@@ -85,12 +79,13 @@ class WordFragment : Fragment() {
 
         viewModel.wordListLiveData.observe(viewLifecycleOwner) {
             slideAdapter.setWordList(it)
-            "size:${it.size}".log()
-            if (viewModel.isInitialPage) {
-                viewModel.isInitialPage = false
-                val fakePosition: Int = it.size*100+viewModel.getInitialPosition()
+
+            binding.viewPager.visibility = if(it.isEmpty()) View.GONE else View.VISIBLE
+            binding.explainView.visibility = if(it.isEmpty()) View.VISIBLE else View.GONE
+
+            if(it.size>=2){
+                val fakePosition: Int = it.size * 100 + viewModel.getInitialPosition()
                 binding.viewPager.post {
-                    fakePosition.log()
                     binding.viewPager.setCurrentItem(fakePosition, false)
                 }
             }
@@ -104,7 +99,8 @@ class WordFragment : Fragment() {
                     binding.progressIndicator.visibility = View.GONE
                 val realPosition = position%slideAdapter.wordList.size
                 viewModel.currentPosition = realPosition
-                viewModel.currentWord = viewModel.wordListLiveData.value!![realPosition]
+                viewModel.currentWord = slideAdapter.wordList[realPosition]
+                viewModel.updateInitialWordId()
             }
         }
         binding.viewPager.registerOnPageChangeCallback(viewPagerCallback)
@@ -115,99 +111,104 @@ class WordFragment : Fragment() {
         binding.viewPager.unregisterOnPageChangeCallback(viewPagerCallback)
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        var backPressedToExitOnce: Boolean = false
+
+        val callback: OnBackPressedCallback = object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                if(binding.speedDialView.isOpen){
+                    binding.speedDialView.close()
+                    return
+                }
+
+                if (backPressedToExitOnce) {
+                    requireActivity().finish()
+                    return
+                }
+
+                backPressedToExitOnce = true
+                "再按一次離開程式".showToast(duration = Toast.LENGTH_SHORT)
+                lifecycleScope.launch {
+                    delay(2000)
+                    backPressedToExitOnce = false
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(
+                this, // LifecycleOwner
+                callback)
+    }
+
+
 
     private fun initSpeedDial(addActionItems: Boolean) {
+        val speedDialView = binding.speedDialView
+
+        speedDialView.mainFab.setOnLongClickListener {
+            "點擊子項目進行操作".showToast()
+            true
+        }
+
+
+        val doMark = SpeedDialActionItem.Builder(
+            R.id.fab_mark_word, R.drawable
+                .ic_round_star_border_24
+        ).setLabel("標記").create()
+
+        val disMark = SpeedDialActionItem.Builder(
+            R.id.fab_dis_mark_word, R.drawable
+                .ic_baseline_star_24
+        ).setLabel("取消標記").create()
+
         if (addActionItems) {
-            val doMark = SpeedDialActionItem.Builder(
-                R.id.fab_mark_word, R.drawable
-                    .ic_round_star_border_24
-            )
-                    .setLabel("標記")
-                    .create()
-
-            val disMark = SpeedDialActionItem.Builder(
-                R.id.fab_dis_mark_word, R.drawable
-                    .ic_baseline_star_24
-            )
-                    .setLabel("取消標記")
-                    .create()
-
-            binding.speedDialView
-                    .addActionItem(
+            speedDialView.addActionItem(
                         SpeedDialActionItem.Builder(
                             R.id.fab_add_word, R.drawable
                                 .ic_baseline_add_24
-                        )
-                            .setLabel("新增")
-                            .create()
+                        ).setLabel("新增").create()
                     )
 
-            binding.speedDialView
-                    .addActionItem(
+            speedDialView.addActionItem(
                         SpeedDialActionItem.Builder(
                             R.id.fab_edit_word, R.drawable
                                 .ic_outline_text_snippet_24
-                        )
-                            .setLabel("編輯")
-                            .create()
+                        ).setLabel("編輯").create()
                     )
 
-            binding.speedDialView
-                    .addActionItem(
+            speedDialView.addActionItem(
                         SpeedDialActionItem.Builder(
                             R.id.fab_delete_word, R.drawable
                                 .ic_round_delete_24
-                        )
-                            .setLabel("刪除")
-                            .create()
+                        ).setLabel("刪除").create()
                     )
 
-            binding.speedDialView.addActionItem(doMark)
+            speedDialView.addActionItem(doMark)
         }
 
         // Set option fabs click listeners.
-        binding.speedDialView.setOnActionSelectedListener(SpeedDialView.OnActionSelectedListener { actionItem ->
-
-            val doMark = SpeedDialActionItem.Builder(
-                R.id.fab_mark_word, R.drawable
-                    .ic_round_star_border_24
-            )
-                .setLabel("標記")
-                .setLabelClickable(false)
-                .create()
-
-            val disMark = SpeedDialActionItem.Builder(
-                R.id.fab_dis_mark_word, R.drawable
-                    .ic_baseline_star_24
-            )
-                .setLabel("取消標記")
-                .setLabelClickable(false)
-                .create()
+        speedDialView.setOnActionSelectedListener(SpeedDialView.OnActionSelectedListener { actionItem ->
             when (actionItem.id) {
                 R.id.fab_add_word -> {
                     findNavController().navigate(R.id.addWordFragment)
-                    return@OnActionSelectedListener false // false will close it without animation
                 }
                 R.id.fab_edit_word -> {
                     "編輯".showToast()
-                    return@OnActionSelectedListener false // false will close it without animation
                 }
                 R.id.fab_delete_word -> {
-                    val action = WordFragmentDirections.actionGlobalToDeleteDialog("刪除這 1 個單字?")
+                    val action = WordFragmentDirections.actionGlobalToDeleteDialog("刪除這 1 個單字?", viewModel.currentWord!!.id)
                     findNavController().navigate(action)
-                    return@OnActionSelectedListener false // false will close it without animation
                 }
                 R.id.fab_mark_word -> {
-                    binding.speedDialView.replaceActionItem(actionItem, disMark)
+                    speedDialView.replaceActionItem(actionItem, disMark)
                     "標記成功".showToast()
-                    return@OnActionSelectedListener true // false will close it without animation
                 }
                 R.id.fab_dis_mark_word -> {
-                    binding.speedDialView.replaceActionItem(actionItem, doMark)
+                    speedDialView.replaceActionItem(actionItem, doMark)
                     "取消標記".showToast()
-                    return@OnActionSelectedListener true
                 }
             }
+            speedDialView.close()
             true // To keep the Speed Dial open
         })
     }
@@ -223,11 +224,6 @@ class WordFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.word_toolbar, menu)
 
-    }
-
-    override fun onStop() {
-        super.onStop()
-        viewModel.updateInitialWordId()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

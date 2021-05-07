@@ -23,7 +23,7 @@
                 <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="?attr/actionBarSize"
                     app:navigationIcon="@drawable/ic_round_menu_24"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
@@ -37,10 +37,10 @@
                 android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="?attr/actionBarSize"
                 app:defaultNavHost="true"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:navGraph="@navigation/nav_graph"
-                tools:layout="@layout/fragment_word" />
+                tools:layout="@layout/fragment_add_word" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

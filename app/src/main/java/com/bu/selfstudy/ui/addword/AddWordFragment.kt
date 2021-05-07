@@ -2,6 +2,7 @@ package com.bu.selfstudy.ui.addword
 
 import android.os.Bundle
 import android.view.*
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -71,6 +72,10 @@ class AddWordFragment: Fragment() {
                     findNavController().navigate(R.id.chooseBookDialog)
                 }
             }
+            android.R.id.home->{
+                findNavController().popBackStack()
+            }
+
         }
         return true
     }

@@ -9,6 +9,13 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.bu.selfstudy.R
 
+
+/**
+ * 最初contentTextView的text已設置好了, 使用MeasureSpec去測量它的高之後,
+ * 就可從contentTextView.measuredHeight取得高度, 接著設置動畫, 根據設計,
+ * 無內容時不擴展, 有內容時擴展, 但超過三行並不繼續擴展, 而是在第四行採用模糊設計
+ *
+ */
 class DropdownTextView(context: Context, attrs: AttributeSet): LinearLayout(context, attrs){
     private lateinit var panelView: View
     private lateinit var titleTextView: TextView
@@ -20,6 +27,7 @@ class DropdownTextView(context: Context, attrs: AttributeSet): LinearLayout(cont
     private var contentText: String? = null
     private var expandDuration: Int = -1
     private var isExpanded: Boolean = false
+    private var isExpandedByUser: Boolean = false
 
     init {
         context.theme.obtainStyledAttributes(
@@ -31,6 +39,7 @@ class DropdownTextView(context: Context, attrs: AttributeSet): LinearLayout(cont
                 titleText = getString(R.styleable.DropdownTextView_titleText)
                 contentText = getString(R.styleable.DropdownTextView_contentText)
                 isExpanded = getBoolean(R.styleable.DropdownTextView_isExpanded, false)
+                isExpandedByUser = isExpanded
                 expandDuration = getInteger(R.styleable.DropdownTextView_expandDuration, 300)
             } finally {
                 recycle()
@@ -46,8 +55,10 @@ class DropdownTextView(context: Context, attrs: AttributeSet): LinearLayout(cont
 
         panelView.setOnClickListener {
             if (isExpanded) {
+                isExpandedByUser = false
                 collapse(true)
             } else {
+                isExpandedByUser = true
                 expand(true)
             }
         }
@@ -68,6 +79,8 @@ class DropdownTextView(context: Context, attrs: AttributeSet): LinearLayout(cont
         }
 
     }
+
+
 
     fun expand(animate: Boolean) {
         if (isExpanded) {
@@ -149,12 +162,17 @@ class DropdownTextView(context: Context, attrs: AttributeSet): LinearLayout(cont
         contentTextView.measure(widthMS, heightMS)
     }
 
+
+
     fun setTitleText(text: String?) {
         titleTextView.text = if(text.isNullOrBlank()) "" else text
     }
 
     fun setContentText(text: String?) {
         contentTextView.text = if(text.isNullOrBlank()) "" else text
+        if(isExpanded){
+            setHeightToContentHeight(false)
+        }
     }
 
     fun getTitleText() = titleTextView.text
