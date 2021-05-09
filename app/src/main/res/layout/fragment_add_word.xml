@@ -32,7 +32,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-
+                android:singleLine="true"
+                android:inputType="text"
+                android:imeOptions="actionDone"
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -43,13 +45,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:hint="@string/label_pronunciation"
-            app:endIconMode="clear_text"
             app:errorEnabled="true"
             app:helperText="@string/helper_text_pronunciation"
             app:helperTextEnabled="true"
-            app:layout_constraintBottom_toBottomOf="@+id/switch1"
-            app:layout_constraintEnd_toStartOf="@+id/switch1"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/wordField"
@@ -64,13 +65,43 @@
         </com.google.android.material.textfield.TextInputLayout>
 
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/soundField"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="@string/label_sound"
+            app:startIconDrawable="@drawable/ic_baseline_play_arrow_24"
+            app:endIconDrawable="@drawable/ic_baseline_more_vert_24"
+            app:endIconMode="custom"
+            app:errorEnabled="true"
+            app:helperText="@string/helper_text_sound"
+            app:helperTextEnabled="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pronunciationField"
+            app:placeholderText="@string/hint_input_sound">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:text="@string/hint_input_sound"
+                android:editable="false"
+
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <View
             android:id="@+id/divider"
             style="@style/Divider"
             android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/pronunciationField" />
+            app:layout_constraintTop_toBottomOf="@id/soundField" />
 
 
         <com.google.android.material.textfield.TextInputLayout
@@ -132,6 +163,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:hint="@string/label_example"
+            app:placeholderText="@string/hint_input_example"
             app:endIconMode="clear_text"
             app:errorEnabled="true"
             app:helperText="@string/helper_text_example"
@@ -139,11 +171,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/variationField"
-            app:placeholderText="@string/hint_input_example">
+            >
 
             <com.google.android.material.textfield.TextInputEditText
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity = "top|start"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -168,20 +202,11 @@
             app:placeholderText="@string/hint_input_note">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:gravity = "top|start"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
         </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switch1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="auto"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/pronunciationField"
-            app:layout_constraintTop_toTopOf="@+id/pronunciationField"
-            app:layout_constraintBottom_toBottomOf="@id/pronunciationField"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

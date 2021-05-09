@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/dropdown_title_background"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
     <RelativeLayout
         android:id="@+id/panelView"

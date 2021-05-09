@@ -151,6 +151,8 @@ class WordFragment : Fragment() {
         }
 
 
+
+
         val doMark = SpeedDialActionItem.Builder(
             R.id.fab_mark_word, R.drawable
                 .ic_round_star_border_24

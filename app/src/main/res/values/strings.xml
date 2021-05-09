@@ -30,22 +30,35 @@
     <string name="label_variation">Variation</string>
     <string name="label_example">Example</string>
     <string name="label_note">Note</string>
+    <string name="label_sound">Sound</string>
 
     <string name="hint_input_word">i.e. particular</string>
     <string name="hint_input_pronunciation">i.e. [pɚˋtɪkjəlɚ]</string>
     <string name="hint_input_translation">i.e. adj.特別的, 細緻的 n.細目"</string>
     <string name="hint_input_variation">i.e. 名詞複數：particulars</string>
-    <string name="hint_input_example">i.e. adj.形容詞 1.特殊的；特定的；特別的
-                    The teacher showed particular concern for the disabled child.
-                    老師特別關心那個殘疾兒童</string>
+    <string name="hint_input_example">
+"adj.形容詞
+1.特殊的；特定的；特別的[Z][B]
+The teacher showed particular concern for the disabled child.
+老師特別關心那個殘疾兒童。
+2.特有的，獨特的；異常的[Z][B]
+Her particular way of smiling left a good impression on me.
+她特有的微笑給我留下了美好的印象。
+
+n.名詞
+1.個別的項目，細目[C]
+The particular may have to be satisfied to the general.
+為顧全總體個別的項目也許不得不放棄。"
+    </string>
     <string name="hint_input_note">i.e. particular有兩種意思, 可以簡單記為: 特別的細目</string>
+    <string name="hint_input_sound">"0:00 / 0:00"</string>
 
     <string name="helper_text_word">"輸入單字或片語    *Required"</string>
-    <string name="helper_text_pronunciation">輸入發音音標</string>
+    <string name="helper_text_pronunciation">可自動取得音標</string>
     <string name="helper_text_translation">輸入翻譯</string>
     <string name="helper_text_variation">輸入變化形</string>
     <string name="helper_text_example">輸入例句</string>
     <string name="helper_text_note">輸入註記</string>
-
+    <string name="helper_text_sound">可自動取得發音</string>
 
 </resources>
