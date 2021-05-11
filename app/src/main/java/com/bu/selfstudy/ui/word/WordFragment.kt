@@ -48,6 +48,7 @@ class WordFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        binding.adapter = adapter
         binding.slideAdapter = slideAdapter
         binding.lifecycleOwner = viewLifecycleOwner
 
@@ -79,8 +80,9 @@ class WordFragment : Fragment() {
 
         viewModel.wordListLiveData.observe(viewLifecycleOwner) {
             slideAdapter.setWordList(it)
+            adapter.setWordList(it)
 
-            binding.viewPager.visibility = if(it.isEmpty()) View.GONE else View.VISIBLE
+            //binding.viewPager.visibility = if(it.isEmpty()) View.GONE else View.VISIBLE
             binding.explainView.visibility = if(it.isEmpty()) View.VISIBLE else View.GONE
 
             if(it.size>=2){
@@ -228,6 +230,12 @@ class WordFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.action_search -> {
+            }
+            R.id.action_to_list->{
+                binding.recyclerView.visibility = View.VISIBLE
+                binding.recyclerView.bringToFront()
+                binding.viewPager.visibility = View.GONE
+                binding.recyclerView.requestLayout()
             }
         }
         return super.onOptionsItemSelected(item)

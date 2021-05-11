@@ -6,6 +6,9 @@
 
     <data>
         <variable
+            name="adapter"
+            type="com.bu.selfstudy.ui.word.WordAdapter"/>
+        <variable
             name="slideAdapter"
             type="com.bu.selfstudy.ui.word.WordSlideAdapter"/>
     </data>
@@ -36,6 +39,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:visibility="gone"
+            android:adapter="@{adapter}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPager"

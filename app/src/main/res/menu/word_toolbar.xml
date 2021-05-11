@@ -14,10 +14,10 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_full"
-        android:icon="@drawable/ic_baseline_view_headline_24"
+        android:id="@+id/action_to_list"
+        android:icon="@drawable/ic_baseline_list_24"
         android:title="@string/icon_full"
-        app:showAsAction="never"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_import_word"
