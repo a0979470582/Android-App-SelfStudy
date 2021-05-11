@@ -16,6 +16,7 @@
     <string name="icon_test">測驗</string>
     <string name="icon_background">切換背景</string>
     <string name="icon_send">保存</string>
+    <string name="icon_save">保存</string>
     <string name="icon_full">全覽模式</string>
     <string name="icon_import_word">匯入</string>
 

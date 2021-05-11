@@ -17,7 +17,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
-@Database(version = 9, entities = [Member::class, Book::class, Word::class])
+@Database(version = 10, entities = [Member::class, Book::class, Word::class])
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun memberDao(): MemberDao
@@ -111,12 +111,12 @@ abstract class AppDatabase : RoomDatabase() {
             "同義詞 n.幽默感；幽默 wit, pleasantry, comedy"
         )
 
-        val dictionaryUri = arrayOf(
+        val dictionaryPath = arrayOf(
             "https://tw.dictionary.search.yahoo.com/search?p=reserve",
             "https://tw.dictionary.search.yahoo.com/search?p=particular",
             "https://tw.dictionary.search.yahoo.com/search?p=humor"
         )
-        val pronounceUri = arrayOf(
+        val soundPath = arrayOf(
             "reserve.mp3",
             "particular.mp3",
             "humor.mp3"
@@ -152,8 +152,8 @@ abstract class AppDatabase : RoomDatabase() {
                 translation = translations[index],
                 variation = variations[index],
                 example = examples[index],
-                dictionaryPath = dictionaryUri[index],
-                audioPath = pronounceUri[index],
+                dictionaryPath = dictionaryPath[index],
+                audioPath = soundPath[index],
                 pronunciation = pronunciations[index],
                 note = notes[index],
                 bookId = 0//Pending

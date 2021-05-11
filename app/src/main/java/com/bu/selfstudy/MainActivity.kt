@@ -51,6 +51,10 @@ class MainActivity : AppCompatActivity(){
             activityViewModel.refreshData()
         }
 
+        activityViewModel.updateEvent.observe(this){
+            "已儲存成功".showToast()
+        }
+
         activityViewModel.insertEvent.observe(this){
             binding.root.showSnackbar("已新增了${it!!.size}個單字", "檢視"){
                 "正在檢視中...".showToast()

@@ -28,13 +28,12 @@ class AddWordFragment: Fragment() {
     private val binding : FragmentAddWordBinding by viewBinding()
     private val activityViewModel: ActivityViewModel by activityViewModels()
 
-    var wordName = ""
-    var pronunciation = ""
-    var translation = ""
-    var variation = ""
-    var example = ""
-    var note = ""
-
+    private var wordName = ""
+    private var pronunciation = ""
+    private var translation = ""
+    private var variation = ""
+    private var example = ""
+    private var note = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,7 +62,7 @@ class AddWordFragment: Fragment() {
         binding.wordField.editText?.doOnTextChanged() { inputText, _, _, _ ->
             inputText?.let {
                 if (it.isNotBlank())
-                    binding.wordField.error=null
+                    binding.wordField.error = null
                 binding.pronunciationField.editText!!.setText(it)
             }
         }
@@ -87,14 +86,6 @@ class AddWordFragment: Fragment() {
             }
         }
     }
-
-
-
-
-
-
-
-
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

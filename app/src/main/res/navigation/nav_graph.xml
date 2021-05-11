@@ -113,5 +113,22 @@
     <dialog
         android:id="@+id/changeBookDialog"
         android:name="com.bu.selfstudy.ui.dialog.ChangeBookDialog"/>
+    <fragment
+        android:id="@+id/editWordFragment"
+        android:name="com.bu.selfstudy.ui.editword.EditWordFragment"
+        android:label="編輯單字"
+        tools:layout="@layout/fragment_add_word">
+        <argument
+            android:name="wordId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_editWordFragment_to_exitEditingDialog"
+            app:destination="@id/exitEditingDialog" />
+    </fragment>
+    <action android:id="@+id/action_global_editWordFragment" app:destination="@id/editWordFragment" />
+    <dialog
+        android:id="@+id/exitEditingDialog"
+        android:name="com.bu.selfstudy.ui.dialog.ExitEditingDialog"
+        android:label="ExitEditingDialog" />
 
 </navigation>

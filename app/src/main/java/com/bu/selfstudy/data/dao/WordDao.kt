@@ -14,6 +14,12 @@ interface WordDao : BaseDao<Word>{
     fun loadDistinctWords(bookId:Long, query: String) =
         loadWords(bookId, query).distinctUntilChanged()
 
+    @Query("SELECT * FROM Word WHERE isTrash=0 AND id=:wordId")
+    fun loadWord(wordId:Long): Flow<Word>
+
+    fun loadDistinctWord(wordId:Long) =
+        loadWord(wordId).distinctUntilChanged()
+
     @Query("DELETE FROM Word WHERE id =:wordId")
     fun delete(vararg wordId:Long): Int
 

@@ -61,6 +61,16 @@ class ActivityViewModel : ViewModel() {
     val insertEvent = SingleLiveData<List<Long>>()
     val deleteEvent = SingleLiveData<Int>()
     val deleteToTrashEvent = SingleLiveData<Int>()
+    val updateEvent = SingleLiveData<Int>()
+
+    fun updateWord(word: Word){
+        viewModelScope.launch(Dispatchers.IO) {
+            WordRepository.updateWord(word).let {
+                if(it>0)
+                    updateEvent.postValue(it)
+            }
+        }
+    }
 
     fun insertWord(word: Word){
         viewModelScope.launch(Dispatchers.IO) {

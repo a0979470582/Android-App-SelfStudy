@@ -11,6 +11,7 @@ object WordRepository {
     fun loadWords(bookId: Long, query: String) =
         wordDao.loadDistinctWords(bookId, query)
 
+    fun loadWord(wordId: Long) = wordDao.loadDistinctWord(wordId)
 
     suspend fun insertWord(vararg word: Word) = withContext(Dispatchers.IO){
         wordDao.insert(*word)

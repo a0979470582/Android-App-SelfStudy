@@ -189,30 +189,40 @@ class WordFragment : Fragment() {
         }
 
         // Set option fabs click listeners.
-        speedDialView.setOnActionSelectedListener(SpeedDialView.OnActionSelectedListener { actionItem ->
+        speedDialView.setOnActionSelectedListener { actionItem ->
             when (actionItem.id) {
                 R.id.fab_add_word -> {
                     findNavController().navigate(R.id.addWordFragment)
                 }
                 R.id.fab_edit_word -> {
-                    "編輯".showToast()
+                    viewModel.currentWord?.let {
+                        val action = WordFragmentDirections.actionGlobalEditWordFragment(it.id)
+                        findNavController().navigate(action)
+                    }
+
                 }
                 R.id.fab_delete_word -> {
-                    val action = WordFragmentDirections.actionGlobalToDeleteDialog("刪除這 1 個單字?", viewModel.currentWord!!.id)
-                    findNavController().navigate(action)
+                    viewModel.currentWord?.let {
+                        val action = WordFragmentDirections.actionGlobalToDeleteDialog("刪除這 1 個單字?", viewModel.currentWord!!.id)
+                        findNavController().navigate(action)
+                    }
                 }
                 R.id.fab_mark_word -> {
-                    speedDialView.replaceActionItem(actionItem, disMark)
-                    "標記成功".showToast()
+                    viewModel.currentWord?.let {
+                        speedDialView.replaceActionItem(actionItem, disMark)
+                        "標記成功".showToast()
+                    }
                 }
                 R.id.fab_dis_mark_word -> {
-                    speedDialView.replaceActionItem(actionItem, doMark)
-                    "取消標記".showToast()
+                    viewModel.currentWord?.let {
+                        speedDialView.replaceActionItem(actionItem, doMark)
+                        "取消標記".showToast()
+                    }
                 }
             }
             speedDialView.close()
             true // To keep the Speed Dial open
-        })
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
