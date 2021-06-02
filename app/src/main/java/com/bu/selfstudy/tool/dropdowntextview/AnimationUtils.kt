@@ -1,4 +1,4 @@
-package com.bu.selfstudy.tool
+package com.bu.selfstudy.tool.dropdowntextview
 
 import android.animation.Animator
 import android.animation.PropertyValuesHolder

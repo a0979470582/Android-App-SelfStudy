@@ -1,0 +1,26 @@
+[
+    {
+        "backgroundImageIndex": 0,
+        "email": "a0979470582@gmail.com",
+        "iconPath": "icon.jpg",
+        "id": 1,
+        "initialBookId": 3,
+        "isTrash": 0,
+        "password": "123456789",
+        "sex": "F",
+        "timestamp": 1620912895317,
+        "userName": "LuLu"
+    },
+    {
+        "backgroundImageIndex": 0,
+        "email": "a0979470582@gmail.com",
+        "iconPath": "icon.jpg",
+        "id": 2,
+        "initialBookId": 0,
+        "isTrash": 0,
+        "password": "123456789",
+        "sex": "F",
+        "timestamp": 1620912909292,
+        "userName": "LuLu"
+    }
+]

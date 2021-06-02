@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@layout/activity_main">
+
+    <data>
+        <variable
+            name="adapter"
+            type="com.bu.selfstudy.ui.home.HomeListAdapter"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/myBookIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_library_books_24" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/myBookTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="我的題庫"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@id/myBookIcon"
+            app:layout_constraintStart_toEndOf="@id/myBookIcon"
+            app:layout_constraintTop_toTopOf="@id/myBookIcon" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/moreBookButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="更多 >"
+            app:layout_constraintBottom_toBottomOf="@+id/myBookIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/myBookIcon" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:paddingEnd="16dp"
+            android:adapter="@{adapter}"
+            android:orientation="horizontal"
+            android:scrollbars="horizontal"
+            android:scrollbarSize="10dp"
+            android:fadeScrollbars="false"
+            android:scrollbarStyle="outsideOverlay"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/myBookIcon"
+            tools:listitem="@layout/home_list_item" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

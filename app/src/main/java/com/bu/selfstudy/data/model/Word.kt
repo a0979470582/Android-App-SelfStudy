@@ -31,6 +31,7 @@ data class Word(
     var note: String = "",
     var audioPath:String = "",
     var dictionaryPath: String="",//a file about complete word data from api
+    var isMark: Boolean = false,
 
     var timestamp: Date = Date(),
     var isTrash:Boolean = false

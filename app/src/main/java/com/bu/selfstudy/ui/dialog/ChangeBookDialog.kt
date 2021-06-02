@@ -14,6 +14,7 @@ import com.bu.selfstudy.tool.setDialogResult
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class ChangeBookDialog : AppCompatDialogFragment() {
+    /*
     private val activityViewModel: ActivityViewModel by activityViewModels()
 
     private var position = 0
@@ -25,8 +26,8 @@ class ChangeBookDialog : AppCompatDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
-        val bookList = activityViewModel.bookList
-        val defaultPosition = activityViewModel.position
+        val bookList = activityViewModel.bookListLiveData.value
+        val defaultPosition = activityViewModel.currentOpenBookLiveData.value
 
         val bookNames= bookList.map { it.bookName }.toTypedArray()
 
@@ -43,5 +44,5 @@ class ChangeBookDialog : AppCompatDialogFragment() {
                 .setNegativeButton("取消"){ _, _ ->
                 }
                 .create()
-        }
+        }*/
 }

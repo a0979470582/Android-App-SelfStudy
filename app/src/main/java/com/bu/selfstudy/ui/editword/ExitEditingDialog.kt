@@ -1,4 +1,4 @@
-package com.bu.selfstudy.ui.dialog
+package com.bu.selfstudy.ui.editword
 
 import android.app.Dialog
 import android.os.Bundle

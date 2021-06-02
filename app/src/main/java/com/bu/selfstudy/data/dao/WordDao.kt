@@ -21,9 +21,16 @@ interface WordDao : BaseDao<Word>{
         loadWord(wordId).distinctUntilChanged()
 
     @Query("DELETE FROM Word WHERE id =:wordId")
-    fun delete(vararg wordId:Long): Int
+    suspend fun delete(vararg wordId:Long): Int
 
     @Query("UPDATE Word SET isTrash = 1 WHERE id =:wordId")
-    fun deleteWordToTrash(vararg wordId:Long): Int
+    suspend fun deleteWordToTrash(vararg wordId:Long): Int
 
+    @Query("UPDATE Word SET isTrash = 1 WHERE bookid =:bookId")
+    suspend fun deleteOneBookToTrash(bookId: Long): Int
+
+
+
+    @Update
+    override suspend fun update(vararg word:Word): Int
 }

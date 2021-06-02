@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/wordFragment">
+    app:startDestination="@id/bookFragment">
 
     <fragment
         android:id="@+id/wordFragment"
@@ -11,26 +11,8 @@
         android:label=""
         tools:layout="@layout/fragment_word">
         <action
-            android:id="@+id/action_wordFragment_to_accountFragment"
-            app:destination="@id/accountFragment" />
-        <action
-            android:id="@+id/action_wordFragment_to_themeFragment"
-            app:destination="@id/themeFragment" />
-        <action
-            android:id="@+id/action_wordFragment_to_settingFragment"
-            app:destination="@id/settingFragment" />
-        <action
-            android:id="@+id/action_wordFragment_to_trashFragment"
-            app:destination="@id/trashFragment" />
-        <action
-            android:id="@+id/action_wordFragment_to_subscriptionFragment"
-            app:destination="@id/subscriptionFragment" />
-        <action
-            android:id="@+id/action_wordFragment_to_suggestFragment"
-            app:destination="@id/suggestFragment" />
-        <action
-            android:id="@+id/action_wordFragment_to_changeBookDialog"
-            app:destination="@id/changeBookDialog" />
+            android:id="@+id/action_wordFragment_to_wordCardFragment"
+            app:destination="@id/wordCardFragment" />
     </fragment>
 
     <fragment
@@ -110,9 +92,6 @@
     <action android:id="@+id/action_global_addWordFragment"
             app:destination="@id/addWordFragment"/>
 
-    <dialog
-        android:id="@+id/changeBookDialog"
-        android:name="com.bu.selfstudy.ui.dialog.ChangeBookDialog"/>
     <fragment
         android:id="@+id/editWordFragment"
         android:name="com.bu.selfstudy.ui.editword.EditWordFragment"
@@ -128,7 +107,54 @@
     <action android:id="@+id/action_global_editWordFragment" app:destination="@id/editWordFragment" />
     <dialog
         android:id="@+id/exitEditingDialog"
-        android:name="com.bu.selfstudy.ui.dialog.ExitEditingDialog"
+        android:name="com.bu.selfstudy.ui.editword.ExitEditingDialog"
         android:label="ExitEditingDialog" />
+    <fragment
+        android:id="@+id/bookFragment"
+        android:name="com.bu.selfstudy.ui.book.BookFragment"
+        android:label="我的題庫" >
+        <action
+            android:id="@+id/action_bookFragment_to_wordFragment"
+            app:destination="@id/wordFragment" />
+        <action
+            android:id="@+id/action_bookFragment_to_editBookDialog"
+            app:destination="@id/editBookDialog" />
+        <action
+            android:id="@+id/action_bookFragment_to_deleteBookDialog"
+            app:destination="@id/deleteBookDialog" />
+        <action
+            android:id="@+id/action_bookFragment_to_addBookDialog"
+            app:destination="@id/addBookDialog" />
+    </fragment>
+    <dialog
+        android:id="@+id/addBookDialog"
+        android:name="com.bu.selfstudy.ui.book.AddBookDialog"
+        android:label="AddBookDialog" />
+
+    <dialog
+        android:id="@+id/deleteBookDialog"
+        android:name="com.bu.selfstudy.ui.book.DeleteBookDialog"
+        android:label="deleteBookDialog">
+        <argument
+            android:name="bookName"
+            app:argType="string" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/editBookDialog"
+        android:name="com.bu.selfstudy.ui.book.EditBookDialog"
+        android:label="EditBookDialog" >
+        <argument
+            android:name="bookName"
+            app:argType="string" />
+    </dialog>
+    <fragment
+        android:id="@+id/wordCardFragment"
+        android:name="com.bu.selfstudy.ui.wordcard.WordCardFragment"
+        android:label="" >
+        <argument
+            android:name="position"
+            app:argType="integer" />
+    </fragment>
 
 </navigation>

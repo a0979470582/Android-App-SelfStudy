@@ -7,5 +7,14 @@
         android:title="@string/icon_search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView"/>
-
+    <item
+        android:id="@+id/action_add_book"
+        android:icon="@drawable/ic_baseline_add_24"
+        android:title="@string/icon_add_book"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_download_book"
+        android:icon="@drawable/ic_baseline_add_24"
+        android:title="@string/icon_download_book"
+        app:showAsAction="never"/>
 </menu>

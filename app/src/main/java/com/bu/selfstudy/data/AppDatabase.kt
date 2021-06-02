@@ -12,12 +12,13 @@ import com.bu.selfstudy.data.dao.WordDao
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.model.Member
 import com.bu.selfstudy.data.model.Word
+import com.bu.selfstudy.tool.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
-@Database(version = 10, entities = [Member::class, Book::class, Word::class])
+@Database(version = 12, entities = [Member::class, Book::class, Word::class])
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun memberDao(): MemberDao
@@ -31,7 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
             instance?.let {
                 return it
             }
-            return Room.databaseBuilder(context, AppDatabase::class.java, "app_database")
+            return  Room.databaseBuilder(context, AppDatabase::class.java, "app_database")
                     .fallbackToDestructiveMigration()
                     //.createFromAsset("database/app_database")
                     /*.addCallback(object : Callback() {
@@ -44,10 +45,21 @@ abstract class AppDatabase : RoomDatabase() {
                     })*/
                     .build().apply {
                         instance = this
-                        //initialize()
+                        //initialize2()
                 }
 
         }
+    }
+
+    private fun initialize2(){
+        val member = Member(
+                email = "a0979470582@gmail.com",
+                password = "123456789",
+                userName = "LuLu",
+                sex = "F",
+                iconPath = "icon.jpg"
+        )
+        runBlocking{member.id = memberDao().insert(member)[0]}
     }
 
     private fun initialize(){

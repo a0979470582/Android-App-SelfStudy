@@ -21,7 +21,7 @@ class ToDeleteDialog() : AppCompatDialogFragment() {
                 .setTitle("刪除")
                 .setMessage(args.message)
                 .setPositiveButton("確定") { dialog, which ->
-                    activityViewModel.deleteWordToTrash(args.wordId)
+                    //activityViewModel.deleteWordToTrash(args.wordId)
                     //setNavigationResult("isDelete", true)
                 }
                 .setNegativeButton("取消") { dialog, which ->

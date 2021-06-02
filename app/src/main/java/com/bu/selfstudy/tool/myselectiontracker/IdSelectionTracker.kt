@@ -8,12 +8,14 @@ import com.bu.selfstudy.MainActivity
 import com.bu.selfstudy.R
 import com.bu.selfstudy.tool.closeKeyboard
 
-fun Fragment.buildIdSelectionTracker(
+/*fun Fragment.buildIdSelectionTracker(
         recyclerView: RecyclerView,
         idList: List<Long>,
         actionModeMenuRes: Int,
-        actionModeMenuCallback: (itemId:Int)->Unit
-): SelectionTracker<Long> {
+        actionModeMenuCallback: (itemId:Int)->Unit,
+        onCreateCallback: ((Unit)-> Unit)?=null,
+        onDestroyCallback: ((Unit)-> Unit)?=null
+        ): SelectionTracker<Long> {
 
     val activity = this.requireActivity()
     var actionMode = (activity as MainActivity).actionMode
@@ -72,3 +74,4 @@ fun Fragment.buildIdSelectionTracker(
 
     return tracker
 }
+*/

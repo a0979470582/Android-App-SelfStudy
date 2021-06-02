@@ -2,23 +2,24 @@ package com.bu.selfstudy
 
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
+import com.bu.selfstudy.data.model.Book
+import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.databinding.ActivityMainBinding
-import com.bu.selfstudy.tool.viewBinding
-import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.tool.log
 import com.bu.selfstudy.tool.showSnackbar
 import com.bu.selfstudy.tool.showToast
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.bu.selfstudy.tool.viewBinding
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 
 
 class MainActivity : AppCompatActivity(){
@@ -28,8 +29,6 @@ class MainActivity : AppCompatActivity(){
 
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
-
-    var actionMode: ActionMode? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,31 +44,24 @@ class MainActivity : AppCompatActivity(){
         binding.navView.setupWithNavController(navController)
 
         activityViewModel.memberLiveData.observe(this){
+            binding.navView.findViewById<TextView>(R.id.mailText).text = it.email
+            binding.navView.findViewById<TextView>(R.id.userText).text = it.userName
         }
 
-        activityViewModel.bookLiveData.observe(this){
-            activityViewModel.refreshData()
+        activityViewModel.bookListLiveData.observe(this){
+            activityViewModel.refreshBookIdList(it)
         }
 
-        activityViewModel.updateEvent.observe(this){
-            "已儲存成功".showToast()
+        binding.fab.setOnClickListener {
+            navController.navigate(R.id.addWordFragment)
         }
 
-        activityViewModel.insertEvent.observe(this){
-            binding.root.showSnackbar("已新增了${it!!.size}個單字", "檢視"){
-                "正在檢視中...".showToast()
-            }
+        navController.addOnDestinationChangedListener{ navController, navDestination, bundle ->
+            binding.fab.isVisible = (
+                    navDestination.id == R.id.bookFragment ||
+                    navDestination.id == R.id.wordFragment
+            )
         }
-        activityViewModel.deleteEvent.observe(this){
-            "已移除${it}個單字".showToast()
-        }
-        activityViewModel.deleteToTrashEvent.observe(this){
-            binding.root.showSnackbar("已將${it}個單字移至回收桶", "回復"){
-                "正在回復中...".showToast()
-            }
-        }
-
-
     }
 
 

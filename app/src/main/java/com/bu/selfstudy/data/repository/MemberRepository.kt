@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object MemberRepository {
-    private val memberDao = getDatabase().memberDao()
+    val memberDao = getDatabase().memberDao()
 
     fun loadMember(memberId:Long=SelfStudyApplication.memberId)
         = memberDao.loadDistinctMember(memberId)

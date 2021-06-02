@@ -17,11 +17,14 @@ import java.util.*
 @Parcelize
 data class Book(
     @PrimaryKey(autoGenerate = true)
-    var id:Long=0,
+    var id:Long = 0,
     var memberId: Long,
     var bookName: String,
 
-    var initialWordId:Long= 0,
+    var size: Int = 0,
+
+
+    var initialWordId:Long = 0,
     var sortState:String = "time_asc",//time, letter, proficiency
     var displayMode:String = "one",//one, list, grid
 

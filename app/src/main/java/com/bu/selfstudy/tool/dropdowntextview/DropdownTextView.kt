@@ -1,4 +1,4 @@
-package com.bu.selfstudy.tool
+package com.bu.selfstudy.tool.dropdowntextview
 
 import android.content.Context
 import android.os.Bundle

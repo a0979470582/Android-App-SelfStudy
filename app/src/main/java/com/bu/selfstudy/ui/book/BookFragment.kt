@@ -1,92 +1,198 @@
 package com.bu.selfstudy.ui.book
 
-import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import androidx.activity.addCallback
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
+import androidx.recyclerview.selection.StorageStrategy
 import com.bu.selfstudy.R
-import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.FragmentBookBinding
 import com.bu.selfstudy.tool.*
-import com.bu.selfstudy.tool.myselectiontracker.buildIdSelectionTracker
 import com.bu.selfstudy.ActivityViewModel
-import com.bu.selfstudy.data.model.Book
+import com.bu.selfstudy.data.repository.BookRepository
+import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
+import com.bu.selfstudy.tool.myselectiontracker.IdItemKeyProvider
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class BookFragment : Fragment() {
 
     private val activityViewModel: ActivityViewModel by activityViewModels()
-
+    private val viewModel: BookViewModel by viewModels()
     private val binding : FragmentBookBinding by viewBinding()
+    private val adapter = BookListAdapter(this)
 
-    private lateinit var adapter: BookAdapter
     private lateinit var tracker: SelectionTracker<Long>
+
     private var searchView: SearchView? = null
+    private var actionMode: ActionMode? = null
+
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle? ):View{
 
-        binding.lifecycleOwner = this
+        binding.recyclerView.let {
+            it.adapter = this.adapter
+            it.setHasFixedSize(true)
+        }
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
-
-        adapter = BookAdapter(this, activityViewModel.bookList)
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.setHasFixedSize(true)
+        setDialogResultListener()
+        lifecycleScope.launch {
+            initSelectionTracker()
+        }
 
         activityViewModel.bookListLiveData.observe(viewLifecycleOwner){
-            adapter.notifyDataSetChanged()
+            adapter.submitList(it)
         }
 
-        tracker = buildIdSelectionTracker(
-                binding.recyclerView,
-                activityViewModel.bookList.map { it.id },
-                R.menu.book_action_mode,
-                ::actionModeMenuCallback
-        ).also { adapter.tracker = it }
-/*
-        getDatabaseResult(viewModel.databaseEventLD){_, message, _ ->
-            message.showToast()
-        }
-
-        getDialogResult()
-        */
-
-    }
-
-
-    fun navigateToAddWordFragment() = findNavController().navigate(R.id.addWordFragment)
-
-
-    fun navigateToWordFragment(book: Book){
-        /*
-        activityViewModel.bookLiveData.value = book
-        val action = BookFragmentDirections.actionBookFragmentToWordFragment()
-        //findNavController().navigate(R.id.wordFragment)
-        findNavController().navigate(action)*/
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.action_search->{
+        viewModel.databaseEvent.observe(viewLifecycleOwner){
+            when(it?.first){
+                "delete"->"已刪除「${it.second?.getString("bookName")}」".showToast()
+                "update"->"更新成功".showToast()
+                "insert"->"新增成功".showToast()
+                "insertLocal"->"已新增「${it.second?.getString("bookName")}」".showToast()
             }
         }
-        return super.onOptionsItemSelected(item)
+
+
     }
 
+    fun navigateToWordFragment(bookId: Long){
+        activityViewModel.refreshCurrentOpenBook(bookId)
+        findNavController().navigate(R.id.wordFragment)
+    }
+
+    private fun setDialogResultListener() {
+        setFragmentResultListener("delete") { _, _ ->
+            viewModel.longPressedBook?.let {
+                viewModel.deleteBook(it.id, it.bookName)
+            }
+        }
+        setFragmentResultListener("edit"){_, bundle->
+            viewModel.longPressedBook?.let {
+                val book = it.copy()
+                book.bookName = bundle.getString("bookName")!!
+                viewModel.updateBook(book)
+            }
+        }
+        setFragmentResultListener("insert"){_, bundle->
+            val bookName = bundle.getString("bookName")!!
+            viewModel.insertBook(bookName)
+        }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        var backPressedToExitOnce: Boolean = false
+
+        requireActivity().onBackPressedDispatcher.addCallback(this){
+            if (backPressedToExitOnce) {
+                requireActivity().finish()
+                return@addCallback
+            }
+
+            backPressedToExitOnce = true
+            resources.getString(R.string.toast_exit_app).showToast()
+            lifecycleScope.launch {
+                delay(2000)
+                backPressedToExitOnce = false
+            }
+        }
+    }
+
+
+    private fun initSelectionTracker() {
+        tracker = SelectionTracker.Builder(
+                "recycler-view-book-fragment",
+                binding.recyclerView,
+                IdItemKeyProvider(activityViewModel.bookIdList),
+                IdItemDetailsLookup(binding.recyclerView, activityViewModel.bookIdList),
+                StorageStrategy.createLongStorage()
+        ).withSelectionPredicate(SelectionPredicates.createSelectSingleAnything())
+                .build().also {
+                    adapter.tracker = it
+                }
+
+        val selectionObserver = object : SelectionTracker.SelectionObserver<Long>() {
+            override fun onSelectionChanged() {
+                super.onSelectionChanged()
+                if (!tracker.hasSelection()) {
+                    actionMode?.finish()
+                } else {
+                    lifecycleScope.launch {
+                        activityViewModel.bookListLiveData.value?.let {
+                            viewModel.refreshLongPressedBook(it, tracker.selection.toList()[0])
+                        }
+                    }
+                    if (actionMode == null) {
+                        actionMode = (activity as AppCompatActivity)
+                                .startSupportActionMode(actionModeCallback)
+                    }
+                }
+            }
+        }
+
+        tracker.addObserver(selectionObserver)
+    }
+
+    //set actionMode, for multiple selection
+    val actionModeCallback = object : androidx.appcompat.view.ActionMode.Callback {
+        /**對於搜尋結果進行操作, 會將ActionMode疊在SearchView上方, 此時鍵盤不會消失
+        造成使用者能在看不到搜尋框時查詢, 因此ActionMode出現就必須關閉鍵盤
+         */
+        override fun onCreateActionMode(mode: androidx.appcompat.view.ActionMode, menu: Menu): Boolean {
+            mode.menuInflater.inflate(R.menu.book_action_mode, menu)
+            closeKeyboard()
+            return true
+        }
+
+        override fun onPrepareActionMode(mode: androidx.appcompat.view.ActionMode, menu: Menu) = false
+
+        override fun onActionItemClicked(mode: androidx.appcompat.view.ActionMode, item: MenuItem): Boolean {
+            actionModeMenuCallback(item?.itemId)
+            return true
+        }
+
+        override fun onDestroyActionMode(mode: androidx.appcompat.view.ActionMode) {
+            tracker?.clearSelection()
+            actionMode = null
+        }
+    }
+
+    private fun actionModeMenuCallback(itemId:Int){
+        when (itemId) {
+            R.id.action_delete -> {
+                viewModel.longPressedBook?.let {
+                    val action = BookFragmentDirections.actionBookFragmentToDeleteBookDialog(it.bookName)
+                    findNavController().navigate(action)
+                }
+            }
+            R.id.action_edit ->{
+                viewModel.longPressedBook?.let {
+                    val action = BookFragmentDirections.actionBookFragmentToEditBookDialog(it.bookName)
+                    findNavController().navigate(action)
+                }
+            }
+        }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
@@ -126,36 +232,52 @@ class BookFragment : Fragment() {
         }*/
     }
 
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.action_search->{
+            }
+            R.id.action_add_book->{
+                val action = BookFragmentDirections.actionBookFragmentToAddBookDialog()
+                findNavController().navigate(action)
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        //tracker.onSaveInstanceState(outState)
+        tracker?.onSaveInstanceState(outState)
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        //tracker.onRestoreInstanceState(savedInstanceState)
+        tracker?.onRestoreInstanceState(savedInstanceState)
     }
-
-    private fun actionModeMenuCallback(itemId:Int){
-        when (itemId) {
-            /*
-            R.id.action_delete -> {
-                val message = "是否刪除 ${tracker.selection.size()} 個題庫 ?"
-                val action = BookFragmentDirections.actionGlobalToDeleteDialog(message)
-                findNavController().navigate(action)
-            }*/
-        }
-    }
-    /*
-    private fun getDialogResult() {
-        getDialogResult { dialogName, bundle ->
-            when (dialogName) {
-                "AddWordFragment" -> {
-                    bundle.getParcelable<Word>("word").let { word ->
-                        viewModel.insertWords(listOfNotNull(word))
-                    }
-                }
-            }
-        }
-    }*/
 }
+
+/*
+
+
+lifecycleScope.launch {
+            val bookNameList = listOf(
+                    "toeicData.json" to "多益高頻單字",
+                    "ieltsData.json" to "雅思核心單字",
+                    "commonly_use_1000.json" to "最常用1000字",
+                    "commonly_use_3000.json" to "最常用3000字",
+                    "high_school_level_1.json" to "高中英文分級Level1",
+                    "high_school_level_2.json" to "高中英文分級Level2",
+                    "high_school_level_3.json" to "高中英文分級Level3",
+                    "high_school_level_4.json" to "高中英文分級Level4",
+                    "high_school_level_5.json" to "高中英文分級Level5",
+                    "high_school_level_6.json" to "高中英文分級Level6",
+                    "junior_school_basic_1200.json" to "國中基礎英文1200字",
+                    "junior_school_difficult_800.json" to "國中進階英文800字",
+                    "elementary_school_basic_word.json" to "小學基礎單字"
+            )
+            bookNameList.forEach {
+                BookRepository.insertLocalBook(it.first)
+            }
+
+        }
+ */

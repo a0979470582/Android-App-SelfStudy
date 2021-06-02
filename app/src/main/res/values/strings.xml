@@ -17,8 +17,20 @@
     <string name="icon_background">切換背景</string>
     <string name="icon_send">保存</string>
     <string name="icon_save">保存</string>
-    <string name="icon_full">全覽模式</string>
+    <string name="icon_to_list">編輯題庫</string>
     <string name="icon_import_word">匯入</string>
+    <string name="icon_mark">標記</string>
+    <string name="icon_cancel_mark">已標記</string>
+    <string name="icon_add_book">新增題庫</string>
+    <string name="icon_download_book">下載題庫</string>
+
+    <string name="FAB_mark">標記</string>
+    <string name="FAB_cancel_mark">已標記</string>
+    <string name="FAB_delete">刪除</string>
+    <string name="FAB_edit">編輯</string>
+    <string name="FAB_add">新增</string>
+    <string name="FAB_main">點擊子項目進行操作</string>
+
 
     <string name="title_translation">釋義</string>
     <string name="title_variation">變化形</string>
@@ -61,5 +73,10 @@ The particular may have to be satisfied to the general.
     <string name="helper_text_example">輸入例句</string>
     <string name="helper_text_note">輸入註記</string>
     <string name="helper_text_sound">可自動取得發音</string>
+
+    <string name="toast_success_mark">標記成功</string>
+    <string name="toast_cancel_mark">取消標記</string>
+    <string name="toast_exit_app">再按一次離開程式</string>
+    
 
 </resources>

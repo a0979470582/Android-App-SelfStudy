@@ -4,36 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable
-            name="bookFragment"
-            type="com.bu.selfstudy.ui.book.BookFragment" />
+
     </data>
 
-    <FrameLayout
-        android:layout_height="match_parent"
-        android:layout_width="match_parent">
-
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefresh"
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                />
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="parent"
+                tools:itemCount="5"
+                tools:listitem="@layout/book_list_item" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:onClick="@{()->bookFragment.navigateToAddWordFragment()}"
-            android:src="@drawable/ic_baseline_add_24" />
-    </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

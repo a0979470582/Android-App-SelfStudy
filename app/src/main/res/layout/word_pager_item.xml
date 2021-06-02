@@ -39,6 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
+                android:textIsSelectable="true"
                 android:text="@{word.wordName}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -50,6 +51,7 @@
                 android:id="@+id/pronunciationTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textIsSelectable="true"
                 android:text="@{word.pronunciation}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -73,7 +75,7 @@
                 app:layout_constraintTop_toTopOf="@+id/pronunciationTextView" />
 
 
-            <com.bu.selfstudy.tool.DropdownTextView
+            <com.bu.selfstudy.tool.dropdowntextview.DropdownTextView
                 android:id="@+id/translationTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -88,7 +90,7 @@
                 app:titleText="釋義" />
 
 
-            <com.bu.selfstudy.tool.DropdownTextView
+            <com.bu.selfstudy.tool.dropdowntextview.DropdownTextView
                 android:id="@+id/variationTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -102,7 +104,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/translationTextView"
                 app:titleText="變化形" />
 
-            <com.bu.selfstudy.tool.DropdownTextView
+            <com.bu.selfstudy.tool.dropdowntextview.DropdownTextView
                 android:id="@+id/exampleTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -116,7 +118,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/variationTextView"
                 app:titleText="例句" />
 
-            <com.bu.selfstudy.tool.DropdownTextView
+            <com.bu.selfstudy.tool.dropdowntextview.DropdownTextView
                 android:id="@+id/noteTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

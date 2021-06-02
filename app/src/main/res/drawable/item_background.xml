@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/selected_item_background" android:state_activated="true" />
-    <item android:drawable="@android:color/transparent" />
-</selector>
+<ripple
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/ripple_color">
+
+    <item android:id="@android:id/mask">
+        <color android:color="@color/black"/>
+    </item>
+    <item>
+        <selector>
+            <item android:drawable="@drawable/selected_item_background" android:state_activated="true" />
+            <item android:drawable="@android:color/transparent" />
+        </selector>
+    </item>
+
+</ripple>

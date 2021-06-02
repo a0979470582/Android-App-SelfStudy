@@ -1,48 +1,84 @@
 package com.bu.selfstudy.ui.book
 
+import android.os.Bundle
 import androidx.lifecycle.*
+import com.bu.selfstudy.R
+import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.model.Book
+import com.bu.selfstudy.data.repository.BookRepository
+import com.bu.selfstudy.tool.SingleLiveData
+import com.bu.selfstudy.tool.log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class BookViewModel : ViewModel(){
 
 
-}
+    val databaseEvent = SingleLiveData<Pair<String, Bundle?>>()
 
-/*
-val searchQueryLD = MutableLiveData("")
-private val refreshLD = MutableLiveData<Int>(1)
-val bookListLD= refreshLD.switchMap{
-    BookRepository.loadBooks().asLiveData()
-}
-val idList = ArrayList<Long>()
+    val bookNameMap = mapOf(
+            "toeicData.json" to "多益高頻單字",
+            "ieltsData.json" to "雅思核心單字",
+            "commonly_use_1000.json" to "最常用1000字",
+            "commonly_use_3000.json" to "最常用3000字",
+            "high_school_level_1.json" to "高中英文分級Level1",
+            "high_school_level_2.json" to "高中英文分級Level2",
+            "high_school_level_3.json" to "高中英文分級Level3",
+            "high_school_level_4.json" to "高中英文分級Level4",
+            "high_school_level_5.json" to "高中英文分級Level5",
+            "high_school_level_6.json" to "高中英文分級Level6",
+            "junior_school_basic_1200.json" to "國中基礎英文1200字",
+            "junior_school_difficult_800.json" to "國中進階英文800字",
+            "elementary_school_basic_word.json" to "小學基礎單字"
+    )
 
-var isLoadingLD = MutableLiveData(false)
-val databaseEventLD = MutableLiveData<DatabaseResultEvent>()
-
-fun refresh() {
-    refreshLD.value = refreshLD.value
-}
-
-fun insertBooks(books:List<Book>){
-    setDatabaseResult(isLoadingLD, databaseEventLD, "新增"){
-        BookRepository.insertBook(*books.toTypedArray()).size
+    var longPressedBook: Book? = null
+    fun refreshLongPressedBook(bookList: List<Book>, bookId: Long){
+        longPressedBook = bookList.firstOrNull{ it.id==bookId }
     }
-}
 
-fun deleteBooksToTrash(bookIds: List<Long>){
-    setDatabaseResult(isLoadingLD, databaseEventLD, "刪除"){
-        BookRepository.updateBook(
-                *getBookList(bookIds).onEach { it.isTrash = true }.toTypedArray()
-        )
+
+    fun insertLocalBook(bookName: String){
+        viewModelScope.launch {
+            BookRepository.insertLocalBook(bookName).let {
+                val bundle = Bundle()
+                bundle.putString("bookName", "bookName")
+                databaseEvent.postValue("insertLocal" to bundle)
+            }
+        }
     }
-}
 
-fun insertWords(words:List<Word>){
-    setDatabaseResult(isLoadingLD, databaseEventLD, "新增"){
-        WordRepository.insertWord(*words.toTypedArray()).size
+    fun deleteBook(bookId: Long, bookName: String){
+        viewModelScope.launch {
+            BookRepository.deleteBookToTrash(bookId).let {
+                if(it>0) {
+                    val bundle = Bundle()
+                    bundle.putString("bookName", bookName)
+                    databaseEvent.postValue("delete" to bundle)
+                }
+            }
+        }
     }
-}
+    fun insertBook(bookName: String){
+        viewModelScope.launch {
+            val book = Book(bookName = bookName, memberId = SelfStudyApplication.memberId)
+            BookRepository.insertBook(book).let {
+                if(it.isNotEmpty()) {
+                    databaseEvent.postValue("insert" to null)
+                }
+            }
+        }
+    }
 
-private fun getBookList(bookIds: List<Long>) = bookListLD.value!!.filter { bookIds.contains(it.id) }
-*/
+    fun updateBook(book: Book){
+        viewModelScope.launch{
+            BookRepository.updateBook(book).let {
+                if(it>0) {
+                    databaseEvent.postValue("update" to null)
+                }
+            }
+        }
+    }
+
+}

@@ -7,4 +7,9 @@
         android:icon="@drawable/ic_round_delete_24"
         android:title="刪除"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_edit"
+        android:icon="@drawable/ic_round_edit_24"
+        android:title="編輯"
+        app:showAsAction="ifRoom" />
 </menu>

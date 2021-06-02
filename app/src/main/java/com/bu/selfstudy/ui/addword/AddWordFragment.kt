@@ -54,7 +54,7 @@ class AddWordFragment: Fragment() {
                 example = example,
                 note = note
             )
-            activityViewModel.insertWord(word)
+            //activityViewModel.insertWord(word)
             findNavController().popBackStack()
             closeKeyboard()
         }

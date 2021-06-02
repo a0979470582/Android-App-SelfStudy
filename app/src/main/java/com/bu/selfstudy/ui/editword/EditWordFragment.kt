@@ -39,7 +39,7 @@ class EditWordFragment: Fragment() {
 
         getNavigationResultLiveData<Boolean>("exitAndSave")?.observe(viewLifecycleOwner){
             viewModel.editWord?.let {word->
-                activityViewModel.updateWord(word)
+                //activityViewModel.updateWord(word)
             }
             findNavController().popBackStack(R.id.wordFragment, false)
         }
@@ -183,8 +183,8 @@ class EditWordFragment: Fragment() {
                 viewModel.editWord?.let {
                     if (it.wordName.isBlank())
                         binding.wordField.error = "請輸入正確的英文單字"
-                    else
-                        activityViewModel.updateWord(it)
+                    //else
+                        //activityViewModel.updateWord(it)
 
                 }
             }

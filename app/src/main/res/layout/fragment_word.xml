@@ -5,12 +5,6 @@
     tools:showIn="@layout/activity_main">
 
     <data>
-        <variable
-            name="adapter"
-            type="com.bu.selfstudy.ui.word.WordAdapter"/>
-        <variable
-            name="slideAdapter"
-            type="com.bu.selfstudy.ui.word.WordSlideAdapter"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,52 +29,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:indeterminate="true"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller
+            android:id="@+id/fastScroller"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:visibility="gone"
-            android:adapter="@{adapter}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:handleWidth="38dp"
+            app:handleHeight="48dp"
+            app:handleHasFixedSize="true"
+            app:handleDrawable="@drawable/ic_round_scroll_handler_24"
+            app:handleVisibilityDuration="1000">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/word_list_item"/>
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adapter="@{slideAdapter}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
-
-        </androidx.viewpager2.widget.ViewPager2>
-
-        <com.leinardi.android.speeddial.SpeedDialOverlayLayout
-            android:id="@+id/overlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:clickable_overlay="true" />
-
-        <com.leinardi.android.speeddial.SpeedDialView
-            android:id="@+id/speedDialView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:sdMainFabClosedSrc="@drawable/ic_baseline_edit_24"
-            app:sdMainFabOpenedSrc="@drawable/ic_baseline_close_24"
-            app:sdOverlayLayout="@id/overlay" />
-
+        </com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

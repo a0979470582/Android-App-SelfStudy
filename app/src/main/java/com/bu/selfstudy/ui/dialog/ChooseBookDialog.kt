@@ -18,10 +18,10 @@ class ChooseBookDialog : AppCompatDialogFragment() {
     private var position = 0
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val bookList = activityViewModel.bookList
-        val defaultPosition = activityViewModel.position
+        val bookList = activityViewModel.bookListLiveData.value
+        val defaultPosition = bookList!!.indexOf(activityViewModel.currentOpenBookLiveData.value)
 
-        val bookNames= bookList.map { it.bookName }.toTypedArray()
+        val bookNames= bookList?.map { it.bookName }?.toTypedArray()
 
         return MaterialAlertDialogBuilder(requireActivity())
             .setTitle("選擇加入的題庫")
