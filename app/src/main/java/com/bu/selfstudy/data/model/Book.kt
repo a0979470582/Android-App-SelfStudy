@@ -20,11 +20,9 @@ data class Book(
     var id:Long = 0,
     var memberId: Long,
     var bookName: String,
-
     var size: Int = 0,
 
-
-    var initialWordId:Long = 0,
+    var position: Int = 0,
     var sortState:String = "time_asc",//time, letter, proficiency
     var displayMode:String = "one",//one, list, grid
 

@@ -20,6 +20,7 @@ import com.bu.selfstudy.R
 import com.bu.selfstudy.databinding.FragmentBookBinding
 import com.bu.selfstudy.tool.*
 import com.bu.selfstudy.ActivityViewModel
+import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
 import com.bu.selfstudy.tool.myselectiontracker.IdItemKeyProvider
@@ -54,8 +55,9 @@ class BookFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
-        setDialogResultListener()
         lifecycleScope.launch {
+            //loadLocalBook()
+            setDialogResultListener()
             initSelectionTracker()
         }
 
@@ -75,9 +77,33 @@ class BookFragment : Fragment() {
 
     }
 
-    fun navigateToWordFragment(bookId: Long){
-        activityViewModel.refreshCurrentOpenBook(bookId)
-        findNavController().navigate(R.id.wordFragment)
+    private fun loadLocalBook(){
+        lifecycleScope.launch {
+            val bookNameList = listOf(
+                    "toeicData.json" to "多益高頻單字",
+                    "ieltsData.json" to "雅思核心單字",
+                    "commonly_use_1000.json" to "最常用1000字",
+                    "commonly_use_3000.json" to "最常用3000字",
+                    "high_school_level_1.json" to "高中英文分級Level1",
+                    "high_school_level_2.json" to "高中英文分級Level2",
+                    "high_school_level_3.json" to "高中英文分級Level3",
+                    "high_school_level_4.json" to "高中英文分級Level4",
+                    "high_school_level_5.json" to "高中英文分級Level5",
+                    "high_school_level_6.json" to "高中英文分級Level6",
+                    "junior_school_basic_1200.json" to "國中基礎英文1200字",
+                    "junior_school_difficult_800.json" to "國中進階英文800字",
+                    "elementary_school_basic_word.json" to "小學基礎單字"
+            )
+            bookNameList.forEach {
+                BookRepository.insertLocalBook(it.first)
+            }
+
+        }
+    }
+
+    fun navigateToWordCardFragment(book: Book){
+        activityViewModel.currentOpenBookLiveData.value = book
+        findNavController().navigate(R.id.wordCardFragment)
     }
 
     private fun setDialogResultListener() {
@@ -127,9 +153,9 @@ class BookFragment : Fragment() {
                 IdItemDetailsLookup(binding.recyclerView, activityViewModel.bookIdList),
                 StorageStrategy.createLongStorage()
         ).withSelectionPredicate(SelectionPredicates.createSelectSingleAnything())
-                .build().also {
-                    adapter.tracker = it
-                }
+         .build().also {
+             adapter.tracker = it
+         }
 
         val selectionObserver = object : SelectionTracker.SelectionObserver<Long>() {
             override fun onSelectionChanged() {
@@ -191,7 +217,31 @@ class BookFragment : Fragment() {
                     findNavController().navigate(action)
                 }
             }
+            R.id.action_archive ->{
+                viewModel.longPressedBook?.let {
+                    val action = BookFragmentDirections.actionBookFragmentToEditBookDialog(it.bookName)
+                    findNavController().navigate(action)
+                }
+            }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.action_search->{
+            }
+            R.id.action_add_book->{
+                val action = BookFragmentDirections.actionBookFragmentToAddBookDialog()
+                findNavController().navigate(action)
+            }
+            R.id.action_test->{
+
+            }
+            R.id.action_download_book->{
+
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -232,52 +282,13 @@ class BookFragment : Fragment() {
         }*/
     }
 
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.action_search->{
-            }
-            R.id.action_add_book->{
-                val action = BookFragmentDirections.actionBookFragmentToAddBookDialog()
-                findNavController().navigate(action)
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        tracker?.onSaveInstanceState(outState)
+        tracker.onSaveInstanceState(outState)
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        tracker?.onRestoreInstanceState(savedInstanceState)
+        tracker.onRestoreInstanceState(savedInstanceState)
     }
 }
-
-/*
-
-
-lifecycleScope.launch {
-            val bookNameList = listOf(
-                    "toeicData.json" to "多益高頻單字",
-                    "ieltsData.json" to "雅思核心單字",
-                    "commonly_use_1000.json" to "最常用1000字",
-                    "commonly_use_3000.json" to "最常用3000字",
-                    "high_school_level_1.json" to "高中英文分級Level1",
-                    "high_school_level_2.json" to "高中英文分級Level2",
-                    "high_school_level_3.json" to "高中英文分級Level3",
-                    "high_school_level_4.json" to "高中英文分級Level4",
-                    "high_school_level_5.json" to "高中英文分級Level5",
-                    "high_school_level_6.json" to "高中英文分級Level6",
-                    "junior_school_basic_1200.json" to "國中基礎英文1200字",
-                    "junior_school_difficult_800.json" to "國中進階英文800字",
-                    "elementary_school_basic_word.json" to "小學基礎單字"
-            )
-            bookNameList.forEach {
-                BookRepository.insertLocalBook(it.first)
-            }
-
-        }
- */

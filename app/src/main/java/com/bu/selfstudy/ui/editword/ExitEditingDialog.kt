@@ -23,7 +23,7 @@ class ExitEditingDialog() : AppCompatDialogFragment() {
                     setNavigationResult("exitAndSave", true)
                 }
                 .setNegativeButton("不保存") { dialog, which ->
-                    findNavController().popBackStack(R.id.wordFragment, false)
+                    findNavController().popBackStack(R.id.wordCardFragment, false)
                 }
                 .setNeutralButton("取消"){dialog, which ->
                     dialog.dismiss()

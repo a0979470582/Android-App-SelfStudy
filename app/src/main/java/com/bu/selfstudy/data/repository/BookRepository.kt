@@ -47,7 +47,7 @@ object BookRepository {
         val wordList = mutableListOf<Word>()
         jsonArray.forEach { jsonElement -> (jsonElement as JsonObject).let {
             val wordName = if(it.getAsJsonArray("wordName").size()>0)
-                               it.getAsJsonArray("wordName")[0].asString
+                               it.getAsJsonArray("wordName")[0].asString.replace("KK[", "/").replace("]","/")
                            else ""
 
             val pronunciation = if(it.getAsJsonArray("pronunciation").size()>0)

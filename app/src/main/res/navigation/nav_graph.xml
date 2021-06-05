@@ -6,14 +6,35 @@
     app:startDestination="@id/bookFragment">
 
     <fragment
-        android:id="@+id/wordFragment"
-        android:name="com.bu.selfstudy.ui.word.WordFragment"
-        android:label=""
-        tools:layout="@layout/fragment_word">
+        android:id="@+id/bookFragment"
+        android:name="com.bu.selfstudy.ui.book.BookFragment"
+        android:label="我的題庫" >
         <action
-            android:id="@+id/action_wordFragment_to_wordCardFragment"
+            android:id="@+id/action_bookFragment_to_editBookDialog"
+            app:destination="@id/editBookDialog" />
+        <action
+            android:id="@+id/action_bookFragment_to_deleteBookDialog"
+            app:destination="@id/deleteBookDialog" />
+        <action
+            android:id="@+id/action_bookFragment_to_addBookDialog"
+            app:destination="@id/addBookDialog" />
+        <action
+            android:id="@+id/action_bookFragment_to_wordCardFragment"
             app:destination="@id/wordCardFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/wordCardFragment"
+        android:name="com.bu.selfstudy.ui.wordcard.WordCardFragment">
+        <action
+            android:id="@+id/action_wordCardFragment_to_wordFragment"
+            app:destination="@id/wordListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/wordListFragment"
+        android:name="com.bu.selfstudy.ui.wordlist.WordListFragment"
+        tools:layout="@layout/fragment_word_list"/>
 
     <fragment
         android:id="@+id/subscriptionFragment"
@@ -109,23 +130,7 @@
         android:id="@+id/exitEditingDialog"
         android:name="com.bu.selfstudy.ui.editword.ExitEditingDialog"
         android:label="ExitEditingDialog" />
-    <fragment
-        android:id="@+id/bookFragment"
-        android:name="com.bu.selfstudy.ui.book.BookFragment"
-        android:label="我的題庫" >
-        <action
-            android:id="@+id/action_bookFragment_to_wordFragment"
-            app:destination="@id/wordFragment" />
-        <action
-            android:id="@+id/action_bookFragment_to_editBookDialog"
-            app:destination="@id/editBookDialog" />
-        <action
-            android:id="@+id/action_bookFragment_to_deleteBookDialog"
-            app:destination="@id/deleteBookDialog" />
-        <action
-            android:id="@+id/action_bookFragment_to_addBookDialog"
-            app:destination="@id/addBookDialog" />
-    </fragment>
+
     <dialog
         android:id="@+id/addBookDialog"
         android:name="com.bu.selfstudy.ui.book.AddBookDialog"
@@ -148,13 +153,6 @@
             android:name="bookName"
             app:argType="string" />
     </dialog>
-    <fragment
-        android:id="@+id/wordCardFragment"
-        android:name="com.bu.selfstudy.ui.wordcard.WordCardFragment"
-        android:label="" >
-        <argument
-            android:name="position"
-            app:argType="integer" />
-    </fragment>
+
 
 </navigation>

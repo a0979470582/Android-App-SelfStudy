@@ -1,11 +1,10 @@
-package com.bu.selfstudy.ui.word
+package com.bu.selfstudy.ui.wordlist
 
 import androidx.appcompat.view.ActionMode
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -15,19 +14,21 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
-import com.bu.selfstudy.data.model.Word
-import com.bu.selfstudy.databinding.FragmentWordBinding
+import com.bu.selfstudy.data.model.WordTuple
+import com.bu.selfstudy.databinding.FragmentWordListBinding
+import com.bu.selfstudy.databinding.WordListItemBinding
 import com.bu.selfstudy.tool.*
 import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
 import com.bu.selfstudy.tool.myselectiontracker.IdItemKeyProvider
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
 
-class WordFragment : Fragment() {
-    private val viewModel: WordViewModel by viewModels()
+class WordListFragment : Fragment() {
+    private val listViewModel: WordListViewModel by viewModels()
     private val activityViewModel: ActivityViewModel by activityViewModels()
-    private val binding: FragmentWordBinding by viewBinding()
-    private val listAdapter = WordListAdapter(fragment = this)
+    private val binding: FragmentWordListBinding by viewBinding()
+    private val listAdapter = WordListAdapter(listFragment = this)
 
     private var searchView: SearchView? = null
     private var actionMode: ActionMode? = null
@@ -37,14 +38,13 @@ class WordFragment : Fragment() {
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View {
+            savedInstanceState: Bundle?): View {
+
         binding.recyclerView.let {
-            it.adapter = this.listAdapter
+            it.adapter = listAdapter
             it.setHasFixedSize(true)
         }
         binding.lifecycleOwner = viewLifecycleOwner
-
         return binding.root
     }
 
@@ -58,42 +58,35 @@ class WordFragment : Fragment() {
 
         activityViewModel.currentOpenBookLiveData.observe(viewLifecycleOwner) {
             (requireActivity() as AppCompatActivity).supportActionBar?.title = it.bookName
-            viewModel.currentOpenBookLiveData.value = it
+            listViewModel.currentOpenBookLiveData.value = it
         }
 
-        viewModel.wordListLiveData.observe(viewLifecycleOwner) {
-            listAdapter.submitList(it)
-            viewModel.refreshWordIdList(it)
+         listViewModel.wordListLiveData.observe(viewLifecycleOwner){
+             listAdapter.submitList(it)
+             refreshWordIdList(it)
+         }
 
-            if(it.isEmpty())
-                showExplainView()
-            else
-                hideExplainView()
-
-        }
-
-
-         viewModel.updateEvent.observe(this){
+         listViewModel.updateEvent.observe(this){
              "已儲存成功".showToast()
          }
 
-         viewModel.markEvent.observe(this){
+         listViewModel.markEvent.observe(this){
              when(it){
                  "mark" -> resources.getString(R.string.toast_success_mark).showToast()
                  "cancel_mark" -> resources.getString(R.string.toast_cancel_mark).showToast()
              }
          }
 
-         viewModel.insertEvent.observe(this){
+         listViewModel.insertEvent.observe(this){
              binding.root.showSnackbar("已新增了${it!!.size}個單字", "檢視"){
                  "正在檢視中...".showToast()
              }
          }
 
-         viewModel.deleteEvent.observe(this){
+         listViewModel.deleteEvent.observe(this){
              "已移除${it}個單字".showToast()
          }
-         viewModel.deleteToTrashEvent.observe(this){
+         listViewModel.deleteToTrashEvent.observe(this){
              binding.root.showSnackbar("已將${it}個單字移至回收桶", "回復"){
                  "正在回復中...".showToast()
              }
@@ -102,12 +95,16 @@ class WordFragment : Fragment() {
 
     }
 
+    fun refreshWordIdList(wordList: List<WordTuple>){
+        listViewModel.refreshWordIdList(wordList)
+    }
+
     private fun initSelectionTracker() {
         tracker = SelectionTracker.Builder(
                 "recycler-view-word-fragment",
                 binding.recyclerView,
-                IdItemKeyProvider(viewModel.wordIdList),
-                IdItemDetailsLookup(binding.recyclerView, viewModel.wordIdList),
+                IdItemKeyProvider(listViewModel.wordIdList),
+                IdItemDetailsLookup(binding.recyclerView, listViewModel.wordIdList),
                 StorageStrategy.createLongStorage()
         ).withSelectionPredicate(SelectionPredicates.createSelectAnything())
                 .build().also {
@@ -118,20 +115,19 @@ class WordFragment : Fragment() {
             override fun onSelectionChanged() {
                 super.onSelectionChanged()
 
-
                 if (!tracker.hasSelection()) {
                     actionMode?.finish()
                 } else {
                     lifecycleScope.launch {
                         activityViewModel.bookListLiveData.value?.let {
-                            viewModel.refreshLongPressedWord(tracker.selection.toList())
+                            listViewModel.refreshLongPressedWord(tracker.selection.toList())
                         }
                     }
                     if (actionMode == null) {
                         actionMode = (activity as AppCompatActivity)
                                 .startSupportActionMode(actionModeCallback)
                     }
-                    actionMode?.title = "${tracker.selection.size()}/${viewModel.wordListLiveData.value?.size}"
+                    actionMode?.title = "${tracker.selection.size()}/${listViewModel.wordListLiveData.value?.size}"
                 }
             }
         }
@@ -139,33 +135,17 @@ class WordFragment : Fragment() {
         tracker.addObserver(selectionObserver)
     }
 
-    private fun showExplainView() {
-        if(binding.explainView.isVisible){
-            return
-        }
-        binding.explainView.visibility = View.VISIBLE
-    }
-    private fun hideExplainView() {
-        if(!binding.explainView.isVisible){
-            return
-        }
-        binding.explainView.visibility = View.GONE
-    }
 
-    fun markWord(word:Word){
-        val word = word.copy()
-        word.isMark = true
-        viewModel.markWord(word)
-    }
-    fun cancelMarkWord(word:Word){
-        val word = word.copy()
-        word.isMark = false
-        viewModel.markWord(word)
+
+    fun updateMarkWord(wordId:Long, isMark: Boolean){
+        listViewModel.updateMarkWord(wordId, isMark)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.action_search -> {
+            }
+            R.id.action_filter->{
             }
         }
         return super.onOptionsItemSelected(item)
@@ -173,18 +153,18 @@ class WordFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.word_toolbar, menu)
+        inflater.inflate(R.menu.wordlist_toolbar, menu)
     }
 
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        tracker?.onSaveInstanceState(outState)
+        tracker.onSaveInstanceState(outState)
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        tracker?.onRestoreInstanceState(savedInstanceState)
+        tracker.onRestoreInstanceState(savedInstanceState)
     }
 
     val actionModeCallback = object : androidx.appcompat.view.ActionMode.Callback {
@@ -192,7 +172,7 @@ class WordFragment : Fragment() {
         造成使用者能在看不到搜尋框時查詢, 因此ActionMode出現就必須關閉鍵盤
          */
         override fun onCreateActionMode(mode: androidx.appcompat.view.ActionMode, menu: Menu): Boolean {
-            mode.menuInflater.inflate(R.menu.word_action_mode, menu)
+            mode.menuInflater.inflate(R.menu.wordlist_action_mode, menu)
             closeKeyboard()
             return true
         }
@@ -200,12 +180,12 @@ class WordFragment : Fragment() {
         override fun onPrepareActionMode(mode: androidx.appcompat.view.ActionMode, menu: Menu) = false
 
         override fun onActionItemClicked(mode: androidx.appcompat.view.ActionMode, item: MenuItem): Boolean {
-            actionModeMenuCallback(item?.itemId)
+            actionModeMenuCallback(item.itemId)
             return true
         }
 
         override fun onDestroyActionMode(mode: androidx.appcompat.view.ActionMode) {
-            tracker?.clearSelection()
+            tracker.clearSelection()
             actionMode = null
         }
     }
@@ -213,9 +193,17 @@ class WordFragment : Fragment() {
     private fun actionModeMenuCallback(itemId:Int){
         when (itemId) {
             R.id.action_delete -> {
-               // val action = WordFragmentDirections.actionGlobalToDeleteDialog(
-                 //       "是否刪除 ${tracker.selection.size()} 個單字 ?")
-                //findNavController().navigate(action)
+                MaterialAlertDialogBuilder(requireActivity())
+                        .setTitle("刪除")
+                        .setMessage("是否刪除 ?")
+                        .setPositiveButton("確定") { dialog, which ->
+                            listViewModel.deleteWordToTrash(0)
+                            //activityViewModel.deleteWordToTrash(args.wordId)
+                            //setNavigationResult("isDelete", true)
+                        }
+                        .setNegativeButton("取消") { dialog, which ->
+                        }
+                        .create()
             }
             R.id.action_choose_all -> {
                 //viewModel.idList.let {
@@ -238,16 +226,6 @@ class WordFragment : Fragment() {
     }
 }
 
-        /*
-        /**db event*/
-        getDatabaseResult(viewModel.databaseEventLD){_, message, _ ->
-            message.showToast()
-        }
-
-        /**dialog event*/
-        getDialogResult()
-    }
-*/
 /*
 
 

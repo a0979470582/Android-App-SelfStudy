@@ -34,7 +34,7 @@ class BookListAdapter(val fragment: BookFragment):
 
         holder.itemView.setOnClickListener {
             val book = asyncListDiffer.currentList[holder.adapterPosition]
-            fragment.navigateToWordFragment(book.id)
+            fragment.navigateToWordCardFragment(book)
         }
 
         return holder

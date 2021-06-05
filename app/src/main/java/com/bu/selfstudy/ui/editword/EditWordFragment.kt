@@ -41,7 +41,7 @@ class EditWordFragment: Fragment() {
             viewModel.editWord?.let {word->
                 //activityViewModel.updateWord(word)
             }
-            findNavController().popBackStack(R.id.wordFragment, false)
+            findNavController().popBackStack(R.id.wordCardFragment, false)
         }
 
         setTextChangeListener()
@@ -197,7 +197,7 @@ class EditWordFragment: Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
-        inflater.inflate(R.menu.edit_word_toolbar, menu)
+        inflater.inflate(R.menu.editword_toolbar, menu)
         menu.findItem(R.id.action_save).isEnabled = viewModel.hasEditLiveData.value?:false
     }
     override fun onPrepareOptionsMenu(menu: Menu) {

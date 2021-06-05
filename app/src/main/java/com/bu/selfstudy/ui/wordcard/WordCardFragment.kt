@@ -1,6 +1,5 @@
 package com.bu.selfstudy.ui.wordcard
 
-import androidx.appcompat.view.ActionMode
 import android.content.Context
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -14,31 +13,20 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.selection.SelectionPredicates
-import androidx.recyclerview.selection.SelectionTracker
-import androidx.recyclerview.selection.StorageStrategy
 import androidx.viewpager2.widget.ViewPager2
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
-import com.bu.selfstudy.data.model.Word
-import com.bu.selfstudy.databinding.FragmentWordBinding
 import com.bu.selfstudy.databinding.FragmentWordCardBinding
 import com.bu.selfstudy.tool.*
-import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
-import com.bu.selfstudy.tool.myselectiontracker.IdItemKeyProvider
-import com.bu.selfstudy.ui.word.WordListAdapter
 import com.leinardi.android.speeddial.SpeedDialActionItem
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
 class WordCardFragment : Fragment() {
-    private val wordCardViewModel: WordCardViewModel by viewModels()
+    private val viewModel: WordCardViewModel by viewModels()
     private val activityViewModel: ActivityViewModel by activityViewModels()
     private val binding: FragmentWordCardBinding by viewBinding()
     private val pagerAdapter = WordCardPagerAdapter()
-    private val args: WordCardFragmentArgs by navArgs()
 
     private var searchView: SearchView? = null
     private var mediaPlayer: MediaPlayer? = null
@@ -61,72 +49,66 @@ class WordCardFragment : Fragment() {
      override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
          setHasOptionsMenu(true)
 
-
          lifecycleScope.launch {
              initSpeedDial(savedInstanceState == null)
          }
 
         activityViewModel.currentOpenBookLiveData.observe(viewLifecycleOwner) {
-            wordCardViewModel.currentOpenBookLiveData.value = it
+            (requireActivity() as AppCompatActivity).supportActionBar?.title = it.bookName
+            viewModel.currentOpenBookLiveData.value = it
+            setExplainViewIsVisible(it.size==0)
         }
 
-        wordCardViewModel.wordListLiveData.observe(viewLifecycleOwner) {
-            System.currentTimeMillis().log()
-
+        viewModel.wordListLiveData.observe(viewLifecycleOwner) {
             pagerAdapter.submitList(it)
-            setPagerViewCurrentItem(wordCardViewModel.currentPosition?: args.position)
+            viewModel.currentOpenBookLiveData.value?.let {
+                setPagerViewCurrentItem(it.position)
+            }
         }
 
 
         viewPagerCallback = object: ViewPager2.OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                val realPosition = position%pagerAdapter.wordList.size
-                wordCardViewModel.currentPosition = realPosition
-                wordCardViewModel.currentOpenWord = pagerAdapter.wordList[realPosition]
-                wordCardViewModel.updateInitialWordId()
+                viewModel.updateCurrentPosition(
+                        position % pagerAdapter.wordList.size
+                )
             }
         }
         binding.viewPager.registerOnPageChangeCallback(viewPagerCallback)
 
-         wordCardViewModel.updateEvent.observe(this){
+         viewModel.updateEvent.observe(this){
              "已儲存成功".showToast()
          }
 
-         wordCardViewModel.markEvent.observe(this){
+         viewModel.markEvent.observe(this){
              when(it){
                  "mark" -> resources.getString(R.string.toast_success_mark).showToast()
                  "cancel_mark" -> resources.getString(R.string.toast_cancel_mark).showToast()
              }
          }
 
-         wordCardViewModel.insertEvent.observe(this){
+         viewModel.insertEvent.observe(this){
              binding.root.showSnackbar("已新增了${it!!.size}個單字", "檢視"){
                  "正在檢視中...".showToast()
              }
          }
 
-         wordCardViewModel.deleteEvent.observe(this){
+         viewModel.deleteEvent.observe(this){
              "已移除${it}個單字".showToast()
          }
-         wordCardViewModel.deleteToTrashEvent.observe(this){
+         viewModel.deleteToTrashEvent.observe(this){
              binding.root.showSnackbar("已將${it}個單字移至回收桶", "回復"){
                  "正在回復中...".showToast()
              }
          }
     }
 
-    private fun showExplainView() {
-        if(binding.explainView.isVisible){
+    private fun setExplainViewIsVisible(isVisible: Boolean) {
+        if(isVisible == binding.explainView.isVisible){
             return
         }
-        binding.explainView.visibility = View.VISIBLE
-    }
-    private fun hideExplainView() {
-        if(!binding.explainView.isVisible){
-            return
-        }
-        binding.explainView.visibility = View.GONE
+        binding.explainView.visibility = if(isVisible) View.VISIBLE else View.INVISIBLE
     }
 
     override fun onAttach(context: Context) {
@@ -136,14 +118,15 @@ class WordCardFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(this){
             if(binding.speedDialView.isOpen){
                 binding.speedDialView.close()
-                return@addCallback
+            }else{
+                findNavController().popBackStack()
             }
         }
     }
 
 
     private fun setPagerViewCurrentItem(position: Int){
-        wordCardViewModel.wordListLiveData.value?.let{
+        viewModel.wordListLiveData.value?.let{
             if (it.size >= 2) {
                 val fakePosition: Int = it.size * 100 + position
                 binding.viewPager.post {
@@ -204,28 +187,28 @@ class WordCardFragment : Fragment() {
                     findNavController().navigate(R.id.addWordFragment)
                 }
                 R.id.fab_edit_word -> {
-                    wordCardViewModel.currentOpenWord?.let {
+                    viewModel.currentOpenWord?.let {
                         val action = WordCardFragmentDirections.actionGlobalEditWordFragment(it.id)
                         findNavController().navigate(action)
                     }
 
                 }
                 R.id.fab_delete_word -> {
-                    wordCardViewModel.currentOpenWord?.let {
-                        val action = WordCardFragmentDirections.actionGlobalToDeleteDialog("刪除這 1 個單字?", wordCardViewModel.currentOpenWord!!.id)
+                    viewModel.currentOpenWord?.let {
+                        val action = WordCardFragmentDirections.actionGlobalToDeleteDialog("刪除這 1 個單字?", viewModel.currentOpenWord!!.id)
                         findNavController().navigate(action)
                     }
                 }
                 R.id.fab_mark_word -> {
-                    wordCardViewModel.currentOpenWord?.let {
-                        markWord(it)
+                    viewModel.currentOpenWord?.let {
+                        updateMarkWord(it.id, true)
                         speedDialView.replaceActionItem(actionItem, disMark)
                         resources.getString(R.string.toast_success_mark).showToast()
                     }
                 }
                 R.id.fab_cancel_mark_word -> {
-                    wordCardViewModel.currentOpenWord?.let {
-                        cancelMarkWord(it)
+                    viewModel.currentOpenWord?.let {
+                        updateMarkWord(it.id, false)
                         speedDialView.replaceActionItem(actionItem, doMark)
                         resources.getString(R.string.toast_cancel_mark).showToast()
                     }
@@ -236,20 +219,16 @@ class WordCardFragment : Fragment() {
         }
     }
 
-    fun markWord(word:Word){
-        val word = word.copy()
-        word.isMark = true
-        wordCardViewModel.markWord(word)
-    }
-    fun cancelMarkWord(word:Word){
-        val word = word.copy()
-        word.isMark = false
-        wordCardViewModel.markWord(word)
+    fun updateMarkWord(wordId:Long, isMark: Boolean){
+        viewModel.updateMarkWord(wordId, isMark)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.action_search -> {
+            }
+            R.id.action_edit_book -> {
+                findNavController().navigate(R.id.wordListFragment)
             }
 
         }
@@ -258,7 +237,7 @@ class WordCardFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.word_card_toolbar, menu)
+        inflater.inflate(R.menu.wordcard_toolbar, menu)
     }
 
 

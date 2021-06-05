@@ -1,33 +1,38 @@
-package com.bu.selfstudy.ui.word
+package com.bu.selfstudy.ui.wordlist
 
 
 import androidx.lifecycle.*
+import androidx.paging.Config
+import androidx.paging.LivePagedListBuilder
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.model.Word
+import com.bu.selfstudy.data.model.WordTuple
 import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.data.repository.WordRepository
 import com.bu.selfstudy.tool.SingleLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.math.min
 
 /**
  * 更改資料庫中的wordList都會透過LiveData反應在目前的ViewPager, 例如新增,刪除,修改都會同步到資料庫,
  * 接著透過LiveData傳回並在ViewPager看到更新, 而wordFragment的生命週期進入onStop時, 會同步目前使用者所
  * 看到的單字頁(wordId)到資料庫
  */
-class WordViewModel() : ViewModel() {
+class WordListViewModel() : ViewModel() {
     val currentOpenBookLiveData = MutableLiveData<Book>()
 
     val wordListLiveData = currentOpenBookLiveData.switchMap {
-        WordRepository.loadWords(it.id, "%").asLiveData()
+        LivePagedListBuilder(
+                WordRepository.loadWordTuplesWithPaging(it.id, "%"),
+                Config(30)
+        ).build()
     }
 
     val wordIdList = ArrayList<Long>()
-    fun refreshWordIdList(wordList: List<Word>){
+    fun refreshWordIdList(wordList: List<WordTuple>){
         viewModelScope.launch {
             wordIdList.clear()
-            wordIdList.addAll(wordList.map { it.id })
+            wordIdList.addAll(wordList.map { if(it != null) it.id else 0 })
         }
     }
 
@@ -43,32 +48,11 @@ class WordViewModel() : ViewModel() {
     var currentOpenWord: Word? = null
     var currentPosition: Int? = null
 
-    var currentViewType: String = "listView"
-
-    fun getInitialPosition():Int{
-        if(wordListLiveData.value == null || wordListLiveData.value!!.isEmpty())
-            return 0
-        if(this.currentOpenBookLiveData.value == null)
-            return 0
-        //這是初始化頁面, 題庫切換的情況, 若是刪除單字則it=-1
-        wordListLiveData.value!!.indexOfFirst { this.currentOpenBookLiveData.value!!.initialWordId == it.id }
-                                .let { if(it!=-1) return it }
-
-        //這是刪除單字的情況, 盡量維持同一position
-        currentPosition?.let {
-            val maxPosition = wordListLiveData.value!!.size-1
-            return min(maxPosition, it)
-        }
-
-        return 0
-    }
-
-
     //將當前頁面同步到資料庫
-    fun updateInitialWordId(){
-        currentOpenWord?.let {
+    fun updateCurrentPosition(){
+        currentPosition?.let {
             val currentBook = this.currentOpenBookLiveData.value!!.copy()
-            currentBook.initialWordId = it.id
+            currentBook.position = it
             updateBook(currentBook)
         }
     }
@@ -87,11 +71,11 @@ class WordViewModel() : ViewModel() {
     val updateEvent = SingleLiveData<Int>()
     val markEvent = SingleLiveData<String>()
 
-    fun markWord(word: Word){
+    fun updateMarkWord(wordId:Long, isMark: Boolean){
         viewModelScope.launch(Dispatchers.IO) {
-            WordRepository.updateWord(word, bookId = currentOpenBookLiveData.value!!.id).let {
+            WordRepository.updateMarkWord(wordId, isMark).let {
                 if(it>0) {
-                    when(word.isMark){
+                    when(isMark){
                         true->markEvent.postValue("mark")
                         false->markEvent.postValue("cancel_mark")
                     }
@@ -110,24 +94,11 @@ class WordViewModel() : ViewModel() {
         }
     }
 
-
-
     fun insertWord(word: Word){
         viewModelScope.launch(Dispatchers.IO) {
             WordRepository.insertWord(word,bookId = currentOpenBookLiveData.value!!.id).let {
                 if(it.isNotEmpty())
                     insertEvent.postValue(it)
-            }
-        }
-    }
-
-
-
-    fun deleteWord(wordId: Long){
-        viewModelScope.launch(Dispatchers.IO) {
-            WordRepository.deleteWord(wordId,bookId = currentOpenBookLiveData.value!!.id).let {
-                if(it>0)
-                    deleteEvent.postValue(it)
             }
         }
     }
@@ -145,6 +116,26 @@ class WordViewModel() : ViewModel() {
 
 
 /*
+
+
+
+    fun getInitialPosition():Int{
+        if(wordListLiveData.value == null || wordListLiveData.value!!.isEmpty())
+            return 0
+        if(this.currentOpenBookLiveData.value == null)
+            return 0
+        //這是初始化頁面, 題庫切換的情況, 若是刪除單字則it=-1
+        wordListLiveData.value!!.indexOfFirst { this.currentOpenBookLiveData.value!!.initialWordId == it.id }
+                                .let { if(it!=-1) return it }
+
+        //這是刪除單字的情況, 盡量維持同一position
+        currentPosition?.let {
+            val maxPosition = wordListLiveData.value!!.size-1
+            return min(maxPosition, it)
+        }
+
+        return 0
+    }
     val initialPositionLiveData = wordListLiveData.map {wordList->
         val position = wordList.indexOfFirst {word->
             word.id == bookLiveData.value!!.initialWordId

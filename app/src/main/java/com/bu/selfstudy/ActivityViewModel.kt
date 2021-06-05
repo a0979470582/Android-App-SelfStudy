@@ -16,6 +16,8 @@ class ActivityViewModel : ViewModel() {
     val memberLiveData = MemberRepository.loadMember().asLiveData()
     val bookListLiveData = BookRepository.loadBooks().asLiveData()
 
+    val currentOpenBookLiveData = MutableLiveData<Book>()
+
     val bookIdList = ArrayList<Long>()
     fun refreshBookIdList(bookList: List<Book>){
         viewModelScope.launch {
@@ -24,32 +26,5 @@ class ActivityViewModel : ViewModel() {
         }
     }
 
-    val currentOpenBookLiveData = MutableLiveData<Book>()
-    fun refreshCurrentOpenBook(bookId: Long){
-        viewModelScope.launch {
-            bookListLiveData.value?.let {bookList->
-                currentOpenBookLiveData.value = bookList.firstOrNull { it.id==bookId }
-            }
-        }
-    }
 
 }
-
-/*
-    //當前顯示的book, 這兩個來源都會影響到此變數
-    val bookLiveData = MediatorLiveData<Book>().apply {
-        addSource(bookListLiveData){ bookList->
-            memberLiveData.value?.let { member->
-                value = combineBook(member, bookList)
-            }
-        }
-        addSource(memberLiveData){member->
-            bookListLiveData.value?.let { bookList->
-                if(bookList.isNotEmpty())
-                    value = combineBook(member, bookList)
-            }
-        }
-    }
-    private fun combineBook(member: Member, bookList:List<Book>) =
-        bookList.firstOrNull { it.id == member.initialBookId }?: bookList[0]
-* */

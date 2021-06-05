@@ -10,7 +10,7 @@ import com.bu.selfstudy.BuildConfig
 import com.bu.selfstudy.R
 import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.model.Word
-import com.bu.selfstudy.databinding.WordPagerItemBinding
+import com.bu.selfstudy.databinding.WordCardItemBinding
 import com.bu.selfstudy.tool.log
 
 /**
@@ -33,7 +33,7 @@ class WordCardPagerAdapter(
 
 
     inner class ViewHolder(
-            val binding: WordPagerItemBinding
+            val binding: WordCardItemBinding
     ) : RecyclerView.ViewHolder(binding.root){
 
         fun resetExpandedState(){
@@ -75,7 +75,7 @@ class WordCardPagerAdapter(
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = WordPagerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = WordCardItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val holder = ViewHolder(binding)
 
         holder.binding.soundButton.setOnClickListener {

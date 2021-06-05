@@ -7,4 +7,12 @@
         android:title="@string/icon_search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView"/>
+
+    <item
+        android:id="@+id/action_filter"
+        android:icon="@drawable/ic_baseline_filter_list_24"
+        android:title="更改排序"
+        app:showAsAction="ifRoom" />
+
+
 </menu>

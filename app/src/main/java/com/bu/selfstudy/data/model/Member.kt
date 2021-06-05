@@ -16,7 +16,7 @@ data class Member(
     var userName: String = "",
     var sex:String = "N",
 
-    var initialBookId: Long = 0,
+    var position: Int = 0,
     var backgroundImageIndex:Int = 0,
     var iconPath: String = "",
 

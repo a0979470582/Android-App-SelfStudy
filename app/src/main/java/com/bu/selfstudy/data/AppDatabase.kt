@@ -18,7 +18,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
-@Database(version = 12, entities = [Member::class, Book::class, Word::class])
+@Database(version = 13, entities = [Member::class, Book::class, Word::class])
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun memberDao(): MemberDao

@@ -28,7 +28,7 @@
                     android:backgroundTint="@color/divide_color"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                    tools:menu="@menu/word_toolbar">
+                    tools:menu="@menu/wordlist_toolbar">
 
                 </com.google.android.material.appbar.MaterialToolbar>
             </com.google.android.material.appbar.AppBarLayout>
@@ -41,7 +41,7 @@
                 app:defaultNavHost="true"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:navGraph="@navigation/nav_graph"
-                tools:layout="@layout/fragment_word" />
+                tools:layout="@layout/fragment_word_list" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab"
@@ -57,8 +57,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            app:menu="@menu/nav_view"
-            app:headerLayout="@layout/nav_header"
+            app:menu="@menu/activity_nav_view"
+            app:headerLayout="@layout/activity_nav_header"
             app:itemBackground="@drawable/drawer_item_background"
             />
     </androidx.drawerlayout.widget.DrawerLayout>

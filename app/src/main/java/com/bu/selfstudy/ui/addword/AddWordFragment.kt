@@ -4,24 +4,16 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
-import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
-import androidx.core.view.children
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.FragmentAddWordBinding
 import com.bu.selfstudy.tool.*
-import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 
 class AddWordFragment: Fragment() {
@@ -126,7 +118,7 @@ class AddWordFragment: Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
-        inflater.inflate(R.menu.add_word_toolbar, menu)
+        inflater.inflate(R.menu.addword_toolbar, menu)
     }
 
 }

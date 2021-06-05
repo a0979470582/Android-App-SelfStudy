@@ -58,8 +58,7 @@ class MainActivity : AppCompatActivity(){
 
         navController.addOnDestinationChangedListener{ navController, navDestination, bundle ->
             binding.fab.isVisible = (
-                    navDestination.id == R.id.bookFragment ||
-                    navDestination.id == R.id.wordFragment
+                    navDestination.id == R.id.bookFragment
             )
         }
     }
