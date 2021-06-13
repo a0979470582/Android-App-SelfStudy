@@ -13,12 +13,11 @@ interface BookDao : BaseDao<Book>{
     fun loadDistinctBooks(memberId: Long=SelfStudyApplication.memberId)
         = loadBooks(memberId).distinctUntilChanged()
 
-    @Query("DELETE FROM Book WHERE id =:bookId")
-    suspend fun delete(vararg bookId:Long): Int
-    @Query("UPDATE Book SET isTrash = 1 WHERE id =:bookId")
-    suspend fun deleteBookToTrash(vararg bookId: Long): Int
+    @Query("DELETE FROM Book WHERE id=:bookId")
+    suspend fun delete(bookId: Long): Int
+    @Query("UPDATE Book SET isTrash = 1 WHERE id=:bookId")
+    suspend fun deleteBookToTrash(bookId: Long): Int
 
     @Query("UPDATE Book SET size=(SELECT COUNT(id) FROM Word WHERE bookId=:bookId) WHERE id=:bookId")
     suspend fun updateBookSize(bookId: Long): Int
-
 }

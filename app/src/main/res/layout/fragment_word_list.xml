@@ -39,10 +39,10 @@
             android:id="@+id/fastScroller"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:handleWidth="38dp"
-            app:handleHeight="48dp"
+            app:handleWidth="34dp"
+            app:handleHeight="40dp"
             app:handleHasFixedSize="true"
-            app:handleDrawable="@drawable/ic_round_scroll_handler_24"
+            app:handleDrawable="@drawable/fast_scroller_handle_drawable"
             app:handleVisibilityDuration="1000">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"

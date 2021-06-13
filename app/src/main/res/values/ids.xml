@@ -5,4 +5,7 @@
     <item name="fab_delete_word" type="id"/>
     <item name="fab_mark_word" type="id"/>
     <item name="fab_cancel_mark_word" type="id"/>
+
+    <item name="book_fragment_fab_add_word" type="id"/>
+    <item name="book_fragment_fab_add_book" type="id"/>
 </resources>

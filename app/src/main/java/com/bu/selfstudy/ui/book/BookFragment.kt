@@ -21,9 +21,12 @@ import com.bu.selfstudy.databinding.FragmentBookBinding
 import com.bu.selfstudy.tool.*
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.data.model.Book
+import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
 import com.bu.selfstudy.tool.myselectiontracker.IdItemKeyProvider
+import com.bu.selfstudy.ui.wordcard.ActionItemCreator
+import com.bu.selfstudy.ui.wordcard.WordCardFragmentDirections
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -49,7 +52,6 @@ class BookFragment : Fragment() {
             it.adapter = this.adapter
             it.setHasFixedSize(true)
         }
-
         return binding.root
     }
 
@@ -69,13 +71,16 @@ class BookFragment : Fragment() {
             when(it?.first){
                 "delete"->"已刪除「${it.second?.getString("bookName")}」".showToast()
                 "update"->"更新成功".showToast()
-                "insert"->"新增成功".showToast()
+                "insertBook"->"新增成功".showToast()
                 "insertLocal"->"已新增「${it.second?.getString("bookName")}」".showToast()
             }
         }
-
-
+        binding.fab.setOnClickListener {
+            actionMode?.finish()
+            findNavController().navigate(R.id.addWordFragment)
+        }
     }
+
 
     private fun loadLocalBook(){
         lifecycleScope.launch {
@@ -113,13 +118,12 @@ class BookFragment : Fragment() {
             }
         }
         setFragmentResultListener("edit"){_, bundle->
-            viewModel.longPressedBook?.let {
-                val book = it.copy()
-                book.bookName = bundle.getString("bookName")!!
-                viewModel.updateBook(book)
+            viewModel.longPressedBook?.copy()?.let {
+                it.bookName = bundle.getString("bookName")!!
+                viewModel.updateBook(it)
             }
         }
-        setFragmentResultListener("insert"){_, bundle->
+        setFragmentResultListener("insertBook"){_, bundle->
             val bookName = bundle.getString("bookName")!!
             viewModel.insertBook(bookName)
         }
@@ -146,6 +150,9 @@ class BookFragment : Fragment() {
 
 
     private fun initSelectionTracker() {
+        if(::tracker.isInitialized)
+            return
+
         tracker = SelectionTracker.Builder(
                 "recycler-view-book-fragment",
                 binding.recyclerView,
@@ -163,10 +170,8 @@ class BookFragment : Fragment() {
                 if (!tracker.hasSelection()) {
                     actionMode?.finish()
                 } else {
-                    lifecycleScope.launch {
-                        activityViewModel.bookListLiveData.value?.let {
-                            viewModel.refreshLongPressedBook(it, tracker.selection.toList()[0])
-                        }
+                    activityViewModel.bookListLiveData.value?.let {
+                        viewModel.refreshLongPressedBook(it, tracker.selection.toList()[0])
                     }
                     if (actionMode == null) {
                         actionMode = (activity as AppCompatActivity)
@@ -198,7 +203,7 @@ class BookFragment : Fragment() {
         }
 
         override fun onDestroyActionMode(mode: androidx.appcompat.view.ActionMode) {
-            tracker?.clearSelection()
+            tracker.clearSelection()
             actionMode = null
         }
     }
@@ -207,7 +212,9 @@ class BookFragment : Fragment() {
         when (itemId) {
             R.id.action_delete -> {
                 viewModel.longPressedBook?.let {
-                    val action = BookFragmentDirections.actionBookFragmentToDeleteBookDialog(it.bookName)
+                    val title = "刪除題庫"
+                    val message = "刪除「${it.bookName}」?"
+                    val action = BookFragmentDirections.actionGlobalDialogDeleteCommon(title, message)
                     findNavController().navigate(action)
                 }
             }
@@ -219,8 +226,6 @@ class BookFragment : Fragment() {
             }
             R.id.action_archive ->{
                 viewModel.longPressedBook?.let {
-                    val action = BookFragmentDirections.actionBookFragmentToEditBookDialog(it.bookName)
-                    findNavController().navigate(action)
                 }
             }
         }

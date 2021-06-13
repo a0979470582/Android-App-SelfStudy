@@ -1,6 +1,7 @@
 package com.bu.selfstudy.ui.wordlist
 
 
+import android.os.Bundle
 import androidx.lifecycle.*
 import androidx.paging.Config
 import androidx.paging.LivePagedListBuilder
@@ -10,6 +11,9 @@ import com.bu.selfstudy.data.model.WordTuple
 import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.data.repository.WordRepository
 import com.bu.selfstudy.tool.SingleLiveData
+import com.bu.selfstudy.tool.log
+import com.bu.selfstudy.tool.putBundle
+import com.bu.selfstudy.ui.wordcard.WordCardViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -18,15 +22,15 @@ import kotlinx.coroutines.launch
  * 接著透過LiveData傳回並在ViewPager看到更新, 而wordFragment的生命週期進入onStop時, 會同步目前使用者所
  * 看到的單字頁(wordId)到資料庫
  */
-class WordListViewModel() : ViewModel() {
-    val currentOpenBookLiveData = MutableLiveData<Book>()
+class WordListViewModel(val currentOpenBook: Book) : ViewModel() {
 
-    val wordListLiveData = currentOpenBookLiveData.switchMap {
-        LivePagedListBuilder(
-                WordRepository.loadWordTuplesWithPaging(it.id, "%"),
-                Config(30)
-        ).build()
-    }
+    val databaseEvent = SingleLiveData<Pair<String, Bundle?>>()
+
+    val wordListLiveData = LivePagedListBuilder(
+            WordRepository.loadWordTuplesWithPaging(currentOpenBook.id, "%"),
+            Config(100)
+    ).build()
+
 
     val wordIdList = ArrayList<Long>()
     fun refreshWordIdList(wordList: List<WordTuple>){
@@ -50,68 +54,38 @@ class WordListViewModel() : ViewModel() {
 
     //將當前頁面同步到資料庫
     fun updateCurrentPosition(){
-        currentPosition?.let {
-            val currentBook = this.currentOpenBookLiveData.value!!.copy()
-            currentBook.position = it
-            updateBook(currentBook)
-        }
-    }
-
-    private fun updateBook(book: Book){
         viewModelScope.launch {
-            BookRepository.updateBook(book)
-        }
-    }
-
-
-
-    val insertEvent = SingleLiveData<List<Long>>()
-    val deleteEvent = SingleLiveData<Int>()
-    val deleteToTrashEvent = SingleLiveData<Int>()
-    val updateEvent = SingleLiveData<Int>()
-    val markEvent = SingleLiveData<String>()
-
-    fun updateMarkWord(wordId:Long, isMark: Boolean){
-        viewModelScope.launch(Dispatchers.IO) {
-            WordRepository.updateMarkWord(wordId, isMark).let {
-                if(it>0) {
-                    when(isMark){
-                        true->markEvent.postValue("mark")
-                        false->markEvent.postValue("cancel_mark")
-                    }
-
-                }
+            currentPosition?.let {
+                val currentBook = currentOpenBook.copy()
+                currentBook.position = it
+                BookRepository.updateBook(currentBook)
             }
         }
     }
 
-    fun updateWord(word: Word){
+    fun updateMarkWord(wordId: Long, isMark: Boolean){
         viewModelScope.launch(Dispatchers.IO) {
-            WordRepository.updateWord(word,bookId = currentOpenBookLiveData.value!!.id).let {
-                if(it>0)
-                    updateEvent.postValue(it)
+            if(WordRepository.updateMarkWord(wordId, isMark)>0){
+                databaseEvent.postValue((if(isMark) "mark" else "cancelMark") to null)
             }
         }
     }
 
-    fun insertWord(word: Word){
+    fun deleteWordToTrash(wordIdList:List<Long>){
         viewModelScope.launch(Dispatchers.IO) {
-            WordRepository.insertWord(word,bookId = currentOpenBookLiveData.value!!.id).let {
-                if(it.isNotEmpty())
-                    insertEvent.postValue(it)
-            }
+            if(WordRepository.deleteWordToTrash(*wordIdList.toLongArray()) > 0)
+                databaseEvent.postValue("delete" to null)
         }
     }
 
-    fun deleteWordToTrash(wordId: Long){
-        viewModelScope.launch(Dispatchers.IO) {
-            WordRepository.deleteWordToTrash(wordId, bookId = currentOpenBookLiveData.value!!.id).let {
-                if(it>0)
-                    deleteToTrashEvent.postValue(it)
+    companion object {
+        fun provideFactory(book: Book): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return WordListViewModel(book) as T
             }
         }
     }
-
 }
 
 

@@ -1,13 +1,12 @@
 <resources>
     <string name="app_name">SelfStudy</string>
 
-    <string name="menu_change_book">切換題庫</string>
-    <string name="menu_account">我的帳戶</string>
-    <string name="menu_theme">選擇主題</string>
-    <string name="menu_setting">設置</string>
-    <string name="menu_recycler">回收桶</string>
-    <string name="menu_subscription">訂閱</string>
-    <string name="menu_suggest">意見回饋</string>
+    <string name="activity_menu_book">題庫</string>
+    <string name="activity_menu_archive">封存</string>
+    <string name="activity_menu_recycler">回收桶</string>
+    <string name="activity_menu_theme">主題</string>
+    <string name="activity_menu_setting">設置</string>
+    <string name="activity_menu_suggest">意見回饋</string>
 
     <string name="hint_search_word">搜索英文單字</string>
 

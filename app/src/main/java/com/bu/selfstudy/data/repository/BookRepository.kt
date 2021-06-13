@@ -1,24 +1,20 @@
 package com.bu.selfstudy.data.repository
 
-import androidx.lifecycle.liveData
 import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.model.Book
-import com.bu.selfstudy.data.model.Member
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.AppDatabase.Companion.getDatabase
 import com.bu.selfstudy.data.local.LoadLocalBook
-import com.bu.selfstudy.tool.log
-import com.bu.selfstudy.tool.showToast
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object BookRepository {
-    val bookDao = getDatabase().bookDao()
+    private val bookDao = getDatabase().bookDao()
+    private val wordDao = getDatabase().wordDao()
 
     fun loadBooks(memberId:Long=SelfStudyApplication.memberId) = bookDao.loadDistinctBooks(memberId)
-
 
     suspend fun insertBook(vararg book: Book) = withContext(Dispatchers.IO){
         bookDao.insert(*book)
@@ -26,17 +22,11 @@ object BookRepository {
     suspend fun updateBook(vararg book: Book) = withContext(Dispatchers.IO){
         bookDao.update(*book)
     }
-    suspend fun deleteBook(vararg bookId: Long) = withContext(Dispatchers.IO){
-        bookDao.delete(*bookId)
-    }
+
     suspend fun deleteBookToTrash(bookId: Long) = withContext(Dispatchers.IO){
         bookDao.deleteBookToTrash(bookId).also {
-            WordRepository.deleteOneBookToTrash(bookId)
+            wordDao.deleteBookOwnWord(bookId)
         }
-    }
-
-    suspend fun updateBookSize(bookId: Long) = withContext(Dispatchers.IO){
-        bookDao.updateBookSize(bookId)
     }
 
     suspend fun insertLocalBook(fileName: String) = withContext(Dispatchers.IO) {
@@ -95,7 +85,7 @@ object BookRepository {
                     example = example
             ))
         }}
-        val wordIdList = WordRepository.insertWord(*wordList.toTypedArray(), bookId = bookId)
+        val wordIdList = WordRepository.insertWord(*wordList.toTypedArray())
         return@withContext if(wordIdList.isNotEmpty())
              "新增成功"
         else

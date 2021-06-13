@@ -14,7 +14,7 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_archive"
-        android:icon="@drawable/ic_baseline_drive_file_move_rtl_24"
+        android:icon="@drawable/ic_baseline_archive_24"
         android:title="封存"
         app:showAsAction="ifRoom" />
 </menu>

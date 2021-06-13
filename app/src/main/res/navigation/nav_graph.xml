@@ -13,14 +13,12 @@
             android:id="@+id/action_bookFragment_to_editBookDialog"
             app:destination="@id/editBookDialog" />
         <action
-            android:id="@+id/action_bookFragment_to_deleteBookDialog"
-            app:destination="@id/deleteBookDialog" />
-        <action
             android:id="@+id/action_bookFragment_to_addBookDialog"
             app:destination="@id/addBookDialog" />
         <action
             android:id="@+id/action_bookFragment_to_wordCardFragment"
-            app:destination="@id/wordCardFragment" />
+            app:destination="@id/wordCardFragment"
+            app:launchSingleTop="true" />
     </fragment>
 
     <fragment
@@ -29,6 +27,14 @@
         <action
             android:id="@+id/action_wordCardFragment_to_wordFragment"
             app:destination="@id/wordListFragment" />
+        <argument
+            android:name="wordId"
+            app:argType="long"
+            android:defaultValue="0L" />
+        <action
+            android:id="@+id/action_wordCardFragment_self"
+            app:destination="@id/wordCardFragment"
+            app:launchSingleTop="true" />
     </fragment>
 
     <fragment
@@ -72,43 +78,32 @@
         android:label="使用者登入"
         tools:layout="@layout/fragment_login"/>
     <dialog
-        android:id="@+id/chooseBookDialog"
-        android:name="com.bu.selfstudy.ui.dialog.ChooseBookDialog"
-        android:label="選擇一個題庫" >
+        android:id="@+id/dialogChooseBook"
+        android:name="com.bu.selfstudy.ui.dialog.DialogChooseBook"
+        android:label="">
         <argument
-            android:name="bookNames"
-            app:argType="string[]" />
-        <argument
-            android:name="bookIds"
-            app:argType="long[]" />
-        <argument
-            android:name="message"
-            app:argType="string" />
-        <argument
-            android:name="action"
+            android:name="title"
             app:argType="string" />
     </dialog>
     <action android:id="@+id/action_global_chooseBookDialog"
-            app:destination="@id/chooseBookDialog" />
+            app:destination="@id/dialogChooseBook" />
 
     <dialog
-        android:id="@+id/toDeleteDialog"
-        android:name="com.bu.selfstudy.ui.dialog.ToDeleteDialog"
-        android:label="ToDeleteDialog" >
+        android:id="@+id/dialogDeleteCommon"
+        android:name="com.bu.selfstudy.ui.dialog.DialogDeleteCommon"
+        android:label="" >
+        <argument
+            android:name="title"
+            app:argType="string" />
         <argument
             android:name="message"
             app:argType="string" />
-        <argument
-            android:name="wordId"
-            app:argType="long" />
     </dialog>
-    <action android:id="@+id/action_global_toDeleteDialog"
-            app:destination="@id/toDeleteDialog" />
 
     <fragment
         android:id="@+id/addWordFragment"
         android:name="com.bu.selfstudy.ui.addword.AddWordFragment"
-        android:label="加入單字"
+        android:label="新增單字"
         tools:layout="@layout/fragment_add_word"/>
     <action android:id="@+id/action_global_addWordFragment"
             app:destination="@id/addWordFragment"/>
@@ -118,41 +113,33 @@
         android:name="com.bu.selfstudy.ui.editword.EditWordFragment"
         android:label="編輯單字"
         tools:layout="@layout/fragment_add_word">
-        <argument
-            android:name="wordId"
-            app:argType="long" />
         <action
             android:id="@+id/action_editWordFragment_to_exitEditingDialog"
             app:destination="@id/exitEditingDialog" />
+        <argument
+            android:name="word"
+            app:argType="com.bu.selfstudy.data.model.Word" />
     </fragment>
     <action android:id="@+id/action_global_editWordFragment" app:destination="@id/editWordFragment" />
     <dialog
         android:id="@+id/exitEditingDialog"
-        android:name="com.bu.selfstudy.ui.editword.ExitEditingDialog"
+        android:name="com.bu.selfstudy.ui.editword.DialogSaveAndExit"
         android:label="ExitEditingDialog" />
 
     <dialog
         android:id="@+id/addBookDialog"
-        android:name="com.bu.selfstudy.ui.book.AddBookDialog"
+        android:name="com.bu.selfstudy.ui.book.DialogAddBook"
         android:label="AddBookDialog" />
 
     <dialog
-        android:id="@+id/deleteBookDialog"
-        android:name="com.bu.selfstudy.ui.book.DeleteBookDialog"
-        android:label="deleteBookDialog">
-        <argument
-            android:name="bookName"
-            app:argType="string" />
-    </dialog>
-
-    <dialog
         android:id="@+id/editBookDialog"
-        android:name="com.bu.selfstudy.ui.book.EditBookDialog"
+        android:name="com.bu.selfstudy.ui.book.DialogEditBook"
         android:label="EditBookDialog" >
         <argument
             android:name="bookName"
             app:argType="string" />
     </dialog>
+    <action android:id="@+id/action_global_dialogDeleteCommon" app:destination="@id/dialogDeleteCommon" />
 
 
 </navigation>

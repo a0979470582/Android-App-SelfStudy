@@ -3,6 +3,7 @@ package com.bu.selfstudy.ui.wordlist
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.R
 import com.bu.selfstudy.databinding.WordListItemBinding
 import com.bu.selfstudy.data.model.WordTuple
+import com.bu.selfstudy.tool.log
 import com.bu.selfstudy.tool.showToast
 import com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller
 
@@ -67,8 +69,7 @@ class WordListAdapter(val listFragment: WordListFragment):
             holder.binding.markButton.setIconResource(R.drawable.ic_round_star_border_24
             )
         }
-
-        holder.binding.wordInfoTextView.text = (position+1).toString()
+        //holder.binding.wordInfoTextView.text = (position+1).toString()
         holder.binding.divider.visibility =
                 if(position == asyncListDiffer.currentList.size-1) View.GONE else View.VISIBLE
     }
@@ -89,6 +90,4 @@ class WordListAdapter(val listFragment: WordListFragment):
         else
             ""
     }
-
-
 }

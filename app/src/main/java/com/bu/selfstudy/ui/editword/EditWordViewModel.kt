@@ -1,25 +1,32 @@
 package com.bu.selfstudy.ui.editword
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
+import android.os.Bundle
+import androidx.lifecycle.*
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.repository.WordRepository
+import com.bu.selfstudy.tool.SingleLiveData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class EditWordViewModel(wordId: Long) : ViewModel()  {
+class EditWordViewModel(val word: Word) : ViewModel()  {
 
-    val wordLiveData = WordRepository.loadWord(wordId).asLiveData()
+    val databaseEvent = SingleLiveData<Pair<String, Bundle?>>()
 
-
-    var editWord: Word? = null
-
+    val wordLiveData = WordRepository.loadWord(word.id).asLiveData()
 
     val hasEditLiveData = MutableLiveData(false)
 
-    fun setHasEdit(){
-        wordLiveData.value?.let { word->
-            hasEditLiveData.value = !compareWord(word, editWord!!)
+    fun updateWord(){
+        viewModelScope.launch(Dispatchers.IO) {
+            if(WordRepository.updateWord(word)>0)
+                databaseEvent.postValue("update" to null)
+        }
+    }
+
+
+    fun setEditState(){
+        wordLiveData.value?.let {
+            hasEditLiveData.value = (word!=it)
         }
     }
 
@@ -36,10 +43,10 @@ class EditWordViewModel(wordId: Long) : ViewModel()  {
     }
 
     companion object {
-        fun provideFactory(wordId: Long): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun provideFactory(word: Word): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return EditWordViewModel(wordId) as T
+                return EditWordViewModel(word) as T
             }
         }
     }

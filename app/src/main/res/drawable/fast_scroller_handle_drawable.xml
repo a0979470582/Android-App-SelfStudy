@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <solid android:color="@color/ripple_color" />
-    <padding
-        android:top="10dp"
-        android:left="10dp"
-        android:right="10dp"
-        android:bottom="10dp"/>
-</shape>
+    <item android:gravity="center">
+        <shape android:shape="rectangle">
+            <corners android:radius="2dp"/>
+            <solid
+                android:color="@color/gray"/>
+        </shape>
+    </item>
+
+    <item
+        android:start="-4dp"
+        android:end="-4dp"
+        android:top="0dp"
+        android:bottom="-7dp"
+        android:drawable="@drawable/ic_round_scroll_handler_24"/>
+
+
+</layer-list>

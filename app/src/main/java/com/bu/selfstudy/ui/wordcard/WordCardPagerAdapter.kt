@@ -25,12 +25,12 @@ class WordCardPagerAdapter(
     var mediaPlayer: MediaPlayer? = null
 
     fun mapToRealPosition(position: Int) = position%wordList.size
+
     fun submitList(words: List<Word>){
         wordList.clear()
         wordList.addAll(words)
         notifyDataSetChanged()
     }
-
 
     inner class ViewHolder(
             val binding: WordCardItemBinding
@@ -92,14 +92,11 @@ class WordCardPagerAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        System.currentTimeMillis().log()
-
         val word: Word = wordList[mapToRealPosition(position)]
         holder.bindData(word)
         holder.resetExpandedState()
 
         //val stateList: List<Boolean>  = ExpandState.getState(word)
-
     }
 
 

@@ -3,29 +3,30 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/changeBookDialog"
-            android:icon="@drawable/ic_baseline_library_books_24"
-            android:title="@string/menu_change_book" />
+            android:id="@+id/bookFragment"
+            android:icon="@drawable/ic_baseline_event_note_24"
+            android:title="@string/activity_menu_book" />
+
         <item
-            android:id="@+id/accountFragment"
-            android:icon="@drawable/ic_baseline_account_circle_24"
-            android:title="@string/menu_account" />
-        <item
-            android:id="@+id/themeFragment"
-            android:icon="@drawable/ic_round_color_lens_24"
-            android:title="@string/menu_theme" />
-        <item
-            android:id="@+id/settingFragment"
-            android:icon="@drawable/ic_round_settings_24"
-            android:title="@string/menu_setting" />
+            android:id="@+id/archiveFragment"
+            android:icon="@drawable/ic_baseline_archive_24"
+            android:title="@string/activity_menu_archive" />
         <item
             android:id="@+id/trashFragment"
             android:icon="@drawable/ic_round_delete_24"
-            android:title="@string/menu_recycler" />
+            android:title="@string/activity_menu_recycler" />
+        <item
+            android:id="@+id/themeFragment"
+            android:icon="@drawable/ic_round_color_lens_24"
+            android:title="@string/activity_menu_theme" />
+        <item
+            android:id="@+id/settingFragment"
+            android:icon="@drawable/ic_round_settings_24"
+            android:title="@string/activity_menu_setting" />
 
         <item
             android:id="@+id/suggestFragment"
             android:icon="@drawable/ic_baseline_contact_mail_24"
-            android:title="@string/menu_suggest" />
+            android:title="@string/activity_menu_suggest" />
     </group>
 </menu>

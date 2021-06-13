@@ -8,6 +8,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
@@ -36,9 +38,9 @@ class AddWordFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
 
-        getNavigationResultLiveData<Long>("bookId")?.observe(viewLifecycleOwner){
+        setFragmentResultListener("bookId"){_, bundle ->
             val word = Word(
-                bookId = it,
+                bookId = bundle.getLong("bookId"),
                 wordName = wordName,
                 pronunciation = pronunciation,
                 translation = translation,
@@ -46,9 +48,9 @@ class AddWordFragment: Fragment() {
                 example = example,
                 note = note
             )
-            //activityViewModel.insertWord(word)
-            findNavController().popBackStack()
+            activityViewModel.insertWord(word)
             closeKeyboard()
+            findNavController().popBackStack()
         }
 
         binding.wordField.editText?.doOnTextChanged() { inputText, _, _, _ ->
@@ -85,11 +87,11 @@ class AddWordFragment: Fragment() {
         val callback: OnBackPressedCallback = object: OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
                 val focusView = binding.root.findFocus()
-                if(focusView == null){
-                    //saveState()
-                    findNavController().popBackStack()
-                }else{
+                if(focusView != null)
                     focusView.clearFocus()
+                else {
+                    //save state
+                    findNavController().popBackStack()
                 }
             }
         }
@@ -105,10 +107,12 @@ class AddWordFragment: Fragment() {
                 if(wordName.isBlank())
                     binding.wordField.error = "請輸入正確的英文單字"
                 else{
-                    findNavController().navigate(R.id.chooseBookDialog)
+                    val action = AddWordFragmentDirections.actionGlobalChooseBookDialog("選擇加入的題庫")
+                    findNavController().navigate(action)
                 }
             }
             android.R.id.home->{
+                //新增單字是否需要保存狀態?
                 findNavController().popBackStack()
             }
 

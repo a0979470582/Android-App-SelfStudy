@@ -5,21 +5,21 @@ import android.view.*
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.ActionMode
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenResumed
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.*
-import com.bu.selfstudy.data.model.Book
-import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.databinding.ActivityMainBinding
-import com.bu.selfstudy.tool.log
+import com.bu.selfstudy.tool.putBundle
 import com.bu.selfstudy.tool.showSnackbar
 import com.bu.selfstudy.tool.showToast
 import com.bu.selfstudy.tool.viewBinding
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
+import com.bu.selfstudy.ui.book.BookFragmentDirections
+import com.bu.selfstudy.ui.wordcard.WordCardFragmentDirections
+import kotlinx.coroutines.delay
 
 
 class MainActivity : AppCompatActivity(){
@@ -44,22 +44,33 @@ class MainActivity : AppCompatActivity(){
         binding.navView.setupWithNavController(navController)
 
         activityViewModel.memberLiveData.observe(this){
-            binding.navView.findViewById<TextView>(R.id.mailText).text = it.email
-            binding.navView.findViewById<TextView>(R.id.userText).text = it.userName
+            binding.navView.findViewById<TextView>(R.id.mailField)?.setText(it.email)
+            binding.navView.findViewById<TextView>(R.id.userNameField)?.setText(it.userName)
         }
 
         activityViewModel.bookListLiveData.observe(this){
             activityViewModel.refreshBookIdList(it)
         }
 
-        binding.fab.setOnClickListener {
-            navController.navigate(R.id.addWordFragment)
-        }
+        activityViewModel.databaseEvent.observe(this){
+            when(it?.first){
+                "insertWord"-> binding.root.showSnackbar("新增成功", "檢視"){
+                    val wordId = it.second!!.getLong("wordId")!!
+                    val bookId = it.second!!.getLong("bookId")!!
 
-        navController.addOnDestinationChangedListener{ navController, navDestination, bundle ->
-            binding.fab.isVisible = (
-                    navDestination.id == R.id.bookFragment
-            )
+                    activityViewModel.currentOpenBookLiveData.value =
+                        activityViewModel.bookListLiveData.value!!.find { it.id == bookId }
+
+                    navController.currentDestination?.let {
+                        val action = if(it.id == R.id.wordCardFragment)
+                            WordCardFragmentDirections.actionWordCardFragmentSelf(wordId)
+                        else
+                            BookFragmentDirections.actionBookFragmentToWordCardFragment(wordId)
+
+                        navController.navigate(action)
+                    }
+                }
+            }
         }
     }
 

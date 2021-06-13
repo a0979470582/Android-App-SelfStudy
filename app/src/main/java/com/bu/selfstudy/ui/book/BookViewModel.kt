@@ -5,9 +5,12 @@ import androidx.lifecycle.*
 import com.bu.selfstudy.R
 import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.model.Book
+import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.repository.BookRepository
+import com.bu.selfstudy.data.repository.WordRepository
 import com.bu.selfstudy.tool.SingleLiveData
 import com.bu.selfstudy.tool.log
+import com.bu.selfstudy.tool.putBundle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -35,48 +38,38 @@ class BookViewModel : ViewModel(){
 
     var longPressedBook: Book? = null
     fun refreshLongPressedBook(bookList: List<Book>, bookId: Long){
-        longPressedBook = bookList.firstOrNull{ it.id==bookId }
+        viewModelScope.launch {
+            longPressedBook = bookList.firstOrNull{ it.id==bookId }
+        }
     }
-
 
     fun insertLocalBook(bookName: String){
         viewModelScope.launch {
             BookRepository.insertLocalBook(bookName).let {
-                val bundle = Bundle()
-                bundle.putString("bookName", "bookName")
-                databaseEvent.postValue("insertLocal" to bundle)
+                databaseEvent.postValue("insertLocal" to putBundle("bookName", "bookName"))
             }
         }
     }
 
     fun deleteBook(bookId: Long, bookName: String){
         viewModelScope.launch {
-            BookRepository.deleteBookToTrash(bookId).let {
-                if(it>0) {
-                    val bundle = Bundle()
-                    bundle.putString("bookName", bookName)
-                    databaseEvent.postValue("delete" to bundle)
-                }
-            }
+            if(BookRepository.deleteBookToTrash(bookId) > 0)
+                databaseEvent.postValue("delete" to putBundle("bookName", bookName))
         }
     }
     fun insertBook(bookName: String){
         viewModelScope.launch {
             val book = Book(bookName = bookName, memberId = SelfStudyApplication.memberId)
-            BookRepository.insertBook(book).let {
-                if(it.isNotEmpty()) {
-                    databaseEvent.postValue("insert" to null)
-                }
+            if(BookRepository.insertBook(book).isNotEmpty()) {
+                databaseEvent.postValue("insertBook" to null)
             }
         }
     }
 
     fun updateBook(book: Book){
         viewModelScope.launch{
-            BookRepository.updateBook(book).let {
-                if(it>0) {
-                    databaseEvent.postValue("update" to null)
-                }
+            if(BookRepository.updateBook(book)>0) {
+                databaseEvent.postValue("update" to null)
             }
         }
     }

@@ -7,8 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
@@ -16,24 +19,26 @@ import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.WordTuple
 import com.bu.selfstudy.databinding.FragmentWordListBinding
-import com.bu.selfstudy.databinding.WordListItemBinding
 import com.bu.selfstudy.tool.*
 import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
 import com.bu.selfstudy.tool.myselectiontracker.IdItemKeyProvider
+import com.bu.selfstudy.ui.editword.EditWordViewModel
+import com.bu.selfstudy.ui.wordcard.WordCardViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
 
 class WordListFragment : Fragment() {
-    private val listViewModel: WordListViewModel by viewModels()
+    private lateinit var viewModel: WordListViewModel
     private val activityViewModel: ActivityViewModel by activityViewModels()
     private val binding: FragmentWordListBinding by viewBinding()
     private val listAdapter = WordListAdapter(listFragment = this)
 
+    private lateinit var tracker: SelectionTracker<Long>
+
     private var searchView: SearchView? = null
     private var actionMode: ActionMode? = null
 
-    private lateinit var tracker: SelectionTracker<Long>
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -51,60 +56,56 @@ class WordListFragment : Fragment() {
 
      override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
          setHasOptionsMenu(true)
-         lifecycleScope.launch {
-             initSelectionTracker()
-             binding.fastScroller.attachFastScrollerToRecyclerView(binding.recyclerView)
+
+         activityViewModel.currentOpenBookLiveData.value!!.let {
+             viewModel = ViewModelProvider(this, WordListViewModel.provideFactory(it))
+                     .get(WordListViewModel::class.java)
+             (requireActivity() as AppCompatActivity).supportActionBar?.title = it.bookName
          }
 
-        activityViewModel.currentOpenBookLiveData.observe(viewLifecycleOwner) {
-            (requireActivity() as AppCompatActivity).supportActionBar?.title = it.bookName
-            listViewModel.currentOpenBookLiveData.value = it
-        }
-
-         listViewModel.wordListLiveData.observe(viewLifecycleOwner){
+         viewModel.wordListLiveData.observe(viewLifecycleOwner){
              listAdapter.submitList(it)
              refreshWordIdList(it)
          }
 
-         listViewModel.updateEvent.observe(this){
-             "已儲存成功".showToast()
-         }
-
-         listViewModel.markEvent.observe(this){
-             when(it){
-                 "mark" -> resources.getString(R.string.toast_success_mark).showToast()
-                 "cancel_mark" -> resources.getString(R.string.toast_cancel_mark).showToast()
+         viewModel.databaseEvent.observe(viewLifecycleOwner){
+             when(it?.first){
+                 "delete"-> return@observe
+                 "mark"->return@observe
+                 "cancelMark"->return@observe
              }
          }
 
-         listViewModel.insertEvent.observe(this){
-             binding.root.showSnackbar("已新增了${it!!.size}個單字", "檢視"){
-                 "正在檢視中...".showToast()
-             }
+         lifecycleScope.launch {
+             initSelectionTracker()
+             setDialogResultListener()
+             //binding.fastScroller.attachFastScrollerToRecyclerView(binding.recyclerView)
          }
+         //binding.fastScroller.touch
+    }
 
-         listViewModel.deleteEvent.observe(this){
-             "已移除${it}個單字".showToast()
-         }
-         listViewModel.deleteToTrashEvent.observe(this){
-             binding.root.showSnackbar("已將${it}個單字移至回收桶", "回復"){
-                 "正在回復中...".showToast()
-             }
-         }
-
-
+    private fun setDialogResultListener() {
+        setFragmentResultListener("delete") { _, _ ->
+            viewModel.longPressedWordIdList.let {
+            if(it.isNotEmpty())
+                viewModel.deleteWordToTrash(it)
+            }
+        }
     }
 
     fun refreshWordIdList(wordList: List<WordTuple>){
-        listViewModel.refreshWordIdList(wordList)
+        viewModel.refreshWordIdList(wordList)
     }
 
     private fun initSelectionTracker() {
+        if(::tracker.isInitialized)
+            return
+
         tracker = SelectionTracker.Builder(
                 "recycler-view-word-fragment",
                 binding.recyclerView,
-                IdItemKeyProvider(listViewModel.wordIdList),
-                IdItemDetailsLookup(binding.recyclerView, listViewModel.wordIdList),
+                IdItemKeyProvider(viewModel.wordIdList),
+                IdItemDetailsLookup(binding.recyclerView, viewModel.wordIdList),
                 StorageStrategy.createLongStorage()
         ).withSelectionPredicate(SelectionPredicates.createSelectAnything())
                 .build().also {
@@ -118,16 +119,12 @@ class WordListFragment : Fragment() {
                 if (!tracker.hasSelection()) {
                     actionMode?.finish()
                 } else {
-                    lifecycleScope.launch {
-                        activityViewModel.bookListLiveData.value?.let {
-                            listViewModel.refreshLongPressedWord(tracker.selection.toList())
-                        }
-                    }
+                    viewModel.refreshLongPressedWord(tracker.selection.toList())
                     if (actionMode == null) {
                         actionMode = (activity as AppCompatActivity)
                                 .startSupportActionMode(actionModeCallback)
                     }
-                    actionMode?.title = "${tracker.selection.size()}/${listViewModel.wordListLiveData.value?.size}"
+                    actionMode?.title = "${tracker.selection.size()}/${viewModel.wordListLiveData.value?.size}"
                 }
             }
         }
@@ -138,7 +135,7 @@ class WordListFragment : Fragment() {
 
 
     fun updateMarkWord(wordId:Long, isMark: Boolean){
-        listViewModel.updateMarkWord(wordId, isMark)
+        viewModel.updateMarkWord(wordId, isMark)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -193,23 +190,15 @@ class WordListFragment : Fragment() {
     private fun actionModeMenuCallback(itemId:Int){
         when (itemId) {
             R.id.action_delete -> {
-                MaterialAlertDialogBuilder(requireActivity())
-                        .setTitle("刪除")
-                        .setMessage("是否刪除 ?")
-                        .setPositiveButton("確定") { dialog, which ->
-                            listViewModel.deleteWordToTrash(0)
-                            //activityViewModel.deleteWordToTrash(args.wordId)
-                            //setNavigationResult("isDelete", true)
-                        }
-                        .setNegativeButton("取消") { dialog, which ->
-                        }
-                        .create()
+                val title = "刪除單字"
+                val message = "是否刪除 ${viewModel.longPressedWordIdList.size} 個單字?"
+                val action = WordListFragmentDirections.actionGlobalDialogDeleteCommon(title, message)
+                findNavController().navigate(action)
             }
             R.id.action_choose_all -> {
-                //viewModel.idList.let {
-                    //tracker.setItemsSelected(it,it.size != tracker.selection.size()
-                    //)
-                //}
+                viewModel.wordIdList.let {
+                    tracker.setItemsSelected(it, it.size != tracker.selection.size())
+                }
             }
 
             R.id.action_copy -> {

@@ -9,11 +9,11 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.FragmentAddWordBinding
@@ -22,7 +22,6 @@ import com.bu.selfstudy.tool.*
 
 class EditWordFragment: Fragment() {
     private val binding : FragmentAddWordBinding by viewBinding()
-    private val activityViewModel: ActivityViewModel by activityViewModels()
     private val args: EditWordFragmentArgs by navArgs()
 
     private lateinit var viewModel: EditWordViewModel
@@ -37,35 +36,33 @@ class EditWordFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
 
-        getNavigationResultLiveData<Boolean>("exitAndSave")?.observe(viewLifecycleOwner){
-            viewModel.editWord?.let {word->
-                //activityViewModel.updateWord(word)
-            }
-            findNavController().popBackStack(R.id.wordCardFragment, false)
-        }
+        viewModel = ViewModelProvider(
+                this,
+                EditWordViewModel.provideFactory(args.word)
+        ).get(EditWordViewModel::class.java)
 
-        setTextChangeListener()
+        fillInWord(viewModel.word)
         setCommonListener()
-
-        viewModel = ViewModelProvider(this, EditWordViewModel.provideFactory(args.wordId))
-            .get(EditWordViewModel::class.java)
-
-
-
+        setTextChangeListener()
 
         viewModel.wordLiveData.observe(viewLifecycleOwner){
-            if(viewModel.editWord == null){
-                viewModel.editWord = it.copy()
-                fillInWord(it)
-            }
-            viewModel.hasEditLiveData.value = false
+            viewModel.setEditState()
         }
-
 
         viewModel.hasEditLiveData.observe(viewLifecycleOwner){
             (activity as AppCompatActivity).supportActionBar?.invalidateOptionsMenu()
         }
 
+        viewModel.databaseEvent.observe(viewLifecycleOwner){
+            when(it?.first){
+                "update"->"已保存".showToast()
+            }
+        }
+        setFragmentResultListener("saveAndExit"){_, bundle->
+            viewModel.updateWord()
+            setFragmentResult("ExitFromEditWordFragment", Bundle())
+            findNavController().popBackStack()
+        }
 
     }
 
@@ -81,7 +78,6 @@ class EditWordFragment: Fragment() {
         binding.wordField.editText!!.setOnEditorActionListener { view, actionId, event ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-
                     binding.translationField.requestFocus()
                     binding.wordField.isEndIconVisible = false
                     false
@@ -97,6 +93,35 @@ class EditWordFragment: Fragment() {
             playSound()
         }
     }
+
+
+    @SuppressLint("RestrictedApi")
+    private fun setTextChangeListener() {
+        val allEditText = listOf(
+            binding.wordField.editText!!,
+            binding.pronunciationField.editText!!,
+            binding.translationField.editText!!,
+            binding.variationField.editText!!,
+            binding.exampleField.editText!!,
+            binding.noteField.editText!!,
+        )
+        val allWordColumn = listOf(
+            {text:String -> viewModel.word.wordName=text},
+            {text:String -> viewModel.word.pronunciation=text},
+            {text:String -> viewModel.word.translation=text},
+            {text:String -> viewModel.word.variation=text},
+            {text:String -> viewModel.word.example=text},
+            {text:String -> viewModel.word.note=text}
+        )
+
+        for(i in allEditText.indices){
+            allEditText[i].doOnTextChanged { text, _, _, _ ->
+                allWordColumn[i](text.toString())
+                viewModel.setEditState()
+            }
+        }
+    }
+
 
     private fun fillInWord(word: Word){
         binding.wordField.editText!!.setText(word.wordName)
@@ -114,34 +139,6 @@ class EditWordFragment: Fragment() {
         binding.noteField.isEndIconVisible = false
     }
 
-    @SuppressLint("RestrictedApi")
-    private fun setTextChangeListener() {
-        val allEditText = listOf(
-            binding.wordField.editText!!,
-            binding.pronunciationField.editText!!,
-            binding.translationField.editText!!,
-            binding.variationField.editText!!,
-            binding.exampleField.editText!!,
-            binding.noteField.editText!!,
-        )
-        val allWordColumn = listOf(
-            {text:String -> viewModel.editWord?.wordName=text},
-            {text:String -> viewModel.editWord?.pronunciation=text},
-            {text:String -> viewModel.editWord?.translation=text},
-            {text:String -> viewModel.editWord?.variation=text},
-            {text:String -> viewModel.editWord?.example=text},
-            {text:String -> viewModel.editWord?.note=text}
-        )
-
-        for(i in allEditText.indices){
-            allEditText[i].doOnTextChanged { text, _, _, _ ->
-                allWordColumn[i](text.toString())
-                viewModel.setHasEdit()
-            }
-        }
-    }
-
-
     fun popMenu(){
 
     }
@@ -156,19 +153,10 @@ class EditWordFragment: Fragment() {
         val callback: OnBackPressedCallback = object: OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
                 val focusView = binding.root.findFocus()
-                if(focusView != null){
+                if(focusView != null)
                     focusView.clearFocus()
-                    return
-                }
-
-                if(viewModel.hasEditLiveData.value!!) {
-                    val action = EditWordFragmentDirections
-                        .actionEditWordFragmentToExitEditingDialog()
-                    findNavController().navigate(action)
-                }
                 else
-                    findNavController().popBackStack()
-
+                    navigateToBackOrDialog()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -177,19 +165,28 @@ class EditWordFragment: Fragment() {
         )
     }
 
+    private fun navigateToBackOrDialog() {
+        if(viewModel.hasEditLiveData.value!!) {
+            val action = EditWordFragmentDirections.actionEditWordFragmentToExitEditingDialog()
+            findNavController().navigate(action)
+        } else
+            findNavController().popBackStack()
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.action_save -> {
-                viewModel.editWord?.let {
-                    if (it.wordName.isBlank())
-                        binding.wordField.error = "請輸入正確的英文單字"
-                    //else
-                        //activityViewModel.updateWord(it)
-
+                if (viewModel.word.wordName.isBlank())
+                    binding.wordField.error = "請輸入正確的英文單字"
+                else {
+                    viewModel.updateWord()
+                    closeKeyboard()
+                    binding.root.findFocus()?.clearFocus()
                 }
             }
             android.R.id.home -> {
-                findNavController().popBackStack()
+                closeKeyboard()
+                navigateToBackOrDialog()
             }
         }
         return true

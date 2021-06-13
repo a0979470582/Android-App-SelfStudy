@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.bu.selfstudy.SelfStudyApplication.Companion.context
+import com.bu.selfstudy.data.dao.BaseDao
 import com.bu.selfstudy.data.dao.BookDao
 import com.bu.selfstudy.data.dao.MemberDao
 import com.bu.selfstudy.data.dao.WordDao

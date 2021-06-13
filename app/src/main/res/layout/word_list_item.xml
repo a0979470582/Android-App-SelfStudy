@@ -15,26 +15,15 @@
         android:background="@drawable/item_background">
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/wordInfoTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="1" />
-
-        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/wordNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
             android:textSize="20sp"
-            app:layout_constraintBaseline_toBaselineOf="@id/wordInfoTextView"
-            app:layout_constraintStart_toEndOf="@id/wordInfoTextView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             tools:text="abide" />
 
         <com.google.android.material.textview.MaterialTextView
