@@ -38,7 +38,6 @@ class WordCardFragment : Fragment() {
     private val pagerAdapter = WordCardPagerAdapter()
 
     private var searchView: SearchView? = null
-    private var mediaPlayer: MediaPlayer? = null
     private var viewPagerCallback: ViewPager2.OnPageChangeCallback? = null
 
     override fun onCreateView(
@@ -48,6 +47,7 @@ class WordCardFragment : Fragment() {
     ): View {
 
         binding.viewPager.adapter = pagerAdapter
+        lifecycle.addObserver(pagerAdapter)
         binding.lifecycleOwner = viewLifecycleOwner
 
         return binding.root
@@ -83,6 +83,7 @@ class WordCardFragment : Fragment() {
          viewPagerCallback = object: ViewPager2.OnPageChangeCallback(){
              override fun onPageSelected(position: Int) {
                  super.onPageSelected(position)
+                 pagerAdapter.prepareMediaPlayer(position)
                  val realPosition = position % pagerAdapter.wordList.size
                  viewModel.updateCurrentPosition(realPosition)
              }
@@ -127,7 +128,7 @@ class WordCardFragment : Fragment() {
     private fun setPagerViewCurrentItem(position: Int){
         binding.viewPager.post {
             binding.viewPager.setCurrentItem(
-                    viewModel.getFakePosition(position), false
+                pagerAdapter.mapToFakePosition(position), false
             )
         }
     }
@@ -269,21 +270,6 @@ class WordCardFragment : Fragment() {
         }
         viewPagerCallback = null
     }
-
-    override fun onStart() {
-        super.onStart()
-        if(mediaPlayer == null){
-            mediaPlayer = MediaPlayer()
-        }
-        pagerAdapter.mediaPlayer = mediaPlayer
-    }
-
-    override fun onStop() {
-        super.onStop()
-        mediaPlayer?.release()
-        mediaPlayer = null
-    }
-
 }
 
 /*

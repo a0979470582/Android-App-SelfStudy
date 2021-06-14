@@ -4,8 +4,13 @@ import androidx.lifecycle.liveData
 import androidx.paging.toLiveData
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.AppDatabase.Companion.getDatabase
+import com.bu.selfstudy.data.network.SelfStudyNetwork
+import com.bu.selfstudy.data.network.WordPageHandler
+import com.bu.selfstudy.tool.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.net.ContentHandler
+import javax.xml.parsers.SAXParserFactory
 
 object WordRepository {
     private val wordDao = getDatabase().wordDao()
@@ -29,5 +34,13 @@ object WordRepository {
 
     suspend fun deleteWordToTrash(vararg wordId: Long) = withContext(Dispatchers.IO){
         wordDao.deleteWordToTrash(*wordId)
+    }
+
+    suspend fun getWordPage(wordName: String) = withContext(Dispatchers.IO){
+        val responseBody = SelfStudyNetwork.getWordPage(wordName)
+        val factory = SAXParserFactory.newInstance()
+        val xmlReader = factory.newSAXParser().xmlReader
+        xmlReader.contentHandler = WordPageHandler()
+        xmlReader.parse(responseBody.string())
     }
 }

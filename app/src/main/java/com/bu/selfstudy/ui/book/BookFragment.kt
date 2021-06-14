@@ -23,12 +23,15 @@ import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.repository.BookRepository
+import com.bu.selfstudy.data.repository.WordRepository
 import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
 import com.bu.selfstudy.tool.myselectiontracker.IdItemKeyProvider
 import com.bu.selfstudy.ui.wordcard.ActionItemCreator
 import com.bu.selfstudy.ui.wordcard.WordCardFragmentDirections
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.net.ContentHandler
+import javax.xml.parsers.SAXParserFactory
 
 class BookFragment : Fragment() {
 
@@ -234,6 +237,9 @@ class BookFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.action_search->{
+                lifecycleScope.launch {
+                    WordRepository.getWordPage("test")
+                }
             }
             R.id.action_add_book->{
                 val action = BookFragmentDirections.actionBookFragmentToAddBookDialog()

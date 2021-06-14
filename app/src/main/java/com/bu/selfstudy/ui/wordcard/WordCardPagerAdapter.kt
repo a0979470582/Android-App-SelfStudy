@@ -1,10 +1,14 @@
 package com.bu.selfstudy.ui.wordcard
 
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.BuildConfig
 import com.bu.selfstudy.R
@@ -12,6 +16,11 @@ import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.WordCardItemBinding
 import com.bu.selfstudy.tool.log
+import com.bu.selfstudy.tool.showToast
+import java.io.IOException
+import java.lang.IllegalArgumentException
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * onBindViewHolder會觸發文字設定和決定是否擴展, 當viewHolder被重用, wordList被修改, 切換題庫等等會使它觸發,
@@ -20,17 +29,9 @@ import com.bu.selfstudy.tool.log
  */
 class WordCardPagerAdapter(
         val wordList: ArrayList<Word> = ArrayList()
-) : RecyclerView.Adapter<WordCardPagerAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<WordCardPagerAdapter.ViewHolder>(), LifecycleObserver{
 
     var mediaPlayer: MediaPlayer? = null
-
-    fun mapToRealPosition(position: Int) = position%wordList.size
-
-    fun submitList(words: List<Word>){
-        wordList.clear()
-        wordList.addAll(words)
-        notifyDataSetChanged()
-    }
 
     inner class ViewHolder(
             val binding: WordCardItemBinding
@@ -51,7 +52,7 @@ class WordCardPagerAdapter(
             SelfStudyApplication.context.resources.getResourceName(R.raw.humor).log()
             val uri = Uri.parse(word.audioPath)
             //SelfStudyApplication.context.resources.getResourceName(path)
-            binding.soundButton.isVisible = false
+            binding.soundButton.isVisible = true
         }
     }
 
@@ -79,13 +80,13 @@ class WordCardPagerAdapter(
         val holder = ViewHolder(binding)
 
         holder.binding.soundButton.setOnClickListener {
-            val uri = Uri.parse(
-               "android.resource://${BuildConfig.APPLICATION_ID}/raw/${R.raw.particular}"
-            )
-            val mediaPlayer = MediaPlayer.create(SelfStudyApplication.context, uri)
-            //wordList[realPosition].audioPath
-            //SelfStudyApplication.context.resources.getIdentifier()
-            mediaPlayer.start()
+            mediaPlayer?.run {
+                if(duration != -1) {
+                    start()
+                    return@setOnClickListener
+                }
+            }
+            "目前沒有音檔".showToast()
         }
 
         return holder
@@ -99,6 +100,18 @@ class WordCardPagerAdapter(
         //val stateList: List<Boolean>  = ExpandState.getState(word)
     }
 
+    fun mapToFakePosition(position: Int) = if(wordList.size >= 2)
+        wordList.size * 100 + min(position, wordList.lastIndex)
+    else
+        max(position, 0)
+
+    fun mapToRealPosition(position: Int) = position%wordList.size
+
+    fun submitList(words: List<Word>){
+        wordList.clear()
+        wordList.addAll(words)
+        notifyDataSetChanged()
+    }
 
     override fun getItemCount() = when(wordList.size){
         0->0
@@ -106,5 +119,36 @@ class WordCardPagerAdapter(
         else-> Int.MAX_VALUE
     }
     override fun getItemId(position: Int): Long = wordList[mapToRealPosition(position)].id
+
+
+
+    fun prepareMediaPlayer(fakePosition: Int){
+        val url = wordList[mapToRealPosition(fakePosition)].audioPath
+        try {
+            mediaPlayer?.apply {
+                reset()
+                setAudioStreamType(AudioManager.STREAM_MUSIC)
+                setDataSource(url)
+                prepareAsync()
+            }
+        }catch (e: IllegalArgumentException){
+            e.printStackTrace()
+        }catch (e: IOException){
+            e.printStackTrace()
+        }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    private fun createMediaPlayer(){
+        if(mediaPlayer == null){
+            mediaPlayer = MediaPlayer()
+        }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    private fun releaseMediaPlayer(){
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
 
 }

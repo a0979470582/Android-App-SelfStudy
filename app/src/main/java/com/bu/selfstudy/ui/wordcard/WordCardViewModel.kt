@@ -50,13 +50,7 @@ class WordCardViewModel(val currentOpenBook: Book) : ViewModel() {
 
     fun getWordPosition(wordId: Long) = wordListLiveData.value!!.indexOfFirst { it.id==wordId }
 
-    fun getFakePosition(realPosition: Int): Int{
-        wordListLiveData.value?.let {
-            if(it.size >= 2)
-                return it.size * 100 + min(realPosition, it.lastIndex)
-        }
-        return 0
-    }
+
 
     fun updateMarkWord(wordId:Long, isMark: Boolean){
         viewModelScope.launch(Dispatchers.IO) {
