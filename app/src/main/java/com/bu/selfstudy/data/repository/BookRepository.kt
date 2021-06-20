@@ -10,6 +10,7 @@ import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+//use coroutine, try-catch, don't write many code here
 object BookRepository {
     private val bookDao = getDatabase().bookDao()
     private val wordDao = getDatabase().wordDao()

@@ -1,8 +1,10 @@
 package com.bu.selfstudy.ui.book
 
+import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.view.textservice.TextServicesManager
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
@@ -243,61 +245,7 @@ class BookFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.action_search->{
-                lifecycleScope.launch(Dispatchers.IO) {
-                    val wordName = "reserve"
-                    val url = "https://tw.dictionary.search.yahoo.com/search?p=$wordName"
-                    val audioUrlFemale = "https://s.yimg.com/bg/dict/dreye/live/f/${wordName}.mp3"
-                    val audioUrlMale = "https://s.yimg.com/bg/dict/dreye/live/m/${wordName}.mp3"
-
-                    val userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36"
-
-                    val document = Jsoup.connect(url).userAgent(userAgent).get()
-
-                    val wordDict = mutableMapOf<String, Any>()
-
-                    fun Elements.toTextList(cssQuery: String) = this.select(cssQuery).map { it.text() }
-                    fun Element.toTextList(cssQuery: String) = this.select(cssQuery).map { it.text() }
-
-                    document.select("div.dictionaryWordCard").let{
-                        wordDict["wordName"] = it.select("span.fz-24").first().text()
-                        wordDict["pronunciation"] = it.toTextList("li.d-ib span")
-                        wordDict["partOfSpeech"] = it.toTextList("div.pos_button")
-                        wordDict["translation"] = it.toTextList("div.dictionaryExplanation")
-                        wordDict["variation"] = it.toTextList("li.ov-a span")
-                    }
-
-                    document.select("div.grp-tab-content-explanation").let{
-                        wordDict["example_partOfSpeech"] = it.toTextList("div.compTitle")
-                        wordDict["example"] = mutableListOf<Any>()
-
-                        it.select("div.compTextList").forEach {listElement->
-                            val rowDataList = mutableListOf<Any>()
-                            listElement.select("li.va-top").forEach {rowElement->
-                                rowDataList.add(rowElement.toTextList("span"))
-                            }
-                            (wordDict["example"] as MutableList<Any>).add(rowDataList)
-                        }
-                    }
-
-
-                    fun getAudioPathResponse(url: String)= Jsoup
-                        .connect(url)
-                        .ignoreContentType(true)
-                        .ignoreHttpErrors(true)
-                        .execute()
-
-                    wordDict["audioPath"] = when {
-                        getAudioPathResponse(audioUrlFemale).statusCode()==200 -> audioUrlFemale
-                        getAudioPathResponse(audioUrlMale).statusCode()==200 -> audioUrlMale
-                        else -> ""
-                    }
-
-                    wordDict.log()
-
-
-
-                    //WordRepository.getWordPage("reserve")
-                }
+                findNavController().navigate(R.id.searchFragment)
             }
             R.id.action_add_book->{
                 val action = BookFragmentDirections.actionBookFragmentToAddBookDialog()
@@ -317,10 +265,7 @@ class BookFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.book_toolbar, menu)
 
-        /*
-        val searchItem = menu.findItem(R.id.action_search)
-        searchView = searchItem.actionView as SearchView
-
+        searchView = menu.findItem(R.id.action_search).actionView as SearchView
         val searchManager = requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
         searchView?.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
 
@@ -334,7 +279,7 @@ class BookFragment : Fragment() {
 
                 /**每一次搜尋文字改變, 就觸發資料庫刷新*/
                 override fun onQueryTextChange(query: String): Boolean {
-                    viewModel.searchQueryLD.value = query
+                    //viewModel.searchQueryLD.value = query
                     return false
                 }
             })
@@ -342,13 +287,13 @@ class BookFragment : Fragment() {
             /**如果頁面重建, ViewModel保有查詢字串, 表示先前頁面銷毀時, 使用者正在使用查詢
             我們知道頁面銷毀會使SearchView也銷毀, 但SearchView在第一次開啟或最後銷毀時, 都會
             觸發onQueryTextChange且query是空值, 注意expandActionView就會觸發此情形*/
-            val pendingQuery = viewModel.searchQueryLD.value
+            /*val pendingQuery = viewModel.searchQueryLD.value
             if(pendingQuery!=null && pendingQuery.isNotBlank()){
                 searchItem.expandActionView()
                 setQuery(pendingQuery, false)
                 clearFocus()
-            }
-        }*/
+            }*/
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -34,6 +34,8 @@ class MainActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL)
+
         navController = findNavController(R.id.nav_host_fragment)
         appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
 
@@ -72,6 +74,11 @@ class MainActivity : AppCompatActivity(){
                 }
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        return super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.search_toolbar, menu)
     }
 
 
