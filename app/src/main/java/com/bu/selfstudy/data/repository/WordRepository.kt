@@ -1,11 +1,19 @@
 package com.bu.selfstudy.data.repository
 
+import androidx.lifecycle.liveData
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.AppDatabase.Companion.getDatabase
 import com.bu.selfstudy.data.network.SelfStudyNetwork
+import com.bu.selfstudy.tool.getSharedPreferences
+import com.bu.selfstudy.tool.setSharedPreferences
+import com.google.gson.Gson
+import com.google.gson.JsonParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.lang.Exception
+import java.lang.RuntimeException
 import javax.xml.parsers.SAXParserFactory
+
 
 object WordRepository {
     private val wordDao = getDatabase().wordDao()
@@ -13,6 +21,7 @@ object WordRepository {
     fun loadWord(wordId: Long) = wordDao.loadWord(wordId)
 
     fun loadWords(bookId: Long, query: String) = wordDao.loadDistinctWords(bookId, query)
+    fun loadWords(query: String) = wordDao.loadWords(query)
 
     fun loadWordTuplesWithPaging(bookId: Long, query: String) = wordDao.loadWordTuplesWithPaging(bookId, query)
 
@@ -31,7 +40,9 @@ object WordRepository {
         wordDao.deleteWordToTrash(*wordId)
     }
 
-    suspend fun getWordPage(wordName: String) = withContext(Dispatchers.IO){
-        SelfStudyNetwork.getWordPage(wordName)
+    suspend fun getWord(wordName: String): Result<Word> = withContext(Dispatchers.IO){
+        kotlin.runCatching {
+            SelfStudyNetwork.getYahooWord(wordName)
+        }
     }
 }

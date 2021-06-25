@@ -22,6 +22,9 @@ interface WordDao : BaseDao<Word>{
     fun loadWords(bookId:Long, query: String): Flow<List<Word>>
     fun loadDistinctWords(bookId:Long, query: String) = loadWords(bookId, query).distinctUntilChanged()
 
+    @Query("SELECT wordName FROM Word WHERE isTrash=0 AND wordName LIKE :query || '%' ORDER BY wordName")
+    fun loadWords(query: String): Flow<List<String>>
+
     @Query("SELECT * FROM Word WHERE isTrash=0 AND bookId=:bookId AND wordName LIKE :query")
     fun loadWordsWithPaging(bookId:Long, query: String): DataSource.Factory<Int, Word>
 

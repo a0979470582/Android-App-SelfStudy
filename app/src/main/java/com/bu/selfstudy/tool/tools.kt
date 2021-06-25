@@ -18,6 +18,13 @@ fun Fragment.closeKeyboard(){
         }
     }
 }
+fun Fragment.openKeyboard(){
+    requireActivity().currentFocus?.let{
+        (requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).apply{
+            toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0)
+        }
+    }
+}
 
 fun <T:Any> T.log(){
     Log.e("debug", this.toString())

@@ -4,7 +4,8 @@ import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
 import android.view.*
-import android.view.textservice.TextServicesManager
+import android.widget.AutoCompleteTextView
+import android.widget.LinearLayout
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
@@ -18,28 +19,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
+import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
+import com.bu.selfstudy.data.model.Book
+import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.databinding.FragmentBookBinding
 import com.bu.selfstudy.tool.*
-import com.bu.selfstudy.ActivityViewModel
-import com.bu.selfstudy.data.model.Book
-import com.bu.selfstudy.data.model.Word
-import com.bu.selfstudy.data.repository.BookRepository
-import com.bu.selfstudy.data.repository.WordRepository
 import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
 import com.bu.selfstudy.tool.myselectiontracker.IdItemKeyProvider
-import com.bu.selfstudy.ui.wordcard.ActionItemCreator
-import com.bu.selfstudy.ui.wordcard.WordCardFragmentDirections
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
-import java.net.ContentHandler
 import java.util.*
-import javax.xml.parsers.SAXParserFactory
 
 class BookFragment : Fragment() {
 
@@ -57,7 +47,7 @@ class BookFragment : Fragment() {
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
-            savedInstanceState: Bundle? ):View{
+            savedInstanceState: Bundle?):View{
 
         binding.recyclerView.let {
             it.adapter = this.adapter
@@ -80,10 +70,10 @@ class BookFragment : Fragment() {
 
         viewModel.databaseEvent.observe(viewLifecycleOwner){
             when(it?.first){
-                "delete"->"已刪除「${it.second?.getString("bookName")}」".showToast()
-                "update"->"更新成功".showToast()
-                "insertBook"->"新增成功".showToast()
-                "insertLocal"->"已新增「${it.second?.getString("bookName")}」".showToast()
+                "delete" -> "已刪除「${it.second?.getString("bookName")}」".showToast()
+                "update" -> "更新成功".showToast()
+                "insertBook" -> "新增成功".showToast()
+                "insertLocal" -> "已新增「${it.second?.getString("bookName")}」".showToast()
             }
         }
         binding.fab.setOnClickListener {
@@ -128,13 +118,13 @@ class BookFragment : Fragment() {
                 viewModel.deleteBook(it.id, it.bookName)
             }
         }
-        setFragmentResultListener("edit"){_, bundle->
+        setFragmentResultListener("edit"){ _, bundle->
             viewModel.longPressedBook?.copy()?.let {
                 it.bookName = bundle.getString("bookName")!!
                 viewModel.updateBook(it)
             }
         }
-        setFragmentResultListener("insertBook"){_, bundle->
+        setFragmentResultListener("insertBook"){ _, bundle->
             val bookName = bundle.getString("bookName")!!
             viewModel.insertBook(bookName)
         }
@@ -219,7 +209,7 @@ class BookFragment : Fragment() {
         }
     }
 
-    private fun actionModeMenuCallback(itemId:Int){
+    private fun actionModeMenuCallback(itemId: Int){
         when (itemId) {
             R.id.action_delete -> {
                 viewModel.longPressedBook?.let {
@@ -229,13 +219,13 @@ class BookFragment : Fragment() {
                     findNavController().navigate(action)
                 }
             }
-            R.id.action_edit ->{
+            R.id.action_edit -> {
                 viewModel.longPressedBook?.let {
                     val action = BookFragmentDirections.actionBookFragmentToEditBookDialog(it.bookName)
                     findNavController().navigate(action)
                 }
             }
-            R.id.action_archive ->{
+            R.id.action_archive -> {
                 viewModel.longPressedBook?.let {
                 }
             }
@@ -244,17 +234,18 @@ class BookFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.action_search->{
+            R.id.action_search -> {
                 findNavController().navigate(R.id.searchFragment)
+                //FragmentNavigatorExtras()
             }
-            R.id.action_add_book->{
+            R.id.action_add_book -> {
                 val action = BookFragmentDirections.actionBookFragmentToAddBookDialog()
                 findNavController().navigate(action)
             }
-            R.id.action_test->{
+            R.id.action_test -> {
 
             }
-            R.id.action_download_book->{
+            R.id.action_download_book -> {
 
             }
         }
@@ -264,23 +255,23 @@ class BookFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.book_toolbar, menu)
-
         searchView = menu.findItem(R.id.action_search).actionView as SearchView
-        val searchManager = requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        searchView?.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
+
+
 
         searchView?.apply{
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 /**避免按下送出後, 鍵盤消失, 但輸入框的光標仍在閃爍*/
                 override fun onQueryTextSubmit(query: String): Boolean {
                     clearFocus()
-                    return false
+                    return true
                 }
 
                 /**每一次搜尋文字改變, 就觸發資料庫刷新*/
                 override fun onQueryTextChange(query: String): Boolean {
                     //viewModel.searchQueryLD.value = query
-                    return false
+
+                    return true
                 }
             })
 

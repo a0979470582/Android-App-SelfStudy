@@ -6,25 +6,26 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.bu.selfstudy.SelfStudyApplication.Companion.context
-import com.bu.selfstudy.data.dao.BaseDao
-import com.bu.selfstudy.data.dao.BookDao
-import com.bu.selfstudy.data.dao.MemberDao
-import com.bu.selfstudy.data.dao.WordDao
-import com.bu.selfstudy.data.model.Book
-import com.bu.selfstudy.data.model.Member
-import com.bu.selfstudy.data.model.Word
+import com.bu.selfstudy.data.dao.*
+import com.bu.selfstudy.data.model.*
 import com.bu.selfstudy.tool.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
-@Database(version = 13, entities = [Member::class, Book::class, Word::class])
+@Database(version = 1, entities = [Member::class,
+    Book::class,
+    Word::class,
+    SearchHistory::class,
+    SearchAutoComplete::class])
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun memberDao(): MemberDao
     abstract fun bookDao(): BookDao
     abstract fun wordDao(): WordDao
+    abstract fun searchHistoryDao(): SearchHistoryDao
+    abstract fun searchAutoCompleteDao(): SearchAutoCompleteDao
 
     companion object {
         private var instance: AppDatabase? = null
@@ -46,7 +47,7 @@ abstract class AppDatabase : RoomDatabase() {
                     })*/
                     .build().apply {
                         instance = this
-                        //initialize2()
+                        initialize2()
                 }
 
         }

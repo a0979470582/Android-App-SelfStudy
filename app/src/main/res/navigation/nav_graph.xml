@@ -143,7 +143,11 @@
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.bu.selfstudy.ui.search.SearchFragment"
-        android:label="SearchFragment" /><action android:id="@+id/action_global_searchFragment" app:destination="@id/searchFragment"/>
+        android:label="SearchFragment" />
+    <action
+        android:id="@+id/action_global_searchFragment"
+        app:destination="@id/searchFragment"
+        app:enterAnim="@anim/nav_default_enter_anim" />
 
 
 </navigation>
