@@ -47,7 +47,7 @@ abstract class AppDatabase : RoomDatabase() {
                     })*/
                     .build().apply {
                         instance = this
-                        initialize2()
+                        //initialize2()
                 }
 
         }

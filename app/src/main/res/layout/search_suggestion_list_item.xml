@@ -18,14 +18,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/ic_baseline_history_24" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/searchIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="24dp"
+        android:visibility="gone"
+        android:tint="#606060"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_baseline_search_24" />
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/suggestionNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
+        android:layout_marginStart="56dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@id/historyIcon"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="test" />
 
@@ -34,6 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingEnd="16dp"
+        android:tint="#606060"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_baseline_north_west_24" />

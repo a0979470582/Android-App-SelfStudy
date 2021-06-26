@@ -3,15 +3,10 @@ package com.bu.selfstudy.ui.search
 import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
-import android.provider.SearchRecentSuggestions
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
-import com.bu.selfstudy.ActivityViewModel
-import com.bu.selfstudy.data.MySuggestionProvider
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.ActivitySearchBinding
-import com.bu.selfstudy.databinding.FragmentBookBinding
 import com.bu.selfstudy.tool.showToast
 import com.bu.selfstudy.tool.viewBinding
 

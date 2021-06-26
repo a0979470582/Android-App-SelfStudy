@@ -6,8 +6,9 @@ import androidx.room.PrimaryKey
 import java.util.*
 
 @Entity(indices = [Index(value=["searchName"], unique = true)])
-data class SearchAutoComplete (
-    @PrimaryKey(autoGenerate = true)
-    val id:Long = 0,
-    val searchName: String
-)
+class SearchAutoComplete (
+        @PrimaryKey(autoGenerate = true)
+        val id:Long = 0,
+        searchName: String,
+        val timestamp: Date = Date()
+):SearchRow(searchName)

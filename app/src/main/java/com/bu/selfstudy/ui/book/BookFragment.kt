@@ -23,6 +23,7 @@ import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.repository.BookRepository
+import com.bu.selfstudy.data.repository.SearchRepository
 import com.bu.selfstudy.databinding.FragmentBookBinding
 import com.bu.selfstudy.tool.*
 import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
@@ -60,8 +61,10 @@ class BookFragment : Fragment() {
         setHasOptionsMenu(true)
         lifecycleScope.launch {
             //loadLocalBook()
+            //SearchRepository.insertLocalAutoComplete()
             setDialogResultListener()
             initSelectionTracker()
+            //SearchRepository.removeLocalAutoComplete()
         }
 
         activityViewModel.bookListLiveData.observe(viewLifecycleOwner){
@@ -289,11 +292,13 @@ class BookFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        tracker.onSaveInstanceState(outState)
+        if(::tracker.isInitialized)
+            tracker.onSaveInstanceState(outState)
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        tracker.onRestoreInstanceState(savedInstanceState)
+        if(::tracker.isInitialized)
+            tracker.onRestoreInstanceState(savedInstanceState)
     }
 }

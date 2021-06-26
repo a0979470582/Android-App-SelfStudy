@@ -2,6 +2,7 @@ package com.bu.selfstudy.ui.search
 
 import androidx.lifecycle.*
 import com.bu.selfstudy.data.model.SearchHistory
+import com.bu.selfstudy.data.model.SearchRow
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.repository.SearchRepository
 import com.bu.selfstudy.data.repository.WordRepository
@@ -14,26 +15,22 @@ class SearchViewModel : ViewModel() {
 
 
     val searchQuery = MutableLiveData<String>()
-    val autoCompleteList = searchQuery.switchMap {
+    private val autoCompleteList = searchQuery.switchMap {
         SearchRepository.loadSearchAutoComplete(it).asLiveData()
     }
-    val historyList = searchQuery.switchMap {
+    private val historyList = searchQuery.switchMap {
         SearchRepository.loadSearchHistory(it).asLiveData()
     }
 
-    val suggestionList = MediatorLiveData<List<String>>().also {
-        it.addSource(autoCompleteList) {
-            combineList()
-        }
-        it.addSource(historyList) {
-            combineList()
-        }
+    val suggestionList = MediatorLiveData<List<SearchRow>>().also {
+        it.addSource(autoCompleteList) { combineList() }
+        it.addSource(historyList) { combineList() }
     }
 
     @Synchronized
     private fun combineList() {
         viewModelScope.launch(Dispatchers.Default) {
-            val newList = ArrayList<String>()
+            val newList = ArrayList<SearchRow>()
 
             historyList.value?.let {
                 newList.addAll(it)
@@ -60,4 +57,5 @@ class SearchViewModel : ViewModel() {
             wordLiveData.value = WordRepository.getWord(wordName)
         }
     }
+
 }
