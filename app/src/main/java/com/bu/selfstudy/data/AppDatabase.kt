@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.bu.selfstudy.SelfStudyApplication.Companion.context
 import com.bu.selfstudy.data.dao.*
@@ -14,7 +15,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
-@Database(version = 1, entities = [Member::class,
+@Database(version = 2, entities = [Member::class,
     Book::class,
     Word::class,
     SearchHistory::class,
@@ -29,6 +30,13 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
         private var instance: AppDatabase? = null
+
+        val MIGRATION1_2 = object: Migration(1, 2){
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE SearchAutoComplete ADD COLUMN 'isHistory' INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         @Synchronized
         fun getDatabase(): AppDatabase {
             instance?.let {
@@ -36,6 +44,7 @@ abstract class AppDatabase : RoomDatabase() {
             }
             return  Room.databaseBuilder(context, AppDatabase::class.java, "app_database")
                     .fallbackToDestructiveMigration()
+                    .addMigrations(MIGRATION1_2)
                     //.createFromAsset("database/app_database")
                     /*.addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
@@ -52,6 +61,8 @@ abstract class AppDatabase : RoomDatabase() {
 
         }
     }
+
+
 
     private fun initialize2(){
         val member = Member(

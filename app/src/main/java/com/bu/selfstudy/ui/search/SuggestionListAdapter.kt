@@ -42,10 +42,20 @@ class SuggestionListAdapter(val fragment: SearchFragment):
         holder.binding.suggestionNameTextView.text = suggestionList[position].searchName
         with(holder.binding){ when(suggestionList[position]){
                 is SearchHistory->{
+                    holder.binding.suggestionNameTextView.text =
+                            suggestionList[position].searchName
                     historyIcon.visibility = View.VISIBLE
                     searchIcon.visibility = View.GONE
                 }
                 is SearchAutoComplete->{
+                    holder.binding.suggestionNameTextView.text =
+                            suggestionList[position].searchName
+                    historyIcon.visibility = View.GONE
+                    searchIcon.visibility = View.VISIBLE
+                }
+                is SearchRow->{//clipboard text
+                    holder.binding.suggestionNameTextView.text =
+                            "您複製的文字「${suggestionList[position].searchName}」"
                     historyIcon.visibility = View.GONE
                     searchIcon.visibility = View.VISIBLE
                 }

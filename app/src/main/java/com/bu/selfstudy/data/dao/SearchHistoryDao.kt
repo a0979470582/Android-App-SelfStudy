@@ -14,5 +14,5 @@ interface SearchHistoryDao: BaseDao<SearchHistory>{
     fun loadSearchHistory(query: String): Flow<List<SearchHistory>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)//new search replace old
-    fun insertSearchHistory(searchHistory: SearchHistory): Long
+    suspend fun insertSearchHistory(searchHistory: SearchHistory): Long
 }

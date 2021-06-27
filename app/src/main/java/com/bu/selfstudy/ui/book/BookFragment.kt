@@ -65,6 +65,7 @@ class BookFragment : Fragment() {
             setDialogResultListener()
             initSelectionTracker()
             //SearchRepository.removeLocalAutoComplete()
+            //SearchRepository.clearSearchHistory()
         }
 
         activityViewModel.bookListLiveData.observe(viewLifecycleOwner){

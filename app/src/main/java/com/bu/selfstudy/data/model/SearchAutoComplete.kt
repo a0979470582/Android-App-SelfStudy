@@ -10,5 +10,6 @@ class SearchAutoComplete (
         @PrimaryKey(autoGenerate = true)
         val id:Long = 0,
         searchName: String,
-        val timestamp: Date = Date()
+        val timestamp: Date = Date(),
+        val isHistory: Boolean = false
 ):SearchRow(searchName)

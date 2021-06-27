@@ -13,10 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bu.selfstudy.R
 import com.bu.selfstudy.databinding.FragmentSearchBinding
-import com.bu.selfstudy.tool.closeKeyboard
-import com.bu.selfstudy.tool.log
-import com.bu.selfstudy.tool.openKeyboard
-import com.bu.selfstudy.tool.viewBinding
+import com.bu.selfstudy.tool.*
 import com.bu.selfstudy.ui.book.BookListAdapter
 import com.bu.selfstudy.ui.book.BookViewModel
 import kotlinx.coroutines.Dispatchers
@@ -47,10 +44,18 @@ class SearchFragment: Fragment()  {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
 
+        this@SearchFragment.refreshClipboardText()
+
         viewModel.searchQuery.value = ""//let's get data
 
         viewModel.suggestionList.observe(viewLifecycleOwner){
             lifecycleScope.launch { adapter.submitList(it) }
+        }
+    }
+
+    private fun refreshClipboardText() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            viewModel.refreshClipboardText(requireActivity().getClipboardText())
         }
     }
 
@@ -86,6 +91,8 @@ class SearchFragment: Fragment()  {
 
                 /**每一次搜尋文字改變, 就觸發資料庫刷新*/
                 override fun onQueryTextChange(query: String): Boolean {
+                    if(query.isNullOrBlank())
+                        this@SearchFragment.refreshClipboardText()
                     viewModel.searchQuery.value = query
                     return false
                 }

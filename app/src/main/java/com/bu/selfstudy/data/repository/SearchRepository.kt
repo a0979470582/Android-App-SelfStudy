@@ -10,6 +10,8 @@ import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.tool.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 //search and result
@@ -22,10 +24,21 @@ object SearchRepository {
 
 
     suspend fun insertSearchHistory(searchHistory: SearchHistory) = withContext(Dispatchers.IO){
-        searchHistoryDao.insert(searchHistory)
+        val resultId = searchHistoryDao.insertSearchHistory(searchHistory)
+        searchAutoCompleteDao.setIsHistory(searchHistory.searchName, isHistory = true)
+        resultId
     }
     suspend fun insertSearchAutoComplete(vararg searchAutoComplete: SearchAutoComplete) = withContext(Dispatchers.IO){
         searchAutoCompleteDao.insert(*searchAutoComplete)
+    }
+
+    suspend fun clearSearchHistory() = withContext(Dispatchers.IO){
+        val searchHistoryList  = searchHistoryDao.loadSearchHistory("").first()
+        searchAutoCompleteDao.setIsHistory(
+                searchName = searchHistoryList.map { it.searchName }.toTypedArray(),
+                isHistory = false
+        )
+        searchHistoryDao.delete(*searchHistoryList.toTypedArray())
     }
 
     suspend fun insertLocalAutoComplete() = withContext(Dispatchers.IO){

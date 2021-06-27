@@ -11,6 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
+
+        <TextView
+            android:id="@+id/clipboardTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="您複製的文字「zoo」"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"

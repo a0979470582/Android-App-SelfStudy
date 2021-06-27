@@ -1,6 +1,7 @@
 package com.bu.selfstudy.ui.search
 
 import androidx.lifecycle.*
+import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.model.SearchHistory
 import com.bu.selfstudy.data.model.SearchRow
 import com.bu.selfstudy.data.model.Word
@@ -10,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
-    //val clipboardText = MutableLiveData<String>()
+    var clipboardText: String? = null
     val wordLiveData = MutableLiveData<Result<Word>>()
 
 
@@ -32,6 +33,11 @@ class SearchViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.Default) {
             val newList = ArrayList<SearchRow>()
 
+            if(searchQuery.value!!.isNullOrBlank()){
+                clipboardText?.let{
+                    newList.add(SearchRow(it))
+                }
+            }
             historyList.value?.let {
                 newList.addAll(it)
             }
@@ -42,6 +48,10 @@ class SearchViewModel : ViewModel() {
 
             suggestionList.postValue(newList)
         }
+    }
+
+    fun refreshClipboardText(text: String?){
+        clipboardText = text
     }
 
     fun addOneSearchHistory(query: String) {
