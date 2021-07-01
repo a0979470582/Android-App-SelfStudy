@@ -28,7 +28,6 @@ class SearchViewModel : ViewModel() {
         it.addSource(historyList) { combineList() }
     }
 
-    @Synchronized
     private fun combineList() {
         viewModelScope.launch(Dispatchers.Default) {
             val newList = ArrayList<SearchRow>()
@@ -36,6 +35,7 @@ class SearchViewModel : ViewModel() {
             if(searchQuery.value!!.isNullOrBlank()){
                 clipboardText?.let{
                     newList.add(SearchRow(it))
+
                 }
             }
             historyList.value?.let {

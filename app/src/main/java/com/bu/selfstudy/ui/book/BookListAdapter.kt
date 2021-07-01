@@ -36,7 +36,6 @@ class BookListAdapter(val fragment: BookFragment):
             val book = asyncListDiffer.currentList[holder.adapterPosition]
             fragment.navigateToWordCardFragment(book)
         }
-
         return holder
     }
 
@@ -44,7 +43,8 @@ class BookListAdapter(val fragment: BookFragment):
         val book = asyncListDiffer.currentList[position]
 
         holder.binding.bookNameTextView.setText(book.bookName)
-        holder.binding.bookSizeTextView.setText(book.size.toString())
+        val bookSizeString = "${book.size.toString()}個單字"
+        holder.binding.bookSizeTextView.setText(bookSizeString)
 
         //holder.binding.bookIcon.imageTintList = ColorStateList.valueOf(colorList.random())
 
@@ -68,4 +68,5 @@ class BookListAdapter(val fragment: BookFragment):
     fun submitList(bookList: List<Book>){
         asyncListDiffer.submitList(bookList)
     }
+
 }

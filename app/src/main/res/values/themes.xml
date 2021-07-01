@@ -18,5 +18,23 @@
         <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24</item>
     </style>
 
+    <style name="Theme.SelfStudy2" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">#425C5A</item>
+        <item name="colorPrimaryVariant">#425C5A</item>
+        <item name="colorOnPrimary">#BA946C</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">#FDCDA1</item>
+        <item name="colorSecondaryVariant">#FDCDA1</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+
+        <!-- display ActionMode over toolbar -->
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24</item>
+    </style>
+
 
 </resources>

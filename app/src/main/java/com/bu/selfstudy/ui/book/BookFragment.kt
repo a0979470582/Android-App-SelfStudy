@@ -52,7 +52,6 @@ class BookFragment : Fragment() {
 
         binding.recyclerView.let {
             it.adapter = this.adapter
-            it.setHasFixedSize(true)
         }
         return binding.root
     }

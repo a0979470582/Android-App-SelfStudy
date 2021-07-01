@@ -43,10 +43,9 @@ class SearchFragment: Fragment()  {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
+        viewModel.searchQuery.value = ""//let's get data
 
         this@SearchFragment.refreshClipboardText()
-
-        viewModel.searchQuery.value = ""//let's get data
 
         viewModel.suggestionList.observe(viewLifecycleOwner){
             lifecycleScope.launch { adapter.submitList(it) }

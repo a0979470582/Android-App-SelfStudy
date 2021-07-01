@@ -31,6 +31,9 @@ interface WordDao : BaseDao<Word>{
     @Query("SELECT * FROM Word WHERE isTrash=0 AND bookId=:bookId AND wordName LIKE :query")
     fun loadWordTuplesWithPaging(bookId:Long, query: String): DataSource.Factory<Int, WordTuple>
 
+    @Query("SELECT COUNT(id) FROM Word WHERE isTrash=0 AND bookId=:bookId")
+    fun loadOneBookSize(bookId: Long):Int
+
     //delete
     @Query("DELETE FROM Word WHERE id IN (:wordId)")
     suspend fun deleteWord(vararg wordId: Long): Int

@@ -28,7 +28,8 @@
                     android:backgroundTint="@color/divide_color"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                    tools:menu="@menu/wordlist_toolbar">
+                    tools:title="SelfStudy"
+                    tools:menu="@menu/book_toolbar">
 
                 </com.google.android.material.appbar.MaterialToolbar>
             </com.google.android.material.appbar.AppBarLayout>
@@ -41,7 +42,7 @@
                 app:defaultNavHost="true"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:navGraph="@navigation/nav_graph"
-                tools:layout="@layout/fragment_word_list" />
+                tools:layout="@layout/fragment_book"/>
 
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>

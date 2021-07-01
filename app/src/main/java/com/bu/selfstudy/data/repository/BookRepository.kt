@@ -1,13 +1,19 @@
 package com.bu.selfstudy.data.repository
 
+import androidx.lifecycle.liveData
 import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.AppDatabase.Companion.getDatabase
 import com.bu.selfstudy.data.local.LoadLocalBook
+import com.bu.selfstudy.tool.log
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
 //use coroutine, try-catch, don't write many code here
@@ -16,7 +22,6 @@ object BookRepository {
     private val wordDao = getDatabase().wordDao()
 
     fun loadBooks(memberId:Long=SelfStudyApplication.memberId) = bookDao.loadDistinctBooks(memberId)
-
     suspend fun insertBook(vararg book: Book) = withContext(Dispatchers.IO){
         bookDao.insert(*book)
     }
@@ -28,6 +33,16 @@ object BookRepository {
         bookDao.deleteBookToTrash(bookId).also {
             wordDao.deleteBookOwnWord(bookId)
         }
+    }
+
+    suspend fun  refreshBookSize() = withContext(Dispatchers.IO){
+        val bookList = bookDao.loadBooks(SelfStudyApplication.memberId).first()
+        val newBookList = ArrayList<Book>()
+        bookList.forEach {
+            it.size = wordDao.loadOneBookSize(it.id)
+            newBookList.add(it.copy())
+        }
+        updateBook(*newBookList.toTypedArray())
     }
 
     suspend fun insertLocalBook(fileName: String) = withContext(Dispatchers.IO) {

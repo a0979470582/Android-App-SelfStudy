@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/bookFragment"
         android:name="com.bu.selfstudy.ui.book.BookFragment"
-        android:label="我的題庫" >
+        android:label="SelfStudy" >
         <action
             android:id="@+id/action_bookFragment_to_editBookDialog"
             app:destination="@id/editBookDialog" />
