@@ -40,7 +40,7 @@ class WordCardPagerAdapter(
         fun resetExpandedState(){
             binding.translationTextView.expand(false)
             binding.variationTextView.expand(false)
-            binding.exampleTextView.collapse(false)
+            binding.exampleTextView.expand(false)
             binding.noteTextView.expand(false)
         }
         fun bindData(word: Word){

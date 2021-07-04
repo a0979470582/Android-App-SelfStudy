@@ -36,6 +36,12 @@ class BookViewModel : ViewModel(){
             "elementary_school_basic_word.json" to "小學基礎單字"
     )
 
+    fun calculateBookSize(){
+        viewModelScope.launch {
+            BookRepository.refreshBookSize()
+        }
+    }
+
     var longPressedBook: Book? = null
     fun refreshLongPressedBook(bookList: List<Book>, bookId: Long){
         viewModelScope.launch {

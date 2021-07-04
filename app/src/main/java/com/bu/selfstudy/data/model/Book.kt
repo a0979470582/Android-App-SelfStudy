@@ -18,7 +18,7 @@ import java.util.*
 @Parcelize
 data class Book(
         @PrimaryKey(autoGenerate = true)
-    var id:Long = 0,
+        var id:Long = 0,
         var memberId: Long = SelfStudyApplication.memberId,
         var bookName: String="",
         var size: Int = 0,
@@ -28,6 +28,7 @@ data class Book(
         var displayMode:String = "one",//one, list, grid
 
         var timestamp: Date = Date(),
-        var isTrash:Boolean = false
+        var isTrash:Boolean = false,
+        var isArchive: Boolean = false
 ):Parcelable
 

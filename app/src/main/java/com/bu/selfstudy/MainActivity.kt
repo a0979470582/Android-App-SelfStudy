@@ -54,24 +54,29 @@ class MainActivity : AppCompatActivity(){
             activityViewModel.refreshBookIdList(it)
         }
 
-        activityViewModel.databaseEvent.observe(this){
-            when(it?.first){
-                "insertWord"-> binding.root.showSnackbar("新增成功", "檢視"){
-                    val wordId = it.second!!.getLong("wordId")!!
-                    val bookId = it.second!!.getLong("bookId")!!
+        activityViewModel.databaseEvent.observe(this){ pair->
+            when(pair?.first){
+                "insertWord"->{ pair.second?.let { showInsertMessage(it) } }
+            }
+        }
+    }
 
-                    activityViewModel.currentOpenBookLiveData.value =
-                        activityViewModel.bookListLiveData.value!!.find { it.id == bookId }
+    private fun showInsertMessage(bundle: Bundle) {
+        binding.root.showSnackbar("新增成功", "檢視"){
+            //按下Snackbar上的按鈕之後, 可跳轉到新增的那一個單字卡
+            val wordId = bundle.getLong("wordId")
+            val bookId = bundle.getLong("bookId")
+            
+            activityViewModel.currentOpenBookLiveData.value =
+                activityViewModel.bookListLiveData.value!!.find { it.id == bookId }
 
-                    navController.currentDestination?.let {
-                        val action = if(it.id == R.id.wordCardFragment)
-                            WordCardFragmentDirections.actionWordCardFragmentSelf(wordId)
-                        else
-                            BookFragmentDirections.actionBookFragmentToWordCardFragment(wordId)
+            navController.currentDestination?.let {
+                val action = if(it.id == R.id.wordCardFragment)
+                    WordCardFragmentDirections.actionWordCardFragmentSelf(wordId)
+                else
+                    BookFragmentDirections.actionBookFragmentToWordCardFragment(wordId)
 
-                        navController.navigate(action)
-                    }
-                }
+                navController.navigate(action)
             }
         }
     }

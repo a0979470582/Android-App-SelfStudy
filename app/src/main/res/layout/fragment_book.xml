@@ -7,6 +7,9 @@
     <data>
 
     </data>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -62,15 +65,29 @@
             app:layout_constraintTop_toBottomOf="@id/firstRow"/>
 
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+        <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:clickable_overlay="true" />
+
+        <com.leinardi.android.speeddial.SpeedDialView
+            android:id="@+id/speedDialView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            app:sdMainFabClosedSrc="@drawable/ic_baseline_add_24"
+            app:sdMainFabOpenedSrc="@drawable/ic_baseline_close_24"
+            app:sdOverlayLayout="@id/overlay" />
+        <!--<com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            android:src="@drawable/ic_baseline_add_24" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+            android:src="@drawable/ic_baseline_add_24" />-->
+    </FrameLayout>
 </layout>

@@ -28,6 +28,9 @@ object BookRepository {
     suspend fun updateBook(vararg book: Book) = withContext(Dispatchers.IO){
         bookDao.update(*book)
     }
+    suspend fun updateBookPosition(bookId: Long, position: Int) = withContext(Dispatchers.IO){
+        bookDao.updateBookPosition(bookId, position)
+    }
 
     suspend fun deleteBookToTrash(bookId: Long) = withContext(Dispatchers.IO){
         bookDao.deleteBookToTrash(bookId).also {
@@ -35,14 +38,8 @@ object BookRepository {
         }
     }
 
-    suspend fun  refreshBookSize() = withContext(Dispatchers.IO){
-        val bookList = bookDao.loadBooks(SelfStudyApplication.memberId).first()
-        val newBookList = ArrayList<Book>()
-        bookList.forEach {
-            it.size = wordDao.loadOneBookSize(it.id)
-            newBookList.add(it.copy())
-        }
-        updateBook(*newBookList.toTypedArray())
+    suspend fun refreshBookSize() = withContext(Dispatchers.IO){
+        bookDao.updateBookSize()
     }
 
     suspend fun insertLocalBook(fileName: String) = withContext(Dispatchers.IO) {

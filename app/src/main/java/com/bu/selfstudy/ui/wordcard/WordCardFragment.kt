@@ -83,7 +83,7 @@ class WordCardFragment : Fragment() {
          viewPagerCallback = object: ViewPager2.OnPageChangeCallback(){
              override fun onPageSelected(position: Int) {
                  super.onPageSelected(position)
-                 pagerAdapter.prepareMediaPlayer(position)
+                 //pagerAdapter.prepareMediaPlayer(position)
                  val realPosition = position % pagerAdapter.wordList.size
                  viewModel.updateCurrentPosition(realPosition)
              }
@@ -150,18 +150,18 @@ class WordCardFragment : Fragment() {
         val oldActionItem = if(isMark) ActionItemCreator.markItem else ActionItemCreator.cancelMarkItem
         val newActionItem = if(isMark) ActionItemCreator.cancelMarkItem else ActionItemCreator.markItem
 
-        binding.speedDialView.actionItems.firstOrNull{
+        binding.speedDial.actionItems.firstOrNull{
             it == oldActionItem
         }?.let {
-            binding.speedDialView.replaceActionItem(oldActionItem, newActionItem)
+            binding.speedDial.replaceActionItem(oldActionItem, newActionItem)
         }
     }
 
     private fun initSpeedDial() {
-        if(binding.speedDialView.actionItems.isNotEmpty())
+        if(binding.speedDial.actionItems.isNotEmpty())
             return
 
-        with(binding.speedDialView){
+        with(binding.speedDial){
             this.mainFab.setOnLongClickListener {
                 resources.getString(R.string.FAB_main).showToast()
                 return@setOnLongClickListener true
@@ -252,11 +252,10 @@ class WordCardFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        var backPressedToExitOnce: Boolean = false
 
         requireActivity().onBackPressedDispatcher.addCallback(this){
-            if(binding.speedDialView.isOpen){
-                binding.speedDialView.close()
+            if(binding.speedDial.isOpen){
+                binding.speedDial.close()
             }else{
                 findNavController().popBackStack()
             }

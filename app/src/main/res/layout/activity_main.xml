@@ -44,7 +44,6 @@
                 app:navGraph="@navigation/nav_graph"
                 tools:layout="@layout/fragment_book"/>
 
-
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <com.google.android.material.navigation.NavigationView

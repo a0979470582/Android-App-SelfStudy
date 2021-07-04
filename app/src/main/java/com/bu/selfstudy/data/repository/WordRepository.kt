@@ -32,29 +32,17 @@ object WordRepository {
     }
 
     suspend fun insertWord(vararg word: Word) = withContext(Dispatchers.IO){
-        wordDao.insert(*word).also {
-            refreshBookSize()
-        }
+        wordDao.insert(*word)
     }
     suspend fun updateWord(vararg word: Word) = withContext(Dispatchers.IO){
-        wordDao.update(*word).also {
-            refreshBookSize()
-        }
+        wordDao.update(*word)
     }
 
     suspend fun deleteWordToTrash(vararg wordId: Long) = withContext(Dispatchers.IO){
-        wordDao.deleteWordToTrash(*wordId).also {
-            refreshBookSize()
-        }
+        wordDao.deleteWordToTrash(*wordId)
     }
 
     suspend fun updateMarkWord(wordId:Long, isMark: Boolean) = withContext(Dispatchers.IO){
         wordDao.updateMarkWord(wordId, isMark)
-    }
-
-    suspend fun refreshBookSize(){
-        GlobalScope.launch {
-            BookRepository.refreshBookSize()
-        }
     }
 }

@@ -44,7 +44,7 @@ class WordCardViewModel(val currentOpenBook: Book) : ViewModel() {
             }
 
             currentOpenBook.position = realPosition
-            BookRepository.updateBook(currentOpenBook)
+            BookRepository.updateBookPosition(currentOpenBook.id, realPosition)
         }
     }
 

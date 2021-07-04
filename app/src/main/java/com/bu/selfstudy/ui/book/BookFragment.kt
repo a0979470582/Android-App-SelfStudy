@@ -28,6 +28,8 @@ import com.bu.selfstudy.databinding.FragmentBookBinding
 import com.bu.selfstudy.tool.*
 import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
 import com.bu.selfstudy.tool.myselectiontracker.IdItemKeyProvider
+import com.bu.selfstudy.ui.book.ActionItemCreator
+import com.bu.selfstudy.ui.wordcard.WordCardFragmentDirections
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
@@ -65,6 +67,7 @@ class BookFragment : Fragment() {
             initSelectionTracker()
             //SearchRepository.removeLocalAutoComplete()
             //SearchRepository.clearSearchHistory()
+            initSpeedDial()
         }
 
         activityViewModel.bookListLiveData.observe(viewLifecycleOwner){
@@ -79,10 +82,14 @@ class BookFragment : Fragment() {
                 "insertLocal" -> "已新增「${it.second?.getString("bookName")}」".showToast()
             }
         }
-        binding.fab.setOnClickListener {
-            actionMode?.finish()
-            findNavController().navigate(R.id.addWordFragment)
+        binding.firstRow.setOnClickListener {
+            //findNavController().navigate(R.id.historyWordFragment)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.calculateBookSize()
     }
 
 
@@ -133,11 +140,48 @@ class BookFragment : Fragment() {
         }
     }
 
+    private fun initSpeedDial() {
+        if(binding.speedDialView.actionItems.isNotEmpty())
+            return
+
+        with(binding.speedDialView){
+            this.mainFab.setOnLongClickListener {
+                resources.getString(R.string.FAB_main).showToast()
+                return@setOnLongClickListener true
+            }
+
+            this.addAllActionItems(listOf(
+                    ActionItemCreator.addWordItem,
+                    ActionItemCreator.addBookItem)
+            )
+
+            // Set option fabs click listeners.
+            this.setOnActionSelectedListener { actionItem ->
+                when (actionItem.id) {
+                    R.id.book_fragment_fab_add_word -> {
+                        actionMode?.finish()
+                        findNavController().navigate(R.id.addWordFragment)
+                    }
+                    R.id.book_fragment_fab_add_book -> {
+                        val action = BookFragmentDirections.actionBookFragmentToAddBookDialog()
+                        findNavController().navigate(action)                    }
+                }
+                this.close()
+                return@setOnActionSelectedListener true // To keep the Speed Dial open
+            }
+        }
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         var backPressedToExitOnce: Boolean = false
 
         requireActivity().onBackPressedDispatcher.addCallback(this){
+            if(binding.speedDialView.isOpen){
+                binding.speedDialView.close()
+                return@addCallback
+            }
+
             if (backPressedToExitOnce) {
                 requireActivity().finish()
                 return@addCallback

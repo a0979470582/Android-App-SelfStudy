@@ -15,7 +15,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
-@Database(version = 2, entities = [Member::class,
+@Database(version = 3, entities = [Member::class,
     Book::class,
     Word::class,
     SearchHistory::class,
@@ -31,12 +31,6 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         private var instance: AppDatabase? = null
 
-        val MIGRATION1_2 = object: Migration(1, 2){
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE SearchAutoComplete ADD COLUMN 'isHistory' INTEGER NOT NULL DEFAULT 0")
-            }
-        }
-
         @Synchronized
         fun getDatabase(): AppDatabase {
             instance?.let {
@@ -44,7 +38,6 @@ abstract class AppDatabase : RoomDatabase() {
             }
             return  Room.databaseBuilder(context, AppDatabase::class.java, "app_database")
                     .fallbackToDestructiveMigration()
-                    .addMigrations(MIGRATION1_2)
                     //.createFromAsset("database/app_database")
                     /*.addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {

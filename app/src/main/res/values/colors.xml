@@ -11,4 +11,5 @@
     <color name="divide_color">#4D706A6A</color>
     <color name="ripple_color">#BAADAD</color>
     <color name="test">#2B2B2B</color>
+    <color name="toolbar_icon_color">#FFFFFFFF</color>
 </resources>

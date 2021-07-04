@@ -4,7 +4,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/bookFragment"
-            android:icon="@drawable/ic_baseline_event_note_24"
+            android:icon="@drawable/ic_baseline_menu_book_24"
             android:title="@string/activity_menu_book" />
 
         <item

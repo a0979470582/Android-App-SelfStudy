@@ -38,6 +38,7 @@ class AddWordFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
 
+        //監聽從DialogChooseBook返回的bookId
         setFragmentResultListener("bookId"){_, bundle ->
             val word = Word(
                 bookId = bundle.getLong("bookId"),

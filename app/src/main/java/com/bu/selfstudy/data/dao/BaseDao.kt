@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Dao
 interface BaseDao<T> {
-    @Update
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(vararg obj: T):Int
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

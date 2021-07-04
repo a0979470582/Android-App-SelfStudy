@@ -8,6 +8,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
@@ -39,19 +40,24 @@ class DialogEditBook() : AppCompatDialogFragment() {
             it.addTextChangedListener {editable->
                 alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = editable!!.isNotBlank()
             }
+            it.requestFocus()
         }
 
         alertDialog = MaterialAlertDialogBuilder(requireActivity())
                 .setView(linearLayout)
                 .setPositiveButton("確定") { dialog, which ->
-                    setFragmentResult(
-                            "edit",
+                    setFragmentResult("edit",
                             putBundle("bookName", editText.text.toString())
                     )
                 }
                 .setNegativeButton("取消") { dialog, which ->
                 }
                 .create()
+
+        alertDialog.run {
+            window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+            show()
+        }
 
         return alertDialog
     }

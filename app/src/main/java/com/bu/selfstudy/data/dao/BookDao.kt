@@ -18,6 +18,8 @@ interface BookDao : BaseDao<Book>{
     @Query("UPDATE Book SET isTrash = 1 WHERE id=:bookId")
     suspend fun deleteBookToTrash(bookId: Long): Int
 
-    @Query("UPDATE Book SET size=(SELECT COUNT(id) FROM Word WHERE bookId=:bookId) WHERE id=:bookId")
-    suspend fun updateBookSize(bookId: Long): Int
+    @Query("UPDATE Book SET size=(SELECT COUNT(Word.id) FROM Word WHERE bookId=Book.id AND Word.isTrash=0)")
+    suspend fun updateBookSize(): Int
+    @Query("UPDATE Book SET position=:position WHERE id=:bookId")
+    suspend fun updateBookPosition(bookId: Long, position: Int)
 }

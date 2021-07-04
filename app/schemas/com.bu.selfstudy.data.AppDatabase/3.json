@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "3b83b8d9f5694eacac02ba521aa2d8a3",
+    "identityHash": "065258c0cf497c35848b2bad76a6bc15",
     "entities": [
       {
         "tableName": "Member",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `email` TEXT NOT NULL, `password` TEXT NOT NULL, `userName` TEXT NOT NULL, `iconUri` TEXT NOT NULL, `sex` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `currentBookId` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `email` TEXT NOT NULL, `password` TEXT NOT NULL, `userName` TEXT NOT NULL, `sex` TEXT NOT NULL, `position` INTEGER NOT NULL, `backgroundImageIndex` INTEGER NOT NULL, `iconPath` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -33,26 +33,32 @@
             "notNull": true
           },
           {
-            "fieldPath": "iconUri",
-            "columnName": "iconUri",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
             "fieldPath": "sex",
             "columnName": "sex",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "timestamp",
-            "columnName": "timestamp",
+            "fieldPath": "position",
+            "columnName": "position",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "currentBookId",
-            "columnName": "currentBookId",
+            "fieldPath": "backgroundImageIndex",
+            "columnName": "backgroundImageIndex",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "iconPath",
+            "columnName": "iconPath",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -74,7 +80,7 @@
       },
       {
         "tableName": "Book",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `memberId` INTEGER NOT NULL, `bookName` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `currentWordId` INTEGER NOT NULL, `sortState` TEXT NOT NULL, `photoPosition` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL, FOREIGN KEY(`memberId`) REFERENCES `Member`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `memberId` INTEGER NOT NULL, `bookName` TEXT NOT NULL, `size` INTEGER NOT NULL, `position` INTEGER NOT NULL, `sortState` TEXT NOT NULL, `displayMode` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL, `isArchive` INTEGER NOT NULL, FOREIGN KEY(`memberId`) REFERENCES `Member`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -95,14 +101,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "timestamp",
-            "columnName": "timestamp",
+            "fieldPath": "size",
+            "columnName": "size",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "currentWordId",
-            "columnName": "currentWordId",
+            "fieldPath": "position",
+            "columnName": "position",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -113,14 +119,26 @@
             "notNull": true
           },
           {
-            "fieldPath": "photoPosition",
-            "columnName": "photoPosition",
+            "fieldPath": "displayMode",
+            "columnName": "displayMode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "isTrash",
             "columnName": "isTrash",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isArchive",
+            "columnName": "isArchive",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -148,7 +166,7 @@
       },
       {
         "tableName": "Word",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bookId` INTEGER NOT NULL, `wordName` TEXT NOT NULL, `pronounceString` TEXT NOT NULL, `pronounceUri` TEXT NOT NULL, `translation` TEXT NOT NULL, `variation` TEXT NOT NULL, `example` TEXT NOT NULL, `dictionaryUri` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL, FOREIGN KEY(`bookId`) REFERENCES `Book`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bookId` INTEGER NOT NULL, `wordName` TEXT NOT NULL, `pronunciation` TEXT NOT NULL, `translation` TEXT NOT NULL, `variation` TEXT NOT NULL, `example` TEXT NOT NULL, `note` TEXT NOT NULL, `audioPath` TEXT NOT NULL, `dictionaryPath` TEXT NOT NULL, `isMark` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL, FOREIGN KEY(`bookId`) REFERENCES `Book`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -169,14 +187,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "pronounceString",
-            "columnName": "pronounceString",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "pronounceUri",
-            "columnName": "pronounceUri",
+            "fieldPath": "pronunciation",
+            "columnName": "pronunciation",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -199,9 +211,27 @@
             "notNull": true
           },
           {
-            "fieldPath": "dictionaryUri",
-            "columnName": "dictionaryUri",
+            "fieldPath": "note",
+            "columnName": "note",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "audioPath",
+            "columnName": "audioPath",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dictionaryPath",
+            "columnName": "dictionaryPath",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isMark",
+            "columnName": "isMark",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -270,12 +300,100 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "SearchHistory",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `searchName` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "searchName",
+            "columnName": "searchName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_SearchHistory_searchName",
+            "unique": true,
+            "columnNames": [
+              "searchName"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_SearchHistory_searchName` ON `${TABLE_NAME}` (`searchName`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "SearchAutoComplete",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `isHistory` INTEGER NOT NULL, `searchName` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isHistory",
+            "columnName": "isHistory",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "searchName",
+            "columnName": "searchName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_SearchAutoComplete_searchName",
+            "unique": true,
+            "columnNames": [
+              "searchName"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_SearchAutoComplete_searchName` ON `${TABLE_NAME}` (`searchName`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3b83b8d9f5694eacac02ba521aa2d8a3')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '065258c0cf497c35848b2bad76a6bc15')"
     ]
   }
 }

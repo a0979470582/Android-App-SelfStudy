@@ -29,6 +29,8 @@
     <string name="FAB_edit">編輯</string>
     <string name="FAB_add">新增</string>
     <string name="FAB_main">點擊子項目進行操作</string>
+    <string name="FAB_add_word">新增單字</string>
+    <string name="FAB_add_book">新增題庫</string>
 
 
     <string name="title_translation">釋義</string>
@@ -76,6 +78,6 @@ The particular may have to be satisfied to the general.
     <string name="toast_success_mark">標記成功</string>
     <string name="toast_cancel_mark">取消標記</string>
     <string name="toast_exit_app">再按一次離開程式</string>
-    
+
 
 </resources>
