@@ -13,38 +13,38 @@ import kotlinx.coroutines.withContext
 
 @Dao
 interface WordDao : BaseDao<Word>{
-    //select
+    //select with one wordId
     @Query("SELECT * FROM Word WHERE isTrash=0 AND id=:wordId")
     fun loadWord(wordId:Long): Flow<Word>
     fun loadDistinctWord(wordId:Long) = loadWord(wordId).distinctUntilChanged()
 
+    //one bookId, query
     @Query("SELECT * FROM Word WHERE isTrash=0 AND bookId=:bookId AND wordName LIKE :query")
     fun loadWords(bookId:Long, query: String): Flow<List<Word>>
     fun loadDistinctWords(bookId:Long, query: String) = loadWords(bookId, query).distinctUntilChanged()
 
+    //all book, query
     @Query("SELECT wordName FROM Word WHERE isTrash=0 AND wordName LIKE :query || '%' ORDER BY wordName")
     fun loadWords(query: String): Flow<List<String>>
 
+    //select with paging3
     @Query("SELECT * FROM Word WHERE isTrash=0 AND bookId=:bookId AND wordName LIKE :query")
     fun loadWordsWithPaging(bookId:Long, query: String): DataSource.Factory<Int, Word>
 
     @Query("SELECT * FROM Word WHERE isTrash=0 AND bookId=:bookId AND wordName LIKE :query")
     fun loadWordTuplesWithPaging(bookId:Long, query: String): DataSource.Factory<Int, WordTuple>
 
-    @Query("SELECT COUNT(id) FROM Word WHERE isTrash=0 AND bookId=:bookId")
-    fun loadOneBookSize(bookId: Long):Int
-
     //delete
     @Query("DELETE FROM Word WHERE id IN (:wordId)")
     suspend fun deleteWord(vararg wordId: Long): Int
 
-    @Query("UPDATE Word SET isTrash = 1 WHERE id IN (:wordId)")
-    suspend fun deleteWordToTrash(vararg wordId: Long): Int
-
-    @Query("UPDATE Word SET isTrash = 1 WHERE bookid =:bookId")
-    suspend fun deleteBookOwnWord(bookId: Long): Int
-
     //update
     @Query("UPDATE Word SET isMark = :isMark WHERE id =:wordId")
-    suspend fun updateMarkWord(wordId:Long, isMark: Boolean): Int
+    suspend fun updateWordMark(wordId:Long, isMark: Boolean): Int
+
+    @Query("UPDATE Word SET isTrash = :isTrash WHERE id IN (:wordId)")
+    suspend fun updateWordIsTrash(vararg wordId: Long, isTrash: Boolean): Int
+
+    @Query("UPDATE Word SET isTrash = :isTrash WHERE bookId =:bookId")
+    suspend fun updateWordIsTrash(bookId: Long, isTrash: Boolean): Int
 }

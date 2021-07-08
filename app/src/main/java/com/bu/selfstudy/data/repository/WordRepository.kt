@@ -1,48 +1,49 @@
 package com.bu.selfstudy.data.repository
 
-import androidx.lifecycle.liveData
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.AppDatabase.Companion.getDatabase
 import com.bu.selfstudy.data.network.SelfStudyNetwork
-import com.bu.selfstudy.tool.getSharedPreferences
-import com.bu.selfstudy.tool.log
-import com.bu.selfstudy.tool.setSharedPreferences
-import com.google.gson.Gson
-import com.google.gson.JsonParser
 import kotlinx.coroutines.*
-import java.lang.Exception
-import java.lang.RuntimeException
-import javax.xml.parsers.SAXParserFactory
 
 
 object WordRepository {
     private val wordDao = getDatabase().wordDao()
 
+    //get a word
     fun loadWord(wordId: Long) = wordDao.loadWord(wordId)
 
-    fun loadWords(bookId: Long, query: String) = wordDao.loadDistinctWords(bookId, query)
+    //find word
     fun loadWords(query: String) = wordDao.loadWords(query)
 
-    fun loadWordTuplesWithPaging(bookId: Long, query: String) = wordDao.loadWordTuplesWithPaging(bookId, query)
+    //find word in one book
+    fun loadWords(bookId: Long, query: String) = wordDao.loadDistinctWords(bookId, query)
 
+    //paging3
+    fun loadWordTuplesWithPaging(bookId: Long, query: String) =
+            wordDao.loadWordTuplesWithPaging(bookId, query)
+
+    //connect yahoo
     suspend fun getWord(wordName: String): Result<Word> = withContext(Dispatchers.IO){
         kotlin.runCatching {
             SelfStudyNetwork.getYahooWord(wordName)
         }
     }
 
+    //insert
     suspend fun insertWord(vararg word: Word) = withContext(Dispatchers.IO){
         wordDao.insert(*word)
     }
+
+    //update
     suspend fun updateWord(vararg word: Word) = withContext(Dispatchers.IO){
         wordDao.update(*word)
     }
 
-    suspend fun deleteWordToTrash(vararg wordId: Long) = withContext(Dispatchers.IO){
-        wordDao.deleteWordToTrash(*wordId)
+    suspend fun updateWordIsTrash(vararg wordId: Long, isTrash: Boolean) = withContext(Dispatchers.IO){
+        wordDao.updateWordIsTrash(wordId = *wordId, isTrash)
     }
 
-    suspend fun updateMarkWord(wordId:Long, isMark: Boolean) = withContext(Dispatchers.IO){
-        wordDao.updateMarkWord(wordId, isMark)
+    suspend fun updateWordMark(wordId:Long, isMark: Boolean) = withContext(Dispatchers.IO){
+        wordDao.updateWordMark(wordId, isMark)
     }
 }

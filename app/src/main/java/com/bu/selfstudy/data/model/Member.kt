@@ -7,7 +7,6 @@ import java.util.*
 
 //登入流程必須從此處開始處理
 @Entity
-@Parcelize
 data class Member(
     @PrimaryKey(autoGenerate = true)
     var id:Long = 0,
@@ -22,4 +21,4 @@ data class Member(
 
     var timestamp: Date = Date(),
     var isTrash:Boolean = false
-):Parcelable
+)

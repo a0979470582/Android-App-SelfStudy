@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey
 import java.util.*
 
 @Entity(indices = [Index(value=["searchName"], unique = true)])
-class SearchHistory (
+data class SearchHistory (
         @PrimaryKey(autoGenerate = true)
-    val id:Long = 0,
-    searchName: String,
-    val timestamp: Date = Date()
-):SearchRow(searchName)
+        override var id:Long = 0,
+        override var searchName: String,
+        override var timestamp: Date = Date()
+):SearchRow()

@@ -3,7 +3,6 @@
     package="com.bu.selfstudy">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
     <application
         android:name=".SelfStudyApplication"
         android:allowBackup="true"

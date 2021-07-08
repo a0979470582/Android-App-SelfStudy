@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="book_color_list">
+        <item>@color/book_color_1</item>
+        <item>@color/book_color_2</item>
+        <item>@color/book_color_3</item>
+        <item>@color/book_color_4</item>
+        <item>@color/book_color_5</item>
+        <item>@color/book_color_6</item>
+        <item>@color/book_color_7</item>
+        <item>@color/book_color_8</item>
+        <item>@color/book_color_9</item>
+        <item>@color/book_color_10</item>
+    </array>
+
+    <string-array name="local_book_list">
+        <item></item>
+    </string-array>
+</resources>

@@ -4,7 +4,6 @@ import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
 import android.view.*
-import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.widget.SearchView
@@ -12,10 +11,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bu.selfstudy.R
+import com.bu.selfstudy.data.model.SearchHistory
+import com.bu.selfstudy.data.model.SearchRow
 import com.bu.selfstudy.databinding.FragmentSearchBinding
 import com.bu.selfstudy.tool.*
-import com.bu.selfstudy.ui.book.BookListAdapter
-import com.bu.selfstudy.ui.book.BookViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
@@ -93,6 +92,7 @@ class SearchFragment: Fragment()  {
                     if(query.isNullOrBlank())
                         this@SearchFragment.refreshClipboardText()
                     viewModel.searchQuery.value = query
+                    adapter.refreshSearchQuery(query)
                     return false
                 }
             })
@@ -111,4 +111,9 @@ class SearchFragment: Fragment()  {
     fun startSearch(suggestionName: String){
         searchView.setQuery(suggestionName, true)
     }
+
+    fun removeSearchHistory(searchHistory: SearchHistory) {
+        viewModel.removeSearchHistory(searchHistory)
+    }
+
 }

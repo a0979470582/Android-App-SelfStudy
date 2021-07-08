@@ -8,8 +8,11 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Dao
 interface MemberDao: BaseDao<Member>{
+    //select
     @Query("SELECT * FROM Member WHERE id=:memberId")
     fun loadMember(memberId: Long): Flow<Member>
-    fun loadDistinctMember(memberId: Long) = loadMember(memberId).distinctUntilChanged()
+
+    fun loadDistinctMember(memberId: Long) =
+            loadMember(memberId).distinctUntilChanged()
 
 }

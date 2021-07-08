@@ -303,7 +303,7 @@
       },
       {
         "tableName": "SearchHistory",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `searchName` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `searchName` TEXT NOT NULL, `timestamp` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -312,15 +312,15 @@
             "notNull": true
           },
           {
-            "fieldPath": "timestamp",
-            "columnName": "timestamp",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
             "fieldPath": "searchName",
             "columnName": "searchName",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -344,12 +344,18 @@
       },
       {
         "tableName": "SearchAutoComplete",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `isHistory` INTEGER NOT NULL, `searchName` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `searchName` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `isHistory` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "searchName",
+            "columnName": "searchName",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -362,12 +368,6 @@
             "fieldPath": "isHistory",
             "columnName": "isHistory",
             "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "searchName",
-            "columnName": "searchName",
-            "affinity": "TEXT",
             "notNull": true
           }
         ],

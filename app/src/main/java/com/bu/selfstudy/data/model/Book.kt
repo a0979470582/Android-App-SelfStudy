@@ -15,7 +15,6 @@ import java.util.*
         onDelete = ForeignKey.CASCADE
     )
 ])
-@Parcelize
 data class Book(
         @PrimaryKey(autoGenerate = true)
         var id:Long = 0,
@@ -26,9 +25,10 @@ data class Book(
         var position: Int = 0,
         var sortState:String = "time_asc",//time, letter, proficiency
         var displayMode:String = "one",//one, list, grid
+        var colorInt: Int = 0,
 
         var timestamp: Date = Date(),
         var isTrash:Boolean = false,
         var isArchive: Boolean = false
-):Parcelable
+)
 

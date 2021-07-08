@@ -62,7 +62,7 @@ class RecentWordViewModel(val currentOpenBook: Book) : ViewModel() {
 
     fun updateMarkWord(wordId: Long, isMark: Boolean){
         viewModelScope.launch(Dispatchers.IO) {
-            if(WordRepository.updateMarkWord(wordId, isMark)>0){
+            if(WordRepository.updateWordMark(wordId, isMark)>0){
                 databaseEvent.postValue((if(isMark) "mark" else "cancelMark") to null)
             }
         }
@@ -70,7 +70,7 @@ class RecentWordViewModel(val currentOpenBook: Book) : ViewModel() {
 
     fun deleteWordToTrash(wordIdList:List<Long>){
         viewModelScope.launch(Dispatchers.IO) {
-            if(WordRepository.deleteWordToTrash(*wordIdList.toLongArray()) > 0)
+            if(WordRepository.updateWordIsTrash(*wordIdList.toLongArray(), isTrash = true) > 0)
                 databaseEvent.postValue("delete" to null)
         }
     }

@@ -11,9 +11,6 @@ import com.bu.selfstudy.data.model.WordTuple
 import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.data.repository.WordRepository
 import com.bu.selfstudy.tool.SingleLiveData
-import com.bu.selfstudy.tool.log
-import com.bu.selfstudy.tool.putBundle
-import com.bu.selfstudy.ui.wordcard.WordCardViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -65,7 +62,7 @@ class WordListViewModel(val currentOpenBook: Book) : ViewModel() {
 
     fun updateMarkWord(wordId: Long, isMark: Boolean){
         viewModelScope.launch(Dispatchers.IO) {
-            if(WordRepository.updateMarkWord(wordId, isMark)>0){
+            if(WordRepository.updateWordMark(wordId, isMark)>0){
                 databaseEvent.postValue((if(isMark) "mark" else "cancelMark") to null)
             }
         }
@@ -73,7 +70,7 @@ class WordListViewModel(val currentOpenBook: Book) : ViewModel() {
 
     fun deleteWordToTrash(wordIdList:List<Long>){
         viewModelScope.launch(Dispatchers.IO) {
-            if(WordRepository.deleteWordToTrash(*wordIdList.toLongArray()) > 0)
+            if(WordRepository.updateWordIsTrash(*wordIdList.toLongArray(), isTrash = true) > 0)
                 databaseEvent.postValue("delete" to null)
         }
     }

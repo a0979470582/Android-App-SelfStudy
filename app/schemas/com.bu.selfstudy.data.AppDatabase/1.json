@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "3547946a95883bcb38c7baa143bbf31a",
+    "identityHash": "3c46793faee912d1c193c3c392a1d8a1",
     "entities": [
       {
         "tableName": "Member",
@@ -80,7 +80,7 @@
       },
       {
         "tableName": "Book",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `memberId` INTEGER NOT NULL, `bookName` TEXT NOT NULL, `size` INTEGER NOT NULL, `position` INTEGER NOT NULL, `sortState` TEXT NOT NULL, `displayMode` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL, FOREIGN KEY(`memberId`) REFERENCES `Member`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `memberId` INTEGER NOT NULL, `bookName` TEXT NOT NULL, `size` INTEGER NOT NULL, `position` INTEGER NOT NULL, `sortState` TEXT NOT NULL, `displayMode` TEXT NOT NULL, `colorInt` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL, `isArchive` INTEGER NOT NULL, FOREIGN KEY(`memberId`) REFERENCES `Member`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -125,6 +125,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "colorInt",
+            "columnName": "colorInt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "timestamp",
             "columnName": "timestamp",
             "affinity": "INTEGER",
@@ -133,6 +139,12 @@
           {
             "fieldPath": "isTrash",
             "columnName": "isTrash",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isArchive",
+            "columnName": "isArchive",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -297,7 +309,7 @@
       },
       {
         "tableName": "SearchHistory",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `searchName` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `searchName` TEXT NOT NULL, `timestamp` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -306,15 +318,15 @@
             "notNull": true
           },
           {
-            "fieldPath": "timestamp",
-            "columnName": "timestamp",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
             "fieldPath": "searchName",
             "columnName": "searchName",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -338,12 +350,18 @@
       },
       {
         "tableName": "SearchAutoComplete",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `isHistory` INTEGER NOT NULL, `searchName` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `searchName` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `isHistory` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "searchName",
+            "columnName": "searchName",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -356,12 +374,6 @@
             "fieldPath": "isHistory",
             "columnName": "isHistory",
             "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "searchName",
-            "columnName": "searchName",
-            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -387,7 +399,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3547946a95883bcb38c7baa143bbf31a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3c46793faee912d1c193c3c392a1d8a1')"
     ]
   }
 }

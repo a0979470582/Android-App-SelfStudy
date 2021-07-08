@@ -1,8 +1,7 @@
 package com.bu.selfstudy.data.local
 
 import com.bu.selfstudy.SelfStudyApplication
-import com.google.gson.JsonArray
-import com.google.gson.JsonParser
+import com.bu.selfstudy.data.model.SearchAutoComplete
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -14,8 +13,9 @@ object LoadSearchAutoComplete {
             "最常用3000.txt", "雅思.txt"
     )
 
-    suspend fun loadData(fileName: String): List<String> = withContext(Dispatchers.IO){
+    suspend fun loadData(fileName: String): List<SearchAutoComplete> = withContext(Dispatchers.IO){
         val inputStream = SelfStudyApplication.context.assets.open("autoCompleteData/$fileName")
-        return@withContext inputStream.reader().readLines()
+        val rowList = inputStream.reader().readLines()
+        return@withContext rowList.map { SearchAutoComplete(searchName = it) }
     }
 }

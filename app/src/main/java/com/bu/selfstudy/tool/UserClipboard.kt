@@ -19,6 +19,7 @@ fun Activity.getClipboardText(): String?{
 
     val text = clipboard.primaryClip!!.getItemAt(0).text
 
+
     if(text.isNullOrBlank())
         return null
 

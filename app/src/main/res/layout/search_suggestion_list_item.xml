@@ -5,14 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="16dp"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp"
     android:background="@drawable/item_background">
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/historyIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/ic_baseline_history_24" />
@@ -21,8 +19,9 @@
         android:id="@+id/searchIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:tint="#606060"
+        android:padding="16dp"
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/ic_baseline_search_24" />
@@ -35,19 +34,21 @@
         android:layout_marginEnd="8dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@id/northWestIcon"
+        android:maxLines="2"
+        android:padding="16dp"
+        app:layout_constraintEnd_toStartOf="@id/closeIcon"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="test" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/northWestIcon"
+        android:id="@+id/closeIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingEnd="16dp"
+        android:padding="16dp"
         android:tint="#606060"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_baseline_north_west_24" />
+        app:srcCompat="@drawable/ic_baseline_close_24" />
 </androidx.constraintlayout.widget.ConstraintLayout>

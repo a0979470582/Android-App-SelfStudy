@@ -24,7 +24,7 @@
         <item name="colorPrimaryVariant">#425C5A</item>
         <item name="colorOnPrimary">#BA946C</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">#FDCDA1</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
         <item name="colorSecondaryVariant">#FDCDA1</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->

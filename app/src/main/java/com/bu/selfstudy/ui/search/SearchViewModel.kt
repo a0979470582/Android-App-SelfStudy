@@ -1,7 +1,6 @@
 package com.bu.selfstudy.ui.search
 
 import androidx.lifecycle.*
-import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.model.SearchHistory
 import com.bu.selfstudy.data.model.SearchRow
 import com.bu.selfstudy.data.model.Word
@@ -17,10 +16,10 @@ class SearchViewModel : ViewModel() {
 
     val searchQuery = MutableLiveData<String>()
     private val autoCompleteList = searchQuery.switchMap {
-        SearchRepository.loadSearchAutoComplete(it).asLiveData()
+        SearchRepository.loadAutoComplete(it).asLiveData()
     }
     private val historyList = searchQuery.switchMap {
-        SearchRepository.loadSearchHistory(it).asLiveData()
+        SearchRepository.loadHistory(it).asLiveData()
     }
 
     val suggestionList = MediatorLiveData<List<SearchRow>>().also {
@@ -34,7 +33,7 @@ class SearchViewModel : ViewModel() {
 
             if(searchQuery.value!!.isNullOrBlank()){
                 clipboardText?.let{
-                    newList.add(SearchRow(it))
+                    newList.add(SearchRow(searchName = it))
 
                 }
             }
@@ -57,15 +56,22 @@ class SearchViewModel : ViewModel() {
     fun addOneSearchHistory(query: String) {
         viewModelScope.launch {
             val searchHistoryObj = SearchHistory(searchName=query)
-            SearchRepository.insertSearchHistory(searchHistoryObj)
+            SearchRepository.insertHistory(searchHistoryObj)
         }
     }
 
+    fun removeSearchHistory(searchHistory: SearchHistory) {
+        viewModelScope.launch {
+            SearchRepository.deleteHistory(searchHistory)
+
+        }
+    }
 
     fun getWordPage(wordName: String) {
         viewModelScope.launch {
             wordLiveData.value = WordRepository.getWord(wordName)
         }
     }
+
 
 }

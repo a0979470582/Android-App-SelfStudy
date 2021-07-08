@@ -1,63 +1,73 @@
 package com.bu.selfstudy.data.repository
 
 import com.bu.selfstudy.data.AppDatabase
-import com.bu.selfstudy.data.dao.SearchAutoCompleteDao
-import com.bu.selfstudy.data.dao.SearchHistoryDao
 import com.bu.selfstudy.data.local.LoadSearchAutoComplete
 import com.bu.selfstudy.data.model.SearchAutoComplete
 import com.bu.selfstudy.data.model.SearchHistory
-import com.bu.selfstudy.data.model.Word
-import com.bu.selfstudy.tool.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-//search and result
+//handle Search Suggestion
 object SearchRepository {
-    private val searchHistoryDao = AppDatabase.getDatabase().searchHistoryDao()
-    private val searchAutoCompleteDao = AppDatabase.getDatabase().searchAutoCompleteDao()
+    private val historyDao = AppDatabase.getDatabase().searchHistoryDao()
+    private val autoCompleteDao = AppDatabase.getDatabase().searchAutoCompleteDao()
 
-    fun loadSearchHistory(query: String) = searchHistoryDao.loadSearchHistory(query)
-    fun loadSearchAutoComplete(query: String) = searchAutoCompleteDao.loadSearchAutoComplete(query)
+    //select
+    fun loadHistory(query: String) = historyDao.loadHistory(query)
+    fun loadAutoComplete(query: String) = autoCompleteDao.loadAutoComplete(query)
 
-
-    suspend fun insertSearchHistory(searchHistory: SearchHistory) = withContext(Dispatchers.IO){
-        val resultId = searchHistoryDao.insertSearchHistory(searchHistory)
-        searchAutoCompleteDao.setIsHistory(searchHistory.searchName, isHistory = true)
-        resultId
-    }
-    suspend fun insertSearchAutoComplete(vararg searchAutoComplete: SearchAutoComplete) = withContext(Dispatchers.IO){
-        searchAutoCompleteDao.insert(*searchAutoComplete)
-    }
-
-    suspend fun clearSearchHistory() = withContext(Dispatchers.IO){
-        val searchHistoryList  = searchHistoryDao.loadSearchHistory("").first()
-        searchAutoCompleteDao.setIsHistory(
-                searchName = searchHistoryList.map { it.searchName }.toTypedArray(),
-                isHistory = false
-        )
-        searchHistoryDao.delete(*searchHistoryList.toTypedArray())
-    }
-
-    suspend fun insertLocalAutoComplete() = withContext(Dispatchers.IO){
-        for(filename in LoadSearchAutoComplete.filenameList){
-            val autoCompleteList = LoadSearchAutoComplete.loadData(filename).map {
-                SearchAutoComplete(searchName = it)
-            }
-            searchAutoCompleteDao.insertSearchAutoComplete(*autoCompleteList.toTypedArray())
+    //insert
+    suspend fun insertHistory(history: SearchHistory) = withContext(Dispatchers.IO){
+        historyDao.insertHistory(history).also {
+            autoCompleteDao.setIsHistory(history.searchName, isHistory = true)
         }
     }
-    suspend fun removeLocalAutoComplete() = withContext(Dispatchers.IO){
-        searchAutoCompleteDao.loadSearchAutoComplete("").collect {
-            it.forEach { row->
-                row.searchName.forEach { char->
-                    val commonLetter = char.isLowerCase()
-                    if(!commonLetter)
-                        searchAutoCompleteDao.delete(row)
+
+
+    //prepare DB
+    suspend fun insertLocalAutoComplete() = withContext(Dispatchers.IO){
+        for(filename in LoadSearchAutoComplete.filenameList){
+            val autoCompleteList = LoadSearchAutoComplete.loadData(filename)
+            autoCompleteList.iterator().forEach {
+                it.isHistory = historyDao.checkHistoryExists(it.searchName)
+            }
+            autoCompleteDao.insertAutoComplete(*autoCompleteList.toTypedArray())
+        }
+    }
+
+    //delete
+    suspend fun deleteHistory(history: SearchHistory) = withContext(Dispatchers.IO){
+        historyDao.delete(history).also {
+            autoCompleteDao.setIsHistory(history.searchName, isHistory = false)
+        }
+    }
+
+    suspend fun clearAllHistory() = withContext(Dispatchers.IO){
+        val historyList  = historyDao.loadHistory("").first()
+        autoCompleteDao.setIsHistory(
+                searchName = historyList.map { it.searchName }.toTypedArray(),
+                isHistory = false
+        )
+        historyDao.delete(*historyList.toTypedArray())
+    }
+
+    suspend fun checkAutoComplete() = withContext(Dispatchers.IO){
+        val autoCompleteList  = autoCompleteDao.loadAutoComplete("").first()
+
+        autoCompleteList.forEach first@{ autoComplete ->
+            if(autoComplete.searchName.length <= 1) {
+                autoCompleteDao.delete(autoComplete)
+                return@first //next autoComplete check
+            }
+            autoComplete.searchName.forEach { char->
+                if(!char.isLowerCase()) {
+                    autoCompleteDao.delete(autoComplete)
+                    return@first //next autoComplete check
                 }
             }
         }
     }
+
 }

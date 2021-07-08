@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.R
+import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.WordListItemBinding
 import com.bu.selfstudy.data.model.Word
@@ -43,10 +44,9 @@ class BookListAdapter(val fragment: BookFragment):
         val book = asyncListDiffer.currentList[position]
 
         holder.binding.bookNameTextView.setText(book.bookName)
-        val bookSizeString = "${book.size.toString()}個單字"
-        holder.binding.bookSizeTextView.setText(bookSizeString)
+        holder.binding.bookSizeTextView.setText("${book.size}個單字")
 
-        //holder.binding.bookIcon.imageTintList = ColorStateList.valueOf(colorList.random())
+        holder.binding.bookIcon.imageTintList = ColorStateList.valueOf(book.colorInt)
 
         tracker?.let {
             holder.itemView.isActivated = it.isSelected(book.id)

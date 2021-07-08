@@ -13,10 +13,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.*
 import com.bu.selfstudy.databinding.ActivityMainBinding
-import com.bu.selfstudy.tool.putBundle
-import com.bu.selfstudy.tool.showSnackbar
-import com.bu.selfstudy.tool.showToast
-import com.bu.selfstudy.tool.viewBinding
+import com.bu.selfstudy.tool.*
 import com.bu.selfstudy.ui.book.BookFragmentDirections
 import com.bu.selfstudy.ui.wordcard.WordCardFragmentDirections
 import kotlinx.coroutines.delay
@@ -46,8 +43,11 @@ class MainActivity : AppCompatActivity(){
         binding.navView.setupWithNavController(navController)
 
         activityViewModel.memberLiveData.observe(this){
-            binding.navView.findViewById<TextView>(R.id.mailField)?.setText(it.email)
-            binding.navView.findViewById<TextView>(R.id.userNameField)?.setText(it.userName)
+            if(it != null){ binding.navView.run {
+                    findViewById<TextView>(R.id.mailField)?.text = it.email
+                    findViewById<TextView>(R.id.userNameField)?.text = it.userName
+                }
+            }
         }
 
         activityViewModel.bookListLiveData.observe(this){

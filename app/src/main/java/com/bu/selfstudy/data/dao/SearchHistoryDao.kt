@@ -9,10 +9,17 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Dao
 interface SearchHistoryDao: BaseDao<SearchHistory>{
-    //new search(time more big then old) sort to top
-    @Query("SELECT * FROM SearchHistory WHERE searchName LIKE :query || '%' ORDER BY timestamp DESC")
-    fun loadSearchHistory(query: String): Flow<List<SearchHistory>>
+    //select
+    @Query("""SELECT * FROM SearchHistory
+                    WHERE searchName LIKE :query || '%'
+                    ORDER BY timestamp DESC""")
+    fun loadHistory(query: String): Flow<List<SearchHistory>>
 
+    @Query("""SELECT count(*)>0 FROM SearchHistory
+                    WHERE searchName = :searchName""")
+    fun checkHistoryExists(searchName: String): Boolean
+
+    //insert
     @Insert(onConflict = OnConflictStrategy.REPLACE)//new search replace old
-    suspend fun insertSearchHistory(searchHistory: SearchHistory): Long
+    suspend fun insertHistory(history: SearchHistory): Long
 }

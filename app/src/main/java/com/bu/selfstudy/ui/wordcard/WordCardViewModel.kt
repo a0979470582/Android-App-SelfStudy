@@ -3,21 +3,15 @@
 
 import android.os.Bundle
 import androidx.lifecycle.*
-import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.data.repository.WordRepository
 import com.bu.selfstudy.tool.SingleLiveData
-import com.bu.selfstudy.tool.putBundle
-import com.bu.selfstudy.ui.editword.EditWordViewModel
-import com.bu.selfstudy.ui.wordlist.WordListViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.math.max
-import kotlin.math.min
 
-/**
+  /**
  * 更改資料庫中的wordList都會透過LiveData反應在目前的ViewPager, 例如新增,刪除,修改都會同步到資料庫,
  * 接著透過LiveData傳回並在ViewPager看到更新, 而wordFragment的生命週期進入onStop時, 會同步目前使用者所
  * 看到的單字頁(wordId)到資料庫
@@ -54,7 +48,7 @@ class WordCardViewModel(val currentOpenBook: Book) : ViewModel() {
 
     fun updateMarkWord(wordId:Long, isMark: Boolean){
         viewModelScope.launch(Dispatchers.IO) {
-            if(WordRepository.updateMarkWord(wordId, isMark)>0){
+            if(WordRepository.updateWordMark(wordId, isMark)>0){
                 databaseEvent.postValue((if(isMark) "mark" else "cancelMark") to null)
             }
         }
@@ -70,7 +64,7 @@ class WordCardViewModel(val currentOpenBook: Book) : ViewModel() {
 
     fun deleteWordToTrash(wordId: Long){
         viewModelScope.launch(Dispatchers.IO) {
-            if(WordRepository.deleteWordToTrash(wordId) > 0)
+            if(WordRepository.updateWordIsTrash(wordId, isTrash = true) > 0)
                 databaseEvent.postValue("delete" to null)
         }
     }

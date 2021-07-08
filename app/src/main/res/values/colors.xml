@@ -12,4 +12,18 @@
     <color name="ripple_color">#BAADAD</color>
     <color name="test">#2B2B2B</color>
     <color name="toolbar_icon_color">#FFFFFFFF</color>
+
+    <color name="colorSecondary">#FDCDA1</color>
+    <color name="searchQuerySpan">#FF777C</color>
+
+    <color name="book_color_1">#F44336</color>
+    <color name="book_color_2">#E91E63</color>
+    <color name="book_color_3">#9C27B0</color>
+    <color name="book_color_4">#673AB7</color>
+    <color name="book_color_5">#3F51B5</color>
+    <color name="book_color_6">#2196F3</color>
+    <color name="book_color_7">#4CAF50</color>
+    <color name="book_color_8">#8BC34A</color>
+    <color name="book_color_9">#FFEB3B</color>
+    <color name="book_color_10">#FF9800</color>
 </resources>

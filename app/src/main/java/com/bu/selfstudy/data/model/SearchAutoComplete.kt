@@ -1,15 +1,16 @@
 package com.bu.selfstudy.data.model
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.util.*
 
 @Entity(indices = [Index(value=["searchName"], unique = true)])
-class SearchAutoComplete (
+data class SearchAutoComplete (
         @PrimaryKey(autoGenerate = true)
-        val id:Long = 0,
-        searchName: String,
-        val timestamp: Date = Date(),
-        val isHistory: Boolean = false
-):SearchRow(searchName)
+        override var id:Long = 0,
+        override var searchName: String,
+        override var timestamp: Date = Date(),
+        var isHistory: Boolean = false
+):SearchRow()

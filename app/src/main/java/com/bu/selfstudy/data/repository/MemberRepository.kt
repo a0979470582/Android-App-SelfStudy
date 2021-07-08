@@ -9,11 +9,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 object MemberRepository {
-    val memberDao = getDatabase().memberDao()
+    private val memberDao = getDatabase().memberDao()
 
     fun loadMember(memberId:Long=SelfStudyApplication.memberId)
         = memberDao.loadDistinctMember(memberId)
-
 
     suspend fun insertMember(member: Member) = withContext(Dispatchers.IO){
         memberDao.insert(member)
@@ -24,6 +23,4 @@ object MemberRepository {
     suspend fun deleteMember(member: Member) = withContext(Dispatchers.IO){
         memberDao.delete(member)
     }
-
-
 }
