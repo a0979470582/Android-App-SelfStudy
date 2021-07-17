@@ -19,7 +19,8 @@ import java.util.concurrent.Executors
     Book::class,
     Word::class,
     SearchHistory::class,
-    SearchAutoComplete::class])
+    SearchAutoComplete::class,
+    RecentWord::class])
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun memberDao(): MemberDao
@@ -27,6 +28,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun wordDao(): WordDao
     abstract fun searchHistoryDao(): SearchHistoryDao
     abstract fun searchAutoCompleteDao(): SearchAutoCompleteDao
+    abstract fun recentWordDao():RecentWordDao
 
     companion object {
         private var instance: AppDatabase? = null

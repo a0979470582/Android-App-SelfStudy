@@ -3,6 +3,7 @@ package com.bu.selfstudy.data.local
 import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.model.Word
+import com.bu.selfstudy.tool.log
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -22,11 +23,11 @@ object LoadLocalBook {
 
             val pronunciation = if(it.getAsJsonArray("pronunciation").size()>0)
                 it.getAsJsonArray("pronunciation")[0].asString
-                        .replace("KK[", "/")
-                        .replace("]","/") else ""
+                        .replace("KK[", "/ ")
+                        .replace("]"," /") else ""
 
-            val audioPath = if (it.get("audioPath").isJsonArray) ""
-            else it.get("audioPath").asString
+            //val audioPath = if (it.get("audioPath").isJsonArray) ""
+            //else it.get("audioPath").asString
 
             var translation = ""
             for(i in 0 until it.getAsJsonArray("partOfSpeech").size()){
@@ -38,19 +39,19 @@ object LoadLocalBook {
             }
 
             var variation = ""
-            if(it.getAsJsonArray("variation_n").size()>0)
-                variation = variation.plus(it.getAsJsonArray("variation_n")[0].asString)
+            if(it.getAsJsonArray("variation_v").size()>0)
+                variation = variation.plus(it.getAsJsonArray("variation_v")[0].asString)
 
-            if(it.getAsJsonArray("variation_v").size()>0) {
+            if(it.getAsJsonArray("variation_n").size()>0) {
                 if (variation!="")
                     variation = variation.plus("\n")
-                variation = variation.plus(it.getAsJsonArray("variation_v")[0].asString)
+                variation = variation.plus(it.getAsJsonArray("variation_n")[0].asString)
             }
 
             var example = ""
             for(i in 0 until it.getAsJsonArray("example_partOfSpeech").size()){
                 if(i != 0)
-                    example = example.plus("\n")
+                    example = example.plus("\n\n")
                 example = example.plus(it.getAsJsonArray("example_partOfSpeech")[i].asString)
                 example = example.plus("\n")
                 example = example.plus(it.getAsJsonArray("example")[i].asString)
@@ -60,7 +61,6 @@ object LoadLocalBook {
                     bookId = 0,
                     wordName = wordName,
                     pronunciation = pronunciation,
-                    audioPath = audioPath,
                     translation = translation,
                     variation = variation,
                     example = example

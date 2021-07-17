@@ -15,7 +15,8 @@ data class RecentWord(
     var id:Long = 0,
     var wordId: Long,
     var bookId: Long,
-    var wordName: String,
-    var bookName: String,
+    var wordName: String = "",
+    var bookName: String = "",
+    var isExists:Boolean = true,
     var timestamp: Date = Date()
 )

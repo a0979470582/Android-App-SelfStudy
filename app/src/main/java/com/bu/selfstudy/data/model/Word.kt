@@ -22,14 +22,15 @@ import java.util.*
 data class Word(
     @PrimaryKey(autoGenerate = true)
     var id:Long = 0,
-    var bookId: Long,
-    var wordName: String,
+    var bookId: Long = 0,
+    var wordName: String = "",
     var pronunciation: String="",
     var translation: String="",
     var variation: String="",
     var example: String="",
     var note: String = "",
-    var audioPath:String = "",
+
+    var audioFilePath:String="",//ex: reserve.mp3, dir: /data/data/<application package>/files/
     var dictionaryPath: String="",//a file about complete word data from api
     var isMark: Boolean = false,
 

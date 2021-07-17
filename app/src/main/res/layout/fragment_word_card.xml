@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="">
 
     <data>
     </data>
@@ -14,15 +14,23 @@
 
         <!-- Circular progress indicator -->
         <TextView
-            android:id="@+id/explainView"
+            android:id="@+id/explainText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
             android:text="目前這裡還沒有單字唷~ 可以點擊右下角的按鈕來新增單字"
+            android:gravity="center"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+        <ImageView
+            android:id="@+id/explainImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/app_icon"
+            android:alpha="0.1"
+            android:visibility="gone"/>
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progressIndicator"
@@ -57,7 +65,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:sdMainFabClosedSrc="@drawable/ic_baseline_edit_24"

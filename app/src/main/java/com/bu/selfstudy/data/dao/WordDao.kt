@@ -47,4 +47,7 @@ interface WordDao : BaseDao<Word>{
 
     @Query("UPDATE Word SET isTrash = :isTrash WHERE bookId =:bookId")
     suspend fun updateWordIsTrash(bookId: Long, isTrash: Boolean): Int
+
+    @Query("UPDATE Word SET audioFilePath = :filePath WHERE id = :wordId")
+    suspend fun updateAudioFilePath(wordId: Long, filePath: String): Int
 }

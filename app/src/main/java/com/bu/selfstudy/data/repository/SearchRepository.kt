@@ -15,14 +15,16 @@ object SearchRepository {
     private val autoCompleteDao = AppDatabase.getDatabase().searchAutoCompleteDao()
 
     //select
-    fun loadHistory(query: String) = historyDao.loadHistory(query)
-    fun loadAutoComplete(query: String) = autoCompleteDao.loadAutoComplete(query)
+    fun loadHistory(query: String) = historyDao.loadHistory(query.trim())
+    fun loadAutoComplete(query: String) = autoCompleteDao.loadAutoComplete(query.trim())
 
     //insert
-    suspend fun insertHistory(history: SearchHistory) = withContext(Dispatchers.IO){
-        historyDao.insertHistory(history).also {
-            autoCompleteDao.setIsHistory(history.searchName, isHistory = true)
-        }
+    suspend fun insertHistory(searchName: String) = withContext(Dispatchers.IO){
+        if(searchName.isBlank())
+            return@withContext
+
+        historyDao.insertHistory(SearchHistory(searchName=searchName.trim()))
+        autoCompleteDao.setIsHistory(searchName, isHistory = true)
     }
 
 
@@ -39,9 +41,8 @@ object SearchRepository {
 
     //delete
     suspend fun deleteHistory(history: SearchHistory) = withContext(Dispatchers.IO){
-        historyDao.delete(history).also {
-            autoCompleteDao.setIsHistory(history.searchName, isHistory = false)
-        }
+        historyDao.delete(history)
+        autoCompleteDao.setIsHistory(history.searchName, isHistory = false)
     }
 
     suspend fun clearAllHistory() = withContext(Dispatchers.IO){

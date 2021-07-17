@@ -57,11 +57,11 @@ class WordListFragment : Fragment() {
      override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
          setHasOptionsMenu(true)
 
-         activityViewModel.currentOpenBookLiveData.value!!.let {
+         /*activityViewModel.currentOpenBookLiveData.value!!.let {
              viewModel = ViewModelProvider(this, WordListViewModel.provideFactory(it))
                      .get(WordListViewModel::class.java)
              (requireActivity() as AppCompatActivity).supportActionBar?.title = it.bookName
-         }
+         }*/
 
          viewModel.wordListLiveData.observe(viewLifecycleOwner){
              listAdapter.submitList(it)

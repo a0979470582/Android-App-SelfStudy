@@ -1,6 +1,8 @@
 package com.bu.selfstudy.tool
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
@@ -60,4 +62,25 @@ fun <T:Any> Any.putBundle(key: String, value: T) = run() {
     }
 
     return@run bundle
+}
+
+fun testTaskTime(block: (() -> Unit)){
+    val startTime = System.currentTimeMillis()
+    block()
+    val endTime = System.currentTimeMillis()
+    val result = endTime - startTime
+    result.log()
+}
+
+
+fun hasNetwork(): Boolean {
+    val connectivityManager = SelfStudyApplication.context.getSystemService(
+            Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        connectivityManager.activeNetwork != null
+    } else {
+        val networkInfo = connectivityManager.activeNetworkInfo
+        networkInfo != null && networkInfo.isAvailable
+    }
 }

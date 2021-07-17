@@ -2,26 +2,16 @@ package com.bu.selfstudy.ui.book
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bu.selfstudy.R
-import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.model.Book
-import com.bu.selfstudy.databinding.WordListItemBinding
-import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.BookListItemBinding
-import com.bu.selfstudy.tool.log
-import com.bu.selfstudy.tool.showToast
-import com.bu.selfstudy.ui.book.BookFragment
-import kotlinx.coroutines.supervisorScope
-import kotlin.random.Random
 
-class BookListAdapter(val fragment: BookFragment):
-        RecyclerView.Adapter<BookListAdapter.ViewHolder>() {
+class BookAdapter(val fragment: BookFragment):
+        RecyclerView.Adapter<BookAdapter.ViewHolder>() {
 
     private val asyncListDiffer = object: AsyncListDiffer<Book>(this, BookDiffCallback){}
 
@@ -35,7 +25,7 @@ class BookListAdapter(val fragment: BookFragment):
 
         holder.itemView.setOnClickListener {
             val book = asyncListDiffer.currentList[holder.adapterPosition]
-            fragment.navigateToWordCardFragment(book)
+            fragment.navigateToWordCardFragment(book.id)
         }
         return holder
     }
@@ -43,10 +33,12 @@ class BookListAdapter(val fragment: BookFragment):
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val book = asyncListDiffer.currentList[position]
 
-        holder.binding.bookNameTextView.setText(book.bookName)
-        holder.binding.bookSizeTextView.setText("${book.size}個單字")
+        with(holder.binding){
+            bookNameTextView.text = book.bookName
+            bookSizeTextView.text = "${book.size}個單字"
 
-        holder.binding.bookIcon.imageTintList = ColorStateList.valueOf(book.colorInt)
+            bookIcon.imageTintList = ColorStateList.valueOf(book.colorInt)
+        }
 
         tracker?.let {
             holder.itemView.isActivated = it.isSelected(book.id)

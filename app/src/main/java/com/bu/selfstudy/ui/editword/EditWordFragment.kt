@@ -60,7 +60,7 @@ class EditWordFragment: Fragment() {
         }
         setFragmentResultListener("saveAndExit"){_, bundle->
             viewModel.updateWord()
-            setFragmentResult("ExitFromEditWordFragment", Bundle())
+            setFragmentResult("EditWordFragment", Bundle())
             findNavController().popBackStack()
         }
 

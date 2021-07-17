@@ -1,37 +1,32 @@
 package com.bu.selfstudy
 
+import android.app.SearchManager
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenResumed
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.*
 import com.bu.selfstudy.databinding.ActivityMainBinding
 import com.bu.selfstudy.tool.*
 import com.bu.selfstudy.ui.book.BookFragmentDirections
+import com.bu.selfstudy.ui.search.SearchFragment
 import com.bu.selfstudy.ui.wordcard.WordCardFragmentDirections
-import kotlinx.coroutines.delay
 
 
 class MainActivity : AppCompatActivity(){
     private val activityViewModel: ActivityViewModel by viewModels()
-
     private val binding : ActivityMainBinding by viewBinding()
-
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
-        setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL)
 
         navController = findNavController(R.id.nav_host_fragment)
         appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
@@ -43,7 +38,8 @@ class MainActivity : AppCompatActivity(){
         binding.navView.setupWithNavController(navController)
 
         activityViewModel.memberLiveData.observe(this){
-            if(it != null){ binding.navView.run {
+            if(it != null){
+                with(binding.navView){
                     findViewById<TextView>(R.id.mailField)?.text = it.email
                     findViewById<TextView>(R.id.userNameField)?.text = it.userName
                 }
@@ -59,6 +55,27 @@ class MainActivity : AppCompatActivity(){
                 "insertWord"->{ pair.second?.let { showInsertMessage(it) } }
             }
         }
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            binding.drawerLayout.setDrawerLockMode(
+                if(destination.id == R.id.wordCardFragment)
+                    DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+                else
+                    DrawerLayout.LOCK_MODE_UNLOCKED
+            )
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if(intent.action == Intent.ACTION_SEARCH){
+            intent.getStringExtra(SearchManager.QUERY)?.also { query ->
+                (supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+                        ?.childFragmentManager?.fragments?.first() as SearchFragment).also {
+                            it.startSearch(query)
+                }
+            }
+        }
     }
 
     private fun showInsertMessage(bundle: Bundle) {
@@ -66,16 +83,16 @@ class MainActivity : AppCompatActivity(){
             //按下Snackbar上的按鈕之後, 可跳轉到新增的那一個單字卡
             val wordId = bundle.getLong("wordId")
             val bookId = bundle.getLong("bookId")
-            
-            activityViewModel.currentOpenBookLiveData.value =
-                activityViewModel.bookListLiveData.value!!.find { it.id == bookId }
 
             navController.currentDestination?.let {
-                val action = if(it.id == R.id.wordCardFragment)
-                    WordCardFragmentDirections.actionWordCardFragmentSelf(wordId)
-                else
-                    BookFragmentDirections.actionBookFragmentToWordCardFragment(wordId)
-
+                val action = when(it.id){
+                    R.id.wordCardFragment -> WordCardFragmentDirections
+                            .actionWordCardFragmentSelf(bookId = bookId, wordId = wordId)
+                    R.id.bookFragment -> BookFragmentDirections
+                            .actionBookFragmentToWordCardFragment(
+                            bookId = bookId, wordId = wordId)
+                    else -> return@let
+                }
                 navController.navigate(action)
             }
         }

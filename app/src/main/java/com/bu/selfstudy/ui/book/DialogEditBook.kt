@@ -27,26 +27,28 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
 class DialogEditBook() : AppCompatDialogFragment() {
-    private val args: DialogEditBookArgs by navArgs()
+    private val args: DialogEditBookArgs by navArgs()//get bookName
     private lateinit var alertDialog: AlertDialog
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog{
-        val linearLayout = requireActivity()
-                .layoutInflater
-                .inflate(R.layout.dialog_edit_book, null)
+        val linearLayout = requireActivity().layoutInflater.inflate(
+                R.layout.dialog_edit_book, null
+        )
 
         val editText = linearLayout.findViewById<EditText>(R.id.editText).also {
             it.setText(args.bookName)
             it.addTextChangedListener {editable->
-                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = editable!!.isNotBlank()
+                alertDialog.getButton(
+                        AlertDialog.BUTTON_POSITIVE
+                ).isEnabled = editable!!.isNotBlank()
             }
-            it.requestFocus()
+            it.requestFocus()//進入編輯頁時給予焦點
         }
 
         alertDialog = MaterialAlertDialogBuilder(requireActivity())
                 .setView(linearLayout)
                 .setPositiveButton("確定") { dialog, which ->
-                    setFragmentResult("edit",
+                    setFragmentResult("DialogEditBook",
                             putBundle("bookName", editText.text.toString())
                     )
                 }
@@ -56,7 +58,7 @@ class DialogEditBook() : AppCompatDialogFragment() {
 
         alertDialog.run {
             window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-            show()
+            show()//不先開啟就無法獲取焦點
         }
 
         return alertDialog

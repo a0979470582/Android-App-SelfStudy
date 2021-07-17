@@ -14,6 +14,7 @@ import com.bu.selfstudy.data.model.*
 import com.bu.selfstudy.databinding.SearchSuggestionListItemBinding
 import com.bu.selfstudy.tool.log
 import kotlinx.coroutines.*
+import java.lang.StrictMath.min
 
 
 class SuggestionListAdapter(val fragment: SearchFragment):
@@ -62,11 +63,9 @@ class SuggestionListAdapter(val fragment: SearchFragment):
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        position.log()
-        suggestionList[position].searchName.log()
         //填入每一列的文字
         val span = SpannableString(suggestionList[position].searchName).also {
-            it.setSpan(ForegroundColorSpan(searchQueryColor), 0, searchQuery.length,
+            it.setSpan(ForegroundColorSpan(searchQueryColor), 0, min(searchQuery.length, it.length),
                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
 

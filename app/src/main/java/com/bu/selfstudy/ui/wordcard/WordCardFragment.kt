@@ -1,44 +1,35 @@
 package com.bu.selfstudy.ui.wordcard
 
 import android.content.Context
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
-import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.FragmentWordCardBinding
 import com.bu.selfstudy.tool.*
-import com.bu.selfstudy.ui.book.BookFragmentDirections
-import com.bu.selfstudy.ui.book.DialogEditBookArgs
-import com.bu.selfstudy.ui.editword.EditWordViewModel
-import com.bu.selfstudy.ui.wordlist.WordListViewModel
-import com.leinardi.android.speeddial.SpeedDialActionItem
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 
 class WordCardFragment : Fragment() {
     private val args: WordCardFragmentArgs by navArgs()
-    private lateinit var viewModel: WordCardViewModel
+    private val viewModel: WordCardViewModel by viewModels()
     private val activityViewModel: ActivityViewModel by activityViewModels()
     private val binding: FragmentWordCardBinding by viewBinding()
-    private val pagerAdapter = WordCardPagerAdapter()
+    private val pagerAdapter = WordCardPagerAdapter(fragment = this)
 
-    private var searchView: SearchView? = null
     private var viewPagerCallback: ViewPager2.OnPageChangeCallback? = null
+    private var firstLoadViewPager = true
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -47,8 +38,9 @@ class WordCardFragment : Fragment() {
     ): View {
 
         binding.viewPager.adapter = pagerAdapter
-        lifecycle.addObserver(pagerAdapter)
         binding.lifecycleOwner = viewLifecycleOwner
+
+        lifecycle.addObserver(pagerAdapter)//for create media in adapter
 
         return binding.root
     }
@@ -62,30 +54,39 @@ class WordCardFragment : Fragment() {
              initSpeedDial()
          }
 
-         activityViewModel.currentOpenBookLiveData.value!!.let {
-             viewModel = ViewModelProvider(this, WordCardViewModel.provideFactory(it))
-                     .get(WordCardViewModel::class.java)
-             (requireActivity() as AppCompatActivity).supportActionBar?.title = it.bookName
+         activityViewModel.getBookWithId(args.bookId)?.let { book ->
+             viewModel.bookLiveData.value = book
+             (requireActivity() as AppCompatActivity)
+                     .supportActionBar?.title = book.bookName
          }
 
-
+         //switchMap不會先發送第一次空值
+         //觸發wordList變更有可能是傳入初始值, 修改, 刪除, 新增等情況,
+         //假如刪除一列, 建議只notifyItem
          viewModel.wordListLiveData.observe(viewLifecycleOwner) {
-             binding.explainView.visibility = if(it.isEmpty()) View.VISIBLE else View.INVISIBLE
+             binding.explainImage.visibility = if(it.isEmpty()) View.VISIBLE else View.INVISIBLE
+             binding.explainText.visibility = if(it.isEmpty()) View.VISIBLE else View.INVISIBLE
              pagerAdapter.submitList(it)
              setPagerViewItem()
         }
 
-         viewModel.isMarkLiveData.observe(viewLifecycleOwner){
+         viewModel.markLiveData.observe(viewLifecycleOwner){
              replaceMarkIcon(it)
          }
 
-
+         /**
+          * 修正頁數ViewPager的時機:
+          * 初始化頁面時, 退回到此頁時(ViewModel存在), 配置變更(同退回到此頁時),
+          * 刪除單字或新增單字造成List長度改變(待解決)
+          */
          viewPagerCallback = object: ViewPager2.OnPageChangeCallback(){
              override fun onPageSelected(position: Int) {
                  super.onPageSelected(position)
-                 //pagerAdapter.prepareMediaPlayer(position)
-                 val realPosition = position % pagerAdapter.wordList.size
-                 viewModel.updateCurrentPosition(realPosition)
+                 if(!firstLoadViewPager){
+                     viewModel.updateCurrentPosition(
+                             pagerAdapter.mapToRealPosition(position))
+                 }
+                 firstLoadViewPager = false
              }
          }
 
@@ -102,50 +103,49 @@ class WordCardFragment : Fragment() {
     }
 
     private fun setPagerViewItem() {
-        if(viewModel.firstLoad) {
-            setPagerViewInitialItem()
-            return
-        }
-
-        viewModel.currentPosition?.let {
-            setPagerViewCurrentItem(it)
+        if(viewModel.firstLoad){//初始載入
+            setPagerViewCurrentItem(getInitialPosition())
+        }else{//配置改變, 退回此頁, 單字列表長度有變更(刪除或新增)
+            setPagerViewCurrentItem(viewModel.currentPosition?: 0)
         }
     }
 
-    private fun setPagerViewInitialItem() {
+    private fun getInitialPosition():Int {
         if(viewModel.firstLoad) {
             viewModel.firstLoad = false
-            val position = if (args.wordId != 0L)
+
+            return if (args.wordId != 0L)
                 viewModel.getWordPosition(args.wordId)
             else
-                viewModel.currentOpenBook.position
-
-            setPagerViewCurrentItem(position)
+                viewModel.bookLiveData.value?.position?:0
+                //若無Book存在, 其實也不會觸發WordList及此方法
         }
+        throw Exception(" firstLoad isn't true. ")
     }
 
 
-    private fun setPagerViewCurrentItem(position: Int){
+    private fun setPagerViewCurrentItem(position: Int, smooth: Boolean=false){
         binding.viewPager.post {
             binding.viewPager.setCurrentItem(
-                pagerAdapter.mapToFakePosition(position), false
+                    pagerAdapter.mapToFakePosition(position), smooth
             )
         }
     }
 
     private fun setDialogResultListener() {
-        setFragmentResultListener("ExitFromEditWordFragment") { _, _ ->
+        setFragmentResultListener("EditWordFragment") { _, _ ->
             "更新已保存".showToast()
         }
-        setFragmentResultListener("delete") { _, _ ->
+        setFragmentResultListener("DialogDeleteCommon") { _, _ ->
             viewModel.currentOpenWord?.let {
+                //pagerAdapter.notifyRemoveOneWord(viewModel.currentPosition!!)
                 viewModel.deleteWordToTrash(it.id)
             }
         }
     }
 
 
-    private fun replaceMarkIcon(isMark: Boolean){
+    fun replaceMarkIcon(isMark: Boolean){
 
         val oldActionItem = if(isMark) ActionItemCreator.markItem else ActionItemCreator.cancelMarkItem
         val newActionItem = if(isMark) ActionItemCreator.cancelMarkItem else ActionItemCreator.markItem
@@ -188,9 +188,9 @@ class WordCardFragment : Fragment() {
                     }
                     R.id.fab_delete_word -> {
                         viewModel.currentOpenWord?.let {
-                            val title = "刪除單字"
-                            val message = "刪除此單字?"
-                            val action = WordCardFragmentDirections.actionGlobalDialogDeleteCommon(title, message)
+                            val action = WordCardFragmentDirections.actionGlobalDialogDeleteCommon(
+                                    "刪除單字", "刪除此單字?"
+                            )
                             findNavController().navigate(action)
                         }
                     }
@@ -211,41 +211,7 @@ class WordCardFragment : Fragment() {
                         return@setOnActionSelectedListener true
                     }
                 }
-                this.close()
-                return@setOnActionSelectedListener true // To keep the Speed Dial open
-            }
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.action_search -> {
-            }
-            R.id.action_edit_book -> {
-                findNavController().navigate(R.id.wordListFragment)
-            }
-
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.wordcard_toolbar, menu)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        binding.viewPager.currentItem?.let {
-            outState.putInt("position", it)
-        }
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        savedInstanceState?.getInt("position")?.let {
-            binding.viewPager.post {
-                binding.viewPager.setCurrentItem(it, false)
+                return@setOnActionSelectedListener false //關閉小按鈕
             }
         }
     }
@@ -262,6 +228,24 @@ class WordCardFragment : Fragment() {
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.action_search -> {
+                findNavController().navigate(R.id.searchFragment)
+            }
+            R.id.action_edit_book -> {
+                findNavController().navigate(R.id.wordListFragment)
+            }
+
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.wordcard_toolbar, menu)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         viewPagerCallback?.let {
@@ -269,52 +253,9 @@ class WordCardFragment : Fragment() {
         }
         viewPagerCallback = null
     }
-}
 
-/*
-
-
-
-    /**遺珠之憾:1. 空query時旋轉螢幕無法保留介面*/
-    /**在這裡產生searchView對象*/
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.word_toolbar, menu)
-
-        val searchItem = menu.findItem(R.id.action_search)
-        searchView = searchItem.actionView as SearchView
-
-        val searchManager = requireActivity().getSystemService(SEARCH_SERVICE) as SearchManager
-        searchView?.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
-
-        searchView?.apply{
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                /**避免按下送出後, 鍵盤消失, 但輸入框的光標仍在閃爍*/
-                override fun onQueryTextSubmit(query: String): Boolean {
-                    clearFocus()
-                    return false
-                }
-
-                /**每一次搜尋文字改變, 就觸發資料庫刷新*/
-                override fun onQueryTextChange(query: String): Boolean {
-                    viewModel.searchQueryLD.value = query
-                    return false
-                }
-            })
-
-            /**如果頁面重建, ViewModel保有查詢字串, 表示先前頁面銷毀時, 使用者正在使用查詢
-            我們知道頁面銷毀會使SearchView也銷毀, 但SearchView在第一次開啟或最後銷毀時, 都會
-            觸發onQueryTextChange且query是空值, 注意expandActionView就會觸發此情形*/
-            val pendingQuery = viewModel.searchQueryLD.value
-            if(pendingQuery!=null && pendingQuery.isNotBlank()){
-                searchItem.expandActionView()
-                setQuery(pendingQuery, false)
-                clearFocus()
-            }
-        }
+    fun downloadAudio(wordId: Long) {
+        viewModel.downloadAudio(wordId)
     }
 
-
-
-}*/
-
+}

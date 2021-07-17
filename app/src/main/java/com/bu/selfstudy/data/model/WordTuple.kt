@@ -11,7 +11,7 @@ data class WordTuple(
         var bookId: Long,
         var wordName: String,
         var pronunciation: String,
-        var audioPath:String,
+        var audioFilePath:String,
         var isMark: Boolean,
         var timestamp: Date,
         var isTrash:Boolean

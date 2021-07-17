@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 class SearchViewModel : ViewModel() {
     var clipboardText: String? = null
     val wordLiveData = MutableLiveData<Result<Word>>()
-
+    var lastSearchQuery = ""
 
     val searchQuery = MutableLiveData<String>()
     private val autoCompleteList = searchQuery.switchMap {
@@ -53,22 +53,21 @@ class SearchViewModel : ViewModel() {
         clipboardText = text
     }
 
-    fun addOneSearchHistory(query: String) {
+    fun addOneSearchHistory(searchName: String) {
         viewModelScope.launch {
-            val searchHistoryObj = SearchHistory(searchName=query)
-            SearchRepository.insertHistory(searchHistoryObj)
+            SearchRepository.insertHistory(searchName)
         }
     }
 
     fun removeSearchHistory(searchHistory: SearchHistory) {
         viewModelScope.launch {
             SearchRepository.deleteHistory(searchHistory)
-
         }
     }
 
     fun getWordPage(wordName: String) {
         viewModelScope.launch {
+            lastSearchQuery = wordName
             wordLiveData.value = WordRepository.getWord(wordName)
         }
     }

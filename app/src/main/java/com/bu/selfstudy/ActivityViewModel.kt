@@ -8,6 +8,7 @@ import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.data.repository.MemberRepository
 import com.bu.selfstudy.data.repository.WordRepository
 import com.bu.selfstudy.tool.SingleLiveData
+import com.bu.selfstudy.tool.log
 import com.bu.selfstudy.tool.putBundle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,16 +23,23 @@ class ActivityViewModel : ViewModel() {
     val memberLiveData = MemberRepository.loadMember().asLiveData()
     val bookListLiveData = BookRepository.loadBooks().asLiveData()
 
-    val currentOpenBookLiveData = MutableLiveData<Book>()
 
     val bookIdList = ArrayList<Long>()
     fun refreshBookIdList(bookList: List<Book>){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             bookIdList.clear()
             bookIdList.addAll(bookList.map { it.id })
         }
     }
+    fun getBookWithId(bookId: Long): Book?{
+        val index = bookIdList.indexOfFirst { it == bookId }
+        return if(index == -1)
+            null
+        else
+            bookListLiveData.value!![index]
+    }
 
+    //新增單字是多個頁面共同的操作
     fun insertWord(word: Word){
         viewModelScope.launch(Dispatchers.IO) {
             val resultIdList = WordRepository.insertWord(word)

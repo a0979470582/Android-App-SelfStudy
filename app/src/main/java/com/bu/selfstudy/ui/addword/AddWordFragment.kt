@@ -115,6 +115,7 @@ class AddWordFragment: Fragment() {
             android.R.id.home->{
                 //新增單字是否需要保存狀態?
                 findNavController().popBackStack()
+                closeKeyboard()
             }
 
         }

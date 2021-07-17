@@ -28,7 +28,7 @@
     <string name="FAB_delete">刪除</string>
     <string name="FAB_edit">編輯</string>
     <string name="FAB_add">新增</string>
-    <string name="FAB_main">點擊子項目進行操作</string>
+    <string name="FAB_main">點擊小按鈕進行操作</string>
     <string name="FAB_add_word">新增單字</string>
     <string name="FAB_add_book">新增題庫</string>
 

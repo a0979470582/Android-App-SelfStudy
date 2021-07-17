@@ -57,6 +57,9 @@ object BookRepository {
         bookDao.updateBookSize()
     }
 
+    /**
+     * 即便是三千筆單字, 由於只更動一個欄位的0或1, 並不會感到延遲
+     */
     suspend fun updateBookIsTrash(bookId: Long, isTrash: Boolean) = withContext(Dispatchers.IO){
         bookDao.updateBookIsTrash(bookId, isTrash).also {
             wordDao.updateWordIsTrash(bookId, isTrash)

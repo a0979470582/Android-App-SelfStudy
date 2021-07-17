@@ -18,7 +18,7 @@ class DialogDeleteCommon : AppCompatDialogFragment() {
                 .setTitle(args.title)
                 .setMessage(args.message)
                 .setPositiveButton("確定") { dialog, which ->
-                    setFragmentResult("delete", Bundle())
+                    setFragmentResult("DialogDeleteCommon", Bundle())
                 }
                 .setNegativeButton("取消") { dialog, which ->
                 }

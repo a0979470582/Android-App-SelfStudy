@@ -7,6 +7,7 @@ import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.tool.SingleLiveData
 import com.bu.selfstudy.tool.putBundle
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
@@ -21,16 +22,8 @@ class BookViewModel : ViewModel(){
 
     var longPressedBook: Book? = null
     fun refreshLongPressedBook(bookList: List<Book>, bookId: Long){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             longPressedBook = bookList.firstOrNull{ it.id==bookId }
-        }
-    }
-
-    fun insertLocalBook(bookName: String){
-        viewModelScope.launch {
-            BookRepository.insertLocalBook(bookName).let {
-                databaseEvent.postValue("insertLocal" to putBundle("bookName", "bookName"))
-            }
         }
     }
 
@@ -40,6 +33,7 @@ class BookViewModel : ViewModel(){
                 databaseEvent.postValue("delete" to putBundle("bookName", bookName))
         }
     }
+
     fun insertBook(bookName: String){
         viewModelScope.launch {
             val book = Book(bookName = bookName, memberId = SelfStudyApplication.memberId)

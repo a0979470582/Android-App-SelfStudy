@@ -1,9 +1,15 @@
 package com.bu.selfstudy.data.repository
 
-import com.bu.selfstudy.data.model.Word
+import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.AppDatabase.Companion.getDatabase
+import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.network.SelfStudyNetwork
+import com.bu.selfstudy.data.network.YahooService
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
+import okhttp3.Response
+import okio.Okio
+import java.io.File
 
 
 object WordRepository {
@@ -43,7 +49,23 @@ object WordRepository {
         wordDao.updateWordIsTrash(wordId = *wordId, isTrash)
     }
 
-    suspend fun updateWordMark(wordId:Long, isMark: Boolean) = withContext(Dispatchers.IO){
+    suspend fun updateWordMark(wordId: Long, isMark: Boolean) = withContext(Dispatchers.IO){
         wordDao.updateWordMark(wordId, isMark)
+    }
+
+    suspend fun downloadAudio(wordId: Long)
+    = withContext(Dispatchers.IO){
+        val wordName = wordDao.loadWord(wordId).first().wordName
+
+        YahooService.getAudioResponse(wordName)?.let { response->
+            val file = File(SelfStudyApplication.context.filesDir, "${wordName}.mp3")
+            val sink = Okio.buffer(Okio.sink(file))
+
+            response.body()?.let { body->
+                sink.writeAll(body.source())
+                sink.close()
+                wordDao.updateAudioFilePath(wordId, file.name)
+            }
+        }
     }
 }

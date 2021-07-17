@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "3c46793faee912d1c193c3c392a1d8a1",
+    "identityHash": "2892b8b2f649aa85d0c77bc4ab39fc62",
     "entities": [
       {
         "tableName": "Member",
@@ -172,7 +172,7 @@
       },
       {
         "tableName": "Word",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bookId` INTEGER NOT NULL, `wordName` TEXT NOT NULL, `pronunciation` TEXT NOT NULL, `translation` TEXT NOT NULL, `variation` TEXT NOT NULL, `example` TEXT NOT NULL, `note` TEXT NOT NULL, `audioPath` TEXT NOT NULL, `dictionaryPath` TEXT NOT NULL, `isMark` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL, FOREIGN KEY(`bookId`) REFERENCES `Book`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bookId` INTEGER NOT NULL, `wordName` TEXT NOT NULL, `pronunciation` TEXT NOT NULL, `translation` TEXT NOT NULL, `variation` TEXT NOT NULL, `example` TEXT NOT NULL, `note` TEXT NOT NULL, `audioFilePath` TEXT NOT NULL, `dictionaryPath` TEXT NOT NULL, `isMark` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL, FOREIGN KEY(`bookId`) REFERENCES `Book`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -223,8 +223,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "audioPath",
-            "columnName": "audioPath",
+            "fieldPath": "audioFilePath",
+            "columnName": "audioFilePath",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -394,12 +394,78 @@
           }
         ],
         "foreignKeys": []
+      },
+      {
+        "tableName": "RecentWord",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `wordId` INTEGER NOT NULL, `bookId` INTEGER NOT NULL, `wordName` TEXT NOT NULL, `bookName` TEXT NOT NULL, `isExists` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wordId",
+            "columnName": "wordId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bookId",
+            "columnName": "bookId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wordName",
+            "columnName": "wordName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bookName",
+            "columnName": "bookName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isExists",
+            "columnName": "isExists",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_RecentWord_wordId_bookId",
+            "unique": true,
+            "columnNames": [
+              "wordId",
+              "bookId"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_RecentWord_wordId_bookId` ON `${TABLE_NAME}` (`wordId`, `bookId`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3c46793faee912d1c193c3c392a1d8a1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2892b8b2f649aa85d0c77bc4ab39fc62')"
     ]
   }
 }

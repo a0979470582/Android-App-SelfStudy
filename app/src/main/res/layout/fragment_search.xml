@@ -11,29 +11,42 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-
-        <TextView
-            android:id="@+id/clipboardTextView"
+        <!-- Linear progress indicator -->
+        <!--app:hideAnimationBehavior="outward" 隱藏時從下往上-->
+        <!--app:showAnimationBehavior="inward" 顯示時從上往下-->
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="您複製的文字「zoo」"
-            android:visibility="gone"
-            android:maxLines="3"
+            android:indeterminate="true"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:hideAnimationBehavior="outward"
+            app:showAnimationBehavior="inward"
+            android:visibility="invisible"/>
+
+        <include
+            layout="@layout/word_card_item"
+            android:id="@+id/wordCardItem"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible" />
+
+        <include
+            layout="@layout/search_not_found"
+            android:id="@+id/searchNotFound"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent"
             tools:itemCount="5"
             tools:listitem="@layout/book_list_item" />
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

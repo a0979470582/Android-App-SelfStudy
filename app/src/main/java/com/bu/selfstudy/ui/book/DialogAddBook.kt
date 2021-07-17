@@ -23,13 +23,15 @@ class DialogAddBook() : AppCompatDialogFragment() {
     private lateinit var alertDialog: AlertDialog
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog{
-        val linearLayout = requireActivity().layoutInflater
-                .inflate(R.layout.dialog_add_book, null)
+        val linearLayout = requireActivity().layoutInflater.inflate(
+                R.layout.dialog_add_book, null
+        )
 
         val editText = linearLayout.findViewById<EditText>(R.id.editText).also {
             it.addTextChangedListener {editable->
-                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                    .isEnabled = editable!!.isNotBlank()
+                alertDialog.getButton(
+                        AlertDialog.BUTTON_POSITIVE
+                ).isEnabled = editable!!.isNotBlank()
             }
             it.requestFocus()
         }
@@ -37,7 +39,7 @@ class DialogAddBook() : AppCompatDialogFragment() {
         alertDialog = MaterialAlertDialogBuilder(requireActivity())
                 .setView(linearLayout)
                 .setPositiveButton("確定") { dialog, which ->
-                    setFragmentResult("insertBook",
+                    setFragmentResult("DialogAddBook",
                             putBundle("bookName", editText.text.toString())
                     )
                 }
@@ -48,7 +50,7 @@ class DialogAddBook() : AppCompatDialogFragment() {
         alertDialog.run {
             window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
             show()
-            getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
+            getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false//禁用確定鈕
         }
 
         return alertDialog

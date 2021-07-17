@@ -22,7 +22,7 @@ class DialogChooseBook : AppCompatDialogFragment() {
         val bookNameList = if(bookList.isEmpty()) arrayOf("新題庫1, 新題庫2")
                            else bookList.map { it.bookName }.toTypedArray()
 
-        var defaultPosition = bookList.indexOf(activityViewModel.currentOpenBookLiveData.value)
+        var defaultPosition = bookList.indexOf(0)
         if(defaultPosition == -1)
             defaultPosition = 0
 
