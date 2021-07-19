@@ -119,6 +119,20 @@
                 app:titleText="例句" />
 
             <com.bu.selfstudy.tool.dropdowntextview.DropdownTextView
+                android:id="@+id/synonymsTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="32dp"
+                app:contentText="@{word.synonyms}"
+                app:isExpanded="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/exampleTextView"
+                app:titleText="同反義" />
+
+            <com.bu.selfstudy.tool.dropdowntextview.DropdownTextView
                 android:id="@+id/noteTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -129,8 +143,8 @@
                 app:contentText="@{word.note}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/exampleTextView"
-                app:titleText="註記" />
+                app:layout_constraintTop_toBottomOf="@+id/synonymsTextView"
+                app:titleText="筆記" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

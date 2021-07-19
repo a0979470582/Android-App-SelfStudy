@@ -2,6 +2,7 @@ package com.bu.selfstudy.ui.search
 
 import android.app.SearchManager
 import android.content.Context
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.*
@@ -40,6 +41,8 @@ class SearchFragment: Fragment()  {
 
     private lateinit var searchView: SearchView
 
+    private var mediaPlayer: MediaPlayer? = null
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -69,14 +72,32 @@ class SearchFragment: Fragment()  {
         }
 
         binding.wordCardItem.soundButton.setOnClickListener {
-            MediaPlayer().apply {
-                //setDataSource()
-                setOnPreparedListener{
-                    it.start()
+            viewModel.wordLiveData.value?.getOrNull()?.let {
+                if(it.audioFilePath.isBlank())
+                    return@setOnClickListener
+
+                mediaPlayer?.apply {
+                    reset()
+                    setDataSource(it.audioFilePath)
+                    setAudioStreamType(AudioManager.STREAM_MUSIC)
+                    setOnPreparedListener{
+                        it.start()
+                    }
+                    prepareAsync()
                 }
-                prepareAsync()
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+            mediaPlayer = MediaPlayer()
+    }
+
+    override fun onStop() {
+        super.onStop()
+            mediaPlayer?.release()
+            mediaPlayer = null
     }
 
     private fun refreshClipboardText() {
@@ -170,16 +191,10 @@ class SearchFragment: Fragment()  {
         binding.progressBar.visibility = View.INVISIBLE
         binding.recyclerView.visibility = View.INVISIBLE
         if(word != null){
-            with(binding.wordCardItem){
-                root.visibility = View.VISIBLE
-                wordNameTextView.setText(word.wordName)
-                pronunciationTextView.setText(word.pronunciation)
-                translationTextView.setContentText(word.translation)
-                variationTextView.setContentText(word.variation)
-                exampleTextView.setContentText(word.example)
-                noteTextView.setContentText(word.note)
+            binding.wordCardItem.let {
+                it.root.visibility = View.VISIBLE
+                it.word = word
             }
-
         }else{
             binding.searchNotFound.root.visibility = View.VISIBLE
         }

@@ -17,6 +17,4 @@ interface RecentWordDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecentWord(recentWord: RecentWord): Long
 
-
-
 }

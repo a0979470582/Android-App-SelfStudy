@@ -30,9 +30,6 @@ class RecentWordFragment : Fragment() {
     private val binding: FragmentWordListBinding by viewBinding()
     private val listAdapter = RecentWordAdapter(fragment = this)
 
-    private lateinit var tracker: SelectionTracker<Long>
-
-    private var searchView: SearchView? = null
     private var actionMode: ActionMode? = null
 
 
@@ -45,7 +42,7 @@ class RecentWordFragment : Fragment() {
             it.adapter = listAdapter
             it.setHasFixedSize(true)
         }
-        binding.lifecycleOwner = viewLifecycleOwner
+
         return binding.root
     }
 
@@ -54,44 +51,11 @@ class RecentWordFragment : Fragment() {
          setHasOptionsMenu(true)
 
 
-         viewModel.wordListLiveData.observe(viewLifecycleOwner){
-             //listAdapter.submitList(it)
-             refreshWordIdList(it)
-         }
 
-         viewModel.databaseEvent.observe(viewLifecycleOwner){
-             when(it?.first){
-                 "delete"-> return@observe
-                 "mark"->return@observe
-                 "cancelMark"->return@observe
-             }
-         }
-
-         lifecycleScope.launch {
-             setDialogResultListener()
-             //binding.fastScroller.attachFastScrollerToRecyclerView(binding.recyclerView)
-         }
-         //binding.fastScroller.touch
-    }
-
-    private fun setDialogResultListener() {
-        setFragmentResultListener("delete") { _, _ ->
-            viewModel.longPressedWordIdList.let {
-            if(it.isNotEmpty())
-                viewModel.deleteWordToTrash(it)
-            }
-        }
-    }
-
-    fun refreshWordIdList(wordList: List<WordTuple>){
-        viewModel.refreshWordIdList(wordList)
     }
 
 
 
-    fun updateMarkWord(wordId:Long, isMark: Boolean){
-        viewModel.updateMarkWord(wordId, isMark)
-    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
@@ -108,11 +72,6 @@ class RecentWordFragment : Fragment() {
         inflater.inflate(R.menu.wordlist_toolbar, menu)
     }
 
-    private fun actionModeMenuCallback(itemId:Int){
-        when (itemId) {
-
-        }
-    }
 
     fun navigateWordCardFragment(recentWord: RecentWord) {
         val action = RecentWordFragmentDirections.actionRecentWordFragmentToWordCardFragment(

@@ -57,7 +57,8 @@ class BookFragment : Fragment() {
         }
 
         binding.firstRow.setOnClickListener {
-            findNavController().navigate(R.id.recentWordFragment)
+            val action = BookFragmentDirections.actionBookFragmentToRecentWordFragment()
+            findNavController().navigate(action)
         }
 
         lifecycleScope.launch {

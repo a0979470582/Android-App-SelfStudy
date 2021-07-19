@@ -17,6 +17,7 @@ object SelfStudyNetwork {
                 continuation.resumeWithException(RuntimeException("無此單字"))
             continuation.resume(word)
         }catch (e: Exception){
+            e.printStackTrace()
             continuation.resumeWithException(e)
         }
     }

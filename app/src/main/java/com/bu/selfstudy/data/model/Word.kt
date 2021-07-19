@@ -28,6 +28,7 @@ data class Word(
     var translation: String="",
     var variation: String="",
     var example: String="",
+    var synonyms: String="",
     var note: String = "",
 
     var audioFilePath:String="",//ex: reserve.mp3, dir: /data/data/<application package>/files/
