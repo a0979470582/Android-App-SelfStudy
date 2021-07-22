@@ -42,7 +42,7 @@ class WordCardViewModel : ViewModel() {
             currentOpenWord = wordListLiveData.value!!.getOrNull(realPosition)
             currentOpenWord?.let {
                 markLiveData.postValue(it.isMark)
-                insertRecentWord(bookId = it.bookId, wordId = it.id)
+                insertRecentWord(wordId = it.id)
             }
         }
 
@@ -78,10 +78,10 @@ class WordCardViewModel : ViewModel() {
         }
     }
 
-    private fun insertRecentWord(bookId: Long, wordId: Long) {
+    private fun insertRecentWord(wordId: Long) {
         viewModelScope.launch{
             RecentWordRepository.insertRecentWord(
-                RecentWord(bookId = bookId, wordId = wordId)
+                RecentWord(wordId = wordId)
             )
         }
     }

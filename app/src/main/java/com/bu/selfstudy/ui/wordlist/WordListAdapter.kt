@@ -74,13 +74,19 @@ class WordListAdapter(val listFragment: WordListFragment):
                 if(position == asyncListDiffer.currentList.size-1) View.GONE else View.VISIBLE
     }
 
+    /**
+     * 在一千筆數據中修改其中兩百筆資料, 其比對速度約在13ms,
+     * 尤其預期使用者並不會在題庫中加入超過一千個單字, 因此可以使用DiffUtil
+     */
     companion object WordDiffCallback : DiffUtil.ItemCallback<WordTuple>(){
         override fun areItemsTheSame(oldItem: WordTuple, newItem: WordTuple): Boolean {
             return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: WordTuple, newItem: WordTuple): Boolean {
-            return oldItem == newItem
+            return oldItem.isMark == newItem.isMark &&
+                    oldItem.pronunciation == newItem.pronunciation
+                    oldItem.wordName == newItem.wordName
         }
     }
 

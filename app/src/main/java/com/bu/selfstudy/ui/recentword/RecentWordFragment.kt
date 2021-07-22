@@ -8,6 +8,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -26,7 +27,7 @@ import kotlinx.coroutines.launch
 
 
 class RecentWordFragment : Fragment() {
-    private lateinit var viewModel: RecentWordViewModel
+    private val viewModel: RecentWordViewModel by viewModels()
     private val binding: FragmentWordListBinding by viewBinding()
     private val listAdapter = RecentWordAdapter(fragment = this)
 
@@ -50,7 +51,9 @@ class RecentWordFragment : Fragment() {
      override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
          setHasOptionsMenu(true)
 
-
+         viewModel.recentWordLiveData.observe(viewLifecycleOwner){
+             listAdapter.submitList(it)
+         }
 
     }
 
@@ -79,6 +82,10 @@ class RecentWordFragment : Fragment() {
                 wordId = recentWord.wordId
         )
         findNavController().navigate(action)
+    }
+
+    fun refreshRecentWord(recentWord: RecentWord) {
+        viewModel.refreshRecentWord(recentWord)
     }
 }
 

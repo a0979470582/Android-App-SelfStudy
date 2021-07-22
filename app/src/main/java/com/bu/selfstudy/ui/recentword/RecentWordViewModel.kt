@@ -6,12 +6,15 @@ import androidx.lifecycle.*
 import androidx.paging.Config
 import androidx.paging.LivePagedListBuilder
 import com.bu.selfstudy.data.model.Book
+import com.bu.selfstudy.data.model.RecentWord
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.model.WordTuple
 import com.bu.selfstudy.data.repository.BookRepository
+import com.bu.selfstudy.data.repository.RecentWordRepository
 import com.bu.selfstudy.data.repository.WordRepository
 import com.bu.selfstudy.tool.SingleLiveData
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 /**
@@ -20,7 +23,12 @@ import kotlinx.coroutines.launch
  * 看到的單字頁(wordId)到資料庫
  */
 class RecentWordViewModel() : ViewModel() {
+    fun refreshRecentWord(recentWord: RecentWord) {
+        viewModelScope.launch {
+            RecentWordRepository.refreshRecentWord(recentWord)
+        }
+    }
 
-
+    val recentWordLiveData = RecentWordRepository.loadRecentWord().asLiveData()
 
 }

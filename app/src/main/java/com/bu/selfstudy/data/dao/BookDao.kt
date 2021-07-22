@@ -18,6 +18,9 @@ interface BookDao : BaseDao<Book>{
     fun loadDistinctBooks(memberId: Long=SelfStudyApplication.memberId) =
             loadBooks(memberId).distinctUntilChanged()
 
+    @Query("SELECT * FROM Book WHERE id =:bookId")
+    fun loadBook(bookId: Long): Flow<Book>
+
     //update
     @Query("UPDATE Book SET isTrash = :isTrash WHERE id=:bookId")
     suspend fun updateBookIsTrash(bookId: Long, isTrash: Boolean): Int

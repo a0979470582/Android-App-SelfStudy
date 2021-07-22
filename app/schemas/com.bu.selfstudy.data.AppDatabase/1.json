@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "5f67dc0034278c1ba8ed3b3a1ada126e",
+    "identityHash": "74d683ffdebcbae614a5b71a47a10dfd",
     "entities": [
       {
         "tableName": "Member",
@@ -403,7 +403,7 @@
       },
       {
         "tableName": "RecentWord",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `wordId` INTEGER NOT NULL, `bookId` INTEGER NOT NULL, `wordName` TEXT NOT NULL, `bookName` TEXT NOT NULL, `isExists` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `wordId` INTEGER NOT NULL, `bookId` INTEGER NOT NULL, `wordName` TEXT NOT NULL, `bookName` TEXT NOT NULL, `isTrash` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -436,8 +436,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "isExists",
-            "columnName": "isExists",
+            "fieldPath": "isTrash",
+            "columnName": "isTrash",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -456,13 +456,12 @@
         },
         "indices": [
           {
-            "name": "index_RecentWord_wordId_bookId",
+            "name": "index_RecentWord_wordId",
             "unique": true,
             "columnNames": [
-              "wordId",
-              "bookId"
+              "wordId"
             ],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_RecentWord_wordId_bookId` ON `${TABLE_NAME}` (`wordId`, `bookId`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_RecentWord_wordId` ON `${TABLE_NAME}` (`wordId`)"
           }
         ],
         "foreignKeys": []
@@ -471,7 +470,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5f67dc0034278c1ba8ed3b3a1ada126e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '74d683ffdebcbae614a5b71a47a10dfd')"
     ]
   }
 }

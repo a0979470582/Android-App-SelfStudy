@@ -234,7 +234,11 @@ class WordCardFragment : Fragment() {
                 findNavController().navigate(R.id.searchFragment)
             }
             R.id.action_edit_book -> {
-                findNavController().navigate(R.id.wordListFragment)
+                viewModel.bookLiveData.value?.let {
+                    findNavController().navigate(WordCardFragmentDirections
+                            .actionWordCardFragmentToWordListFragment(bookId = it.id))
+                }
+
             }
 
         }

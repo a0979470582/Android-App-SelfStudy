@@ -5,13 +5,13 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.bu.selfstudy.data.model.RecentWord
-import androidx.paging.DataSource
+import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface RecentWordDao {
+interface RecentWordDao: BaseDao<RecentWord>{
     //select
     @Query("SELECT * FROM RecentWord ORDER BY timestamp DESC")
-    fun loadRecentWord(): DataSource.Factory<Int, RecentWord>
+    fun loadRecentWord(): Flow<List<RecentWord>>
 
     //insert
     @Insert(onConflict = OnConflictStrategy.REPLACE)

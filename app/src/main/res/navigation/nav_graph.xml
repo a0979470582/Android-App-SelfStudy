@@ -28,7 +28,7 @@
         android:id="@+id/wordCardFragment"
         android:name="com.bu.selfstudy.ui.wordcard.WordCardFragment">
         <action
-            android:id="@+id/action_wordCardFragment_to_wordFragment"
+            android:id="@+id/action_wordCardFragment_to_wordListFragment"
             app:destination="@id/wordListFragment" />
         <argument
             android:name="wordId"
@@ -40,14 +40,21 @@
             app:launchSingleTop="true" />
         <argument
             android:name="bookId"
-            app:argType="long"
-            android:defaultValue="0L" />
+            app:argType="long" />
     </fragment>
 
     <fragment
         android:id="@+id/wordListFragment"
         android:name="com.bu.selfstudy.ui.wordlist.WordListFragment"
-        tools:layout="@layout/fragment_word_list"/>
+        tools:layout="@layout/fragment_word_list">
+        <argument
+            android:name="wordId"
+            app:argType="long"
+            android:defaultValue="0L" />
+        <argument
+            android:name="bookId"
+            app:argType="long" />
+    </fragment>
 
     <fragment
         android:id="@+id/subscriptionFragment"

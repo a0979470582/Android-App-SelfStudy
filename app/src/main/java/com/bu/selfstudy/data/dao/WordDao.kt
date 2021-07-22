@@ -2,19 +2,15 @@ package com.bu.selfstudy.data.dao
 
 import androidx.paging.DataSource
 import androidx.room.*
-import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.model.WordTuple
-import com.bu.selfstudy.data.repository.WordRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.withContext
 
 @Dao
 interface WordDao : BaseDao<Word>{
     //select with one wordId
-    @Query("SELECT * FROM Word WHERE isTrash=0 AND id=:wordId")
+    @Query("SELECT * FROM Word WHERE id=:wordId")
     fun loadWord(wordId:Long): Flow<Word>
     fun loadDistinctWord(wordId:Long) = loadWord(wordId).distinctUntilChanged()
 

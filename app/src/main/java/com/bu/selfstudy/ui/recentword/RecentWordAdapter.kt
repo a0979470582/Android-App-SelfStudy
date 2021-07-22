@@ -1,27 +1,27 @@
 package com.bu.selfstudy.ui.recentword
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
-import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.RecentWord
-import com.bu.selfstudy.databinding.WordListItemBinding
-import com.bu.selfstudy.data.model.WordTuple
 import com.bu.selfstudy.databinding.RecentWordListItemBinding
-import com.bu.selfstudy.tool.showToast
-import com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller
 
 class RecentWordAdapter(val fragment: RecentWordFragment):
-        PagedListAdapter<RecentWord, RecentWordAdapter.ViewHolder>(Diff_Callback){
+        RecyclerView.Adapter<RecentWordAdapter.ViewHolder>(){
 
     private val asyncListDiffer = object: AsyncListDiffer<RecentWord>(this, Diff_Callback){}
 
-    inner class ViewHolder(val binding: RecentWordListItemBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(val binding: RecentWordListItemBinding): RecyclerView.ViewHolder(binding.root){
+
+        fun bindData(recentWord: RecentWord){
+            binding.wordNameTextView.text = recentWord.wordName
+            binding.bookNameTextView.text = recentWord.bookName
+        }
+
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = RecentWordListItemBinding.inflate(
@@ -30,11 +30,8 @@ class RecentWordAdapter(val fragment: RecentWordFragment):
         val holder = ViewHolder(binding)
 
         holder.itemView.setOnClickListener {
-            val recentWord = getItem(holder.adapterPosition)
-
-            recentWord?.let {
-                fragment.navigateWordCardFragment(it)
-            }
+            val recentWord = asyncListDiffer.currentList[holder.adapterPosition]
+            fragment.navigateWordCardFragment(recentWord)
 
         }
 
@@ -42,12 +39,11 @@ class RecentWordAdapter(val fragment: RecentWordFragment):
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val word = getItem(position)
-        if(word != null){
-
-        }else{
-
+        asyncListDiffer.currentList[position].let { recentWord ->
+            holder.bindData(recentWord)
+            fragment.refreshRecentWord(recentWord)
         }
+
     }
 
     companion object Diff_Callback : DiffUtil.ItemCallback<RecentWord>(){
@@ -59,4 +55,12 @@ class RecentWordAdapter(val fragment: RecentWordFragment):
             return oldItem == newItem
         }
     }
+
+    override fun getItemCount() = asyncListDiffer.currentList.size
+
+
+    fun submitList(recentWordList: List<RecentWord>){
+        asyncListDiffer.submitList(recentWordList)
+    }
+
 }

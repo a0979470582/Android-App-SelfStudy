@@ -17,10 +17,10 @@
         android:textSize="20sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="abide" />
+        tools:text="reserve" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/pronunciationTextView"
+        android:id="@+id/bookNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -29,5 +29,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/wordNameTextView"
         app:layout_constraintTop_toBottomOf="@id/wordNameTextView"
-        tools:text="\\əˋbaɪd\" />
+        tools:text="我的第一本題庫" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divide_color"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
