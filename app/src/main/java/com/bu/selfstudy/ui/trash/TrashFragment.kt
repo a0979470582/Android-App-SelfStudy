@@ -1,4 +1,4 @@
-package com.bu.selfstudy.ui
+package com.bu.selfstudy.ui.trash
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

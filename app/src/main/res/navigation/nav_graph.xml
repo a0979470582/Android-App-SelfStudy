@@ -68,7 +68,7 @@
         tools:layout="@layout/fragment_suggest"/>
     <fragment
         android:id="@+id/trashFragment"
-        android:name="com.bu.selfstudy.ui.TrashFragment"
+        android:name="com.bu.selfstudy.ui.trash.TrashFragment"
         android:label="單字回收箱"
         tools:layout="@layout/fragment_trash"/>
     <fragment
@@ -98,6 +98,10 @@
         <argument
             android:name="title"
             app:argType="string" />
+        <argument
+            android:name="bookId"
+            app:argType="long"
+            android:defaultValue="0L" />
     </dialog>
     <action android:id="@+id/action_global_chooseBookDialog"
             app:destination="@id/dialogChooseBook" />
@@ -118,7 +122,12 @@
         android:id="@+id/addWordFragment"
         android:name="com.bu.selfstudy.ui.addword.AddWordFragment"
         android:label="新增單字"
-        tools:layout="@layout/fragment_add_word"/>
+        tools:layout="@layout/fragment_add_word">
+        <argument
+            android:name="bookId"
+            app:argType="long"
+            android:defaultValue="0L" />
+    </fragment>
     <action android:id="@+id/action_global_addWordFragment"
             app:destination="@id/addWordFragment"/>
 

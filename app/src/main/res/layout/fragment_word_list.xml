@@ -35,23 +35,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller
-            android:id="@+id/fastScroller"
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:handleWidth="34dp"
-            app:handleHeight="40dp"
-            app:handleHasFixedSize="true"
-            app:handleDrawable="@drawable/fast_scroller_handle_drawable"
-            app:handleVisibilityDuration="1000">
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/word_list_item"/>
-
-        </com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller>
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/word_list_item"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

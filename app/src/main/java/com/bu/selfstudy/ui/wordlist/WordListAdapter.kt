@@ -28,6 +28,7 @@ class WordListAdapter(val listFragment: WordListFragment):
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = WordListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val holder = ViewHolder(binding)
+
         holder.itemView.setOnClickListener {
             val word = getItem(holder.adapterPosition)
             if(word != null)

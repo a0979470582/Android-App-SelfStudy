@@ -1,7 +1,9 @@
 package com.bu.selfstudy.ui.wordlist
 
+import android.graphics.drawable.StateListDrawable
 import androidx.appcompat.view.ActionMode
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +19,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
+import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.WordTuple
@@ -83,13 +86,23 @@ class WordListFragment : Fragment() {
          lifecycleScope.launch {
              initSelectionTracker()
              setDialogResultListener()
-             //binding.fastScroller.attachFastScrollerToRecyclerView(binding.recyclerView)
+             initFastScroll()
          }
-         binding.fastScroller.findViewById<LinearLayout>(R.id.trackView).let {
 
-         }
 
      }
+
+    private fun initFastScroll() {
+        FastScroller(binding.recyclerView,
+                requireContext().getDrawable(R.drawable.thumb_drawable) as StateListDrawable,
+                requireContext().getDrawable(R.drawable.line_drawable),
+                requireContext().getDrawable(R.drawable.thumb_drawable) as StateListDrawable,
+                requireContext().getDrawable(R.drawable.line_drawable),
+                resources.getDimensionPixelSize(androidx.recyclerview.R.dimen.fastscroll_default_thickness),
+                resources.getDimensionPixelSize(androidx.recyclerview.R.dimen.fastscroll_minimum_range),
+                resources.getDimensionPixelOffset(androidx.recyclerview.R.dimen.fastscroll_margin)
+        )
+    }
 
     private fun setDialogResultListener() {
         setFragmentResultListener("DialogDeleteCommon") { _, _ ->
@@ -122,7 +135,6 @@ class WordListFragment : Fragment() {
         val selectionObserver = object : SelectionTracker.SelectionObserver<Long>() {
             override fun onSelectionChanged() {
                 super.onSelectionChanged()
-
                 if (!tracker.hasSelection()) {
                     actionMode?.finish()
                 } else {

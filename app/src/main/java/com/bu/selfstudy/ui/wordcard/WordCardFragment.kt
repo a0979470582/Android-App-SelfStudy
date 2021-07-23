@@ -178,7 +178,9 @@ class WordCardFragment : Fragment() {
             this.setOnActionSelectedListener { actionItem ->
                 when (actionItem.id) {
                     R.id.fab_add_word -> {
-                        findNavController().navigate(R.id.addWordFragment)
+                        val action = WordCardFragmentDirections.actionGlobalAddWordFragment(
+                            bookId = args.bookId)
+                        findNavController().navigate(action)
                     }
                     R.id.fab_edit_word -> {
                         viewModel.currentOpenWord?.let {

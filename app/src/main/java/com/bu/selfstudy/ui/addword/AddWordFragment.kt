@@ -11,14 +11,17 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.FragmentAddWordBinding
 import com.bu.selfstudy.tool.*
+import com.bu.selfstudy.ui.wordcard.WordCardFragmentArgs
 
 
 class AddWordFragment: Fragment() {
+    private val args: AddWordFragmentArgs by navArgs()
     private val binding : FragmentAddWordBinding by viewBinding()
     private val activityViewModel: ActivityViewModel by activityViewModels()
 
@@ -108,7 +111,8 @@ class AddWordFragment: Fragment() {
                 if(wordName.isBlank())
                     binding.wordField.error = "請輸入正確的英文單字"
                 else{
-                    val action = AddWordFragmentDirections.actionGlobalChooseBookDialog("選擇加入的題庫")
+                    val action = AddWordFragmentDirections.actionGlobalChooseBookDialog(
+                        "選擇加入的題庫", args.bookId)
                     findNavController().navigate(action)
                 }
             }
