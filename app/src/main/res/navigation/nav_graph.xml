@@ -69,8 +69,8 @@
     <fragment
         android:id="@+id/trashFragment"
         android:name="com.bu.selfstudy.ui.trash.TrashFragment"
-        android:label="單字回收箱"
-        tools:layout="@layout/fragment_trash"/>
+        android:label="回收桶"
+        tools:layout="@layout/fragment_trash" />
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.bu.selfstudy.ui.SettingFragment"

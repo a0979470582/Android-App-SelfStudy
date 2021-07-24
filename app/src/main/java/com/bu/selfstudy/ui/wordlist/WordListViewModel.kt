@@ -78,7 +78,9 @@ class WordListViewModel() : ViewModel() {
 
     fun deleteWordToTrash(wordIdList:List<Long>){
         viewModelScope.launch(Dispatchers.IO) {
-            if(WordRepository.updateWordIsTrash(*wordIdList.toLongArray(), isTrash = true) > 0)
+            if(WordRepository.updateWordIsTrash(*wordIdList.toLongArray(),
+                            isTrash = true) > 0
+            )
                 databaseEvent.postValue("delete" to null)
         }
     }

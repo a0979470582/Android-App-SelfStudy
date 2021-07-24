@@ -15,12 +15,16 @@ import com.bu.selfstudy.tool.log
 import kotlinx.coroutines.*
 import java.util.concurrent.Executors
 
-@Database(version = 1, entities = [Member::class,
+@Database(version = 1, entities = [
+    Member::class,
     Book::class,
     Word::class,
     SearchHistory::class,
     SearchAutoComplete::class,
-    RecentWord::class])
+    RecentWord::class,
+    DeleteRecordBook::class,
+    DeleteRecordWord::class
+])
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun memberDao(): MemberDao
@@ -29,6 +33,9 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun searchHistoryDao(): SearchHistoryDao
     abstract fun searchAutoCompleteDao(): SearchAutoCompleteDao
     abstract fun recentWordDao():RecentWordDao
+    abstract fun deleteRecordDao():DeleteRecordDao
+
+
 
     companion object {
         private var instance: AppDatabase? = null

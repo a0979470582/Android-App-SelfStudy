@@ -17,8 +17,7 @@ import com.bu.selfstudy.tool.showToast
 import com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller
 
 class WordListAdapter(val listFragment: WordListFragment):
-        PagedListAdapter<WordTuple, WordListAdapter.ViewHolder>(WordDiffCallback),
-        RecyclerViewFastScroller.OnPopupTextUpdate {
+        PagedListAdapter<WordTuple, WordListAdapter.ViewHolder>(WordDiffCallback){
 
     private val asyncListDiffer = object: AsyncListDiffer<WordTuple>(this, WordDiffCallback){}
     var tracker: SelectionTracker<Long>? = null
@@ -91,10 +90,4 @@ class WordListAdapter(val listFragment: WordListFragment):
         }
     }
 
-    override fun onChange(position: Int): CharSequence {
-        return if(getItem(position) != null)
-            getItem(position)!!.wordName
-        else
-            ""
-    }
 }

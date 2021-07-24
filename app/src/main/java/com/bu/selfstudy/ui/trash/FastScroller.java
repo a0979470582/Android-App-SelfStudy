@@ -1,4 +1,4 @@
-package com.bu.selfstudy.ui.wordlist;
+package com.bu.selfstudy.ui.trash;
 
 
 import android.animation.Animator;
@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
 /**
  * Class responsible to animate and provide a fast scroller.
  */

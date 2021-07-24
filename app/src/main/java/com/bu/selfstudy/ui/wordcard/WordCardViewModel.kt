@@ -73,7 +73,8 @@ class WordCardViewModel : ViewModel() {
 
     fun deleteWordToTrash(wordId: Long){
         viewModelScope.launch(Dispatchers.IO) {
-            if(WordRepository.updateWordIsTrash(wordId, isTrash = true) > 0)
+            if(WordRepository.updateWordIsTrash(wordId, isTrash = true) > 0
+            )
                 databaseEvent.postValue("delete" to null)
         }
     }

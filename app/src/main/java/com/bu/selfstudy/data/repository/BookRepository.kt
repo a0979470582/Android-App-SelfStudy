@@ -1,11 +1,14 @@
 package com.bu.selfstudy.data.repository
 
+import androidx.room.Delete
 import com.bu.selfstudy.R
 import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.AppDatabase.Companion.getDatabase
 import com.bu.selfstudy.data.local.LoadLocalBook
+import com.bu.selfstudy.data.model.DeleteRecord
+import com.bu.selfstudy.data.model.DeleteRecordBook
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
@@ -58,11 +61,12 @@ object BookRepository {
     }
 
     /**
-     * 即便是三千筆單字, 由於只更動一個欄位的0或1, 並不會感到延遲
+     * 如果刪除三千筆單字, 由於只更動欄位的0或1, 並不會感到延遲
      */
     suspend fun updateBookIsTrash(bookId: Long, isTrash: Boolean) = withContext(Dispatchers.IO){
         bookDao.updateBookIsTrash(bookId, isTrash).also {
-            wordDao.updateWordIsTrash(bookId, isTrash)
+            //wordDao.updateWordIsTrash(bookId, isTrash)
+            DeleteRecordRepository.handleBookTrash(bookId, isTrash)
         }
     }
 }

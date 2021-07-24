@@ -23,8 +23,9 @@ object SearchRepository {
         if(searchName.isBlank())
             return@withContext
 
-        historyDao.insertHistory(SearchHistory(searchName=searchName.trim()))
-        autoCompleteDao.setIsHistory(searchName, isHistory = true)
+        historyDao.insertHistory(SearchHistory(searchName=searchName.trim())).also {
+            autoCompleteDao.setIsHistory(searchName, isHistory = true)
+        }
     }
 
 
@@ -41,8 +42,9 @@ object SearchRepository {
 
     //delete
     suspend fun deleteHistory(history: SearchHistory) = withContext(Dispatchers.IO){
-        historyDao.delete(history)
-        autoCompleteDao.setIsHistory(history.searchName, isHistory = false)
+        historyDao.delete(history).also {
+            autoCompleteDao.setIsHistory(history.searchName, isHistory = false)
+        }
     }
 
     suspend fun clearAllHistory() = withContext(Dispatchers.IO){

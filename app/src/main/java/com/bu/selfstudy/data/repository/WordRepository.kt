@@ -5,9 +5,9 @@ import com.bu.selfstudy.data.AppDatabase.Companion.getDatabase
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.network.SelfStudyNetwork
 import com.bu.selfstudy.data.network.YahooService
+import com.bu.selfstudy.tool.showToast
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
-import okhttp3.Response
 import okio.Okio
 import java.io.File
 
@@ -28,12 +28,6 @@ object WordRepository {
     fun loadWordTuplesWithPaging(bookId: Long, query: String) =
             wordDao.loadWordTuplesWithPaging(bookId, query)
 
-    //connect yahoo
-    suspend fun getWord(wordName: String): Result<Word> = withContext(Dispatchers.IO){
-        kotlin.runCatching {
-            SelfStudyNetwork.getYahooWord(wordName)
-        }
-    }
 
     //insert
     suspend fun insertWord(vararg word: Word) = withContext(Dispatchers.IO){
@@ -45,12 +39,30 @@ object WordRepository {
         wordDao.update(*word)
     }
 
-    suspend fun updateWordIsTrash(vararg wordId: Long, isTrash: Boolean) = withContext(Dispatchers.IO){
-        wordDao.updateWordIsTrash(wordId = *wordId, isTrash)
-    }
-
     suspend fun updateWordMark(wordId: Long, isMark: Boolean) = withContext(Dispatchers.IO){
         wordDao.updateWordMark(wordId, isMark)
+    }
+
+
+    //delete
+    suspend fun updateWordIsTrash(vararg wordId: Long, isTrash: Boolean) = withContext(Dispatchers.IO){
+        if(isTrash){
+            wordDao.updateWordIsTrash(wordId = *wordId, isTrash).also {
+                DeleteRecordRepository.handleWordTrash(*wordId, isTrash=isTrash)
+            }
+        }else{
+            "現在要回復單字, 必須先做原有book是否存在的判斷".showToast()
+            wordDao.updateWordIsTrash(wordId = *wordId, isTrash).also {
+                DeleteRecordRepository.handleWordTrash(*wordId, isTrash=isTrash)
+            }
+        }
+    }
+
+    //network
+    suspend fun getWord(wordName: String): Result<Word> = withContext(Dispatchers.IO){
+        kotlin.runCatching {
+            SelfStudyNetwork.getYahooWord(wordName)
+        }
     }
 
     suspend fun downloadAudio(wordId: Long)

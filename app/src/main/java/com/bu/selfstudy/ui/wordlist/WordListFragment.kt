@@ -3,23 +3,19 @@ package com.bu.selfstudy.ui.wordlist
 import android.graphics.drawable.StateListDrawable
 import androidx.appcompat.view.ActionMode
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
-import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.WordTuple
@@ -27,10 +23,6 @@ import com.bu.selfstudy.databinding.FragmentWordListBinding
 import com.bu.selfstudy.tool.*
 import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
 import com.bu.selfstudy.tool.myselectiontracker.IdItemKeyProvider
-import com.bu.selfstudy.ui.editword.EditWordViewModel
-import com.bu.selfstudy.ui.wordcard.WordCardFragmentArgs
-import com.bu.selfstudy.ui.wordcard.WordCardViewModel
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
 
