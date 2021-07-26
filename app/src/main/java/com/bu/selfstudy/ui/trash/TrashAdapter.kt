@@ -52,7 +52,7 @@ class TrashAdapter(val fragment: TrashFragment):RecyclerView.Adapter<RecyclerVie
                     (deleteRecordList[position] as DeleteRecordBook).let {
                         bookNameTextView.text = it.bookName
                         bookSizeTextView.text = "${it.bookSize}個單字"
-                        bookIcon.imageTintList = ColorStateList.valueOf(it.bookColorInt)
+                        bookIcon.iconTint = ColorStateList.valueOf(it.bookColorInt)
                     }
                 }
             }

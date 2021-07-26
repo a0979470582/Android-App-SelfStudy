@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f678335a96d95dc4b0cd31a36e8d0d94",
+    "identityHash": "6612c2f7fde2a4c6b2b5b3688c45c75d",
     "entities": [
       {
         "tableName": "Member",
@@ -80,7 +80,7 @@
       },
       {
         "tableName": "Book",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `memberId` INTEGER NOT NULL, `bookName` TEXT NOT NULL, `size` INTEGER NOT NULL, `position` INTEGER NOT NULL, `sortState` TEXT NOT NULL, `displayMode` TEXT NOT NULL, `colorInt` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL, `isArchive` INTEGER NOT NULL, FOREIGN KEY(`memberId`) REFERENCES `Member`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `memberId` INTEGER NOT NULL, `bookName` TEXT NOT NULL, `size` INTEGER NOT NULL, `position` INTEGER NOT NULL, `sortState` TEXT NOT NULL, `displayMode` TEXT NOT NULL, `colorInt` INTEGER NOT NULL, `explanation` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL, `isArchive` INTEGER NOT NULL, FOREIGN KEY(`memberId`) REFERENCES `Member`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -128,6 +128,12 @@
             "fieldPath": "colorInt",
             "columnName": "colorInt",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "explanation",
+            "columnName": "explanation",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -576,7 +582,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f678335a96d95dc4b0cd31a36e8d0d94')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6612c2f7fde2a4c6b2b5b3688c45c75d')"
     ]
   }
 }

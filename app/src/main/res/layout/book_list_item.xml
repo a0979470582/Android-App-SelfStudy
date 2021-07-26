@@ -11,40 +11,85 @@
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
         android:background="@drawable/item_background">
-        <androidx.appcompat.widget.AppCompatImageView
+
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/bookIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginBottom="24dp"
+            android:padding="16dp"
+            app:icon="@drawable/ic_baseline_bookmark_24"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_baseline_menu_book_24" />
+            app:layout_constraintTop_toTopOf="parent" />
+
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/bookNameTextView"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toStartOf="@id/bookSizeTextView"
-            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:textColor="@color/black87"
             app:layout_constraintStart_toEndOf="@id/bookIcon"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="第一本題庫" />
+            tools:text="多益核心單字" />
+
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/bookSizeTextView"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            android:textSize="14sp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textColor="#979797"
+            android:textSize="11.45sp"
+            app:layout_constraintStart_toEndOf="@id/bookNameTextView"
             app:layout_constraintTop_toTopOf="parent"
+            tools:text="1253" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/explanationTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="1dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp"
+            android:text="有關於多益的考試精選單字有關於多益的考試精選單字"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textColor="@color/black60"
+            app:layout_constraintEnd_toStartOf="@id/moreIcon"
+            app:layout_constraintStart_toEndOf="@id/bookIcon"
+            app:layout_constraintTop_toBottomOf="@id/bookNameTextView" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/moreIcon"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginBottom="24dp"
+            android:padding="16dp"
+            app:icon="@drawable/ic_baseline_more_vert_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:background="#14212121"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="750" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/bookIcon" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

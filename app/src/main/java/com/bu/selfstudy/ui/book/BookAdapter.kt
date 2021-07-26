@@ -35,9 +35,9 @@ class BookAdapter(val fragment: BookFragment):
 
         with(holder.binding){
             bookNameTextView.text = book.bookName
-            bookSizeTextView.text = "${book.size}個單字"
+            bookSizeTextView.text = "${book.size}"
 
-            bookIcon.imageTintList = ColorStateList.valueOf(book.colorInt)
+            bookIcon.iconTint = ColorStateList.valueOf(book.colorInt)
         }
 
         tracker?.let {

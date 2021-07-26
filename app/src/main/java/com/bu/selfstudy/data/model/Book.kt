@@ -26,6 +26,8 @@ data class Book(
         var sortState:String = "time_asc",//time, letter, proficiency
         var displayMode:String = "one",//one, list, grid
         var colorInt: Int = 0,
+        var explanation: String="",
+
 
         var timestamp: Date = Date(),
         var isTrash:Boolean = false,
