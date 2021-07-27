@@ -12,8 +12,6 @@
         <item>@color/book_color_8</item>
         <item>@color/book_color_9</item>
         <item>@color/book_color_10</item>
-        <item>@color/book_color_11</item>
-        <item>@color/book_color_12</item>
     </array>
 
     <string-array name="local_book_list">

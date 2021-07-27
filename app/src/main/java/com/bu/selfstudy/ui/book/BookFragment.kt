@@ -18,6 +18,7 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
+import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.FragmentBookBinding
 import com.bu.selfstudy.tool.*
 import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
@@ -33,11 +34,6 @@ class BookFragment : Fragment() {
     private val viewModel: BookViewModel by viewModels()
     private val binding : FragmentBookBinding by viewBinding()
     private val adapter = BookAdapter(this)
-
-    private lateinit var tracker: SelectionTracker<Long>
-
-    private var actionMode: ActionMode? = null
-
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -63,7 +59,6 @@ class BookFragment : Fragment() {
 
         lifecycleScope.launch {
             initSpeedDial()
-            initSelectionTracker()
             setDialogResultListener()
             setDatabaseListener()
         }
@@ -78,6 +73,7 @@ class BookFragment : Fragment() {
         viewModel.databaseEvent.observe(viewLifecycleOwner){
             when(it?.first){
                 "delete" -> "已刪除「${it.second?.getString("bookName")}」".showToast()
+                "archive" -> "已封存「${it.second?.getString("bookName")}」".showToast()
                 "update" -> "更新成功".showToast()
                 "insertBook" -> "新增成功".showToast()
                 "insertLocal" -> "已新增「${it.second?.getString("bookName")}」".showToast()
@@ -100,6 +96,11 @@ class BookFragment : Fragment() {
         setFragmentResultListener("DialogAddBook"){ _, bundle->
             val bookName = bundle.getString("bookName")!!
             viewModel.insertBook(bookName)
+        }
+        setFragmentResultListener("DialogArchiveBook"){ _, bundle->
+            viewModel.longPressedBook?.let {
+                viewModel.archiveBook(it.id, it.bookName)
+            }
         }
     }
 
@@ -133,99 +134,9 @@ class BookFragment : Fragment() {
                 return@setOnActionSelectedListener false //關閉小按鈕
             }
 
-            this.setOnChangeListener(object: SpeedDialView.OnChangeListener {
-                override fun onMainActionSelected() = false
-
-                override fun onToggleChanged(isOpen: Boolean) {
-                    if(isOpen) actionMode?.finish()//快速播號開啟時關閉actionMode
-                }
-            })
         }
     }
 
-    private fun initSelectionTracker() {
-        if(::tracker.isInitialized)
-            return
-
-        tracker = SelectionTracker.Builder(
-                "recycler-view-book-fragment",
-                binding.recyclerView,
-                IdItemKeyProvider(activityViewModel.bookIdList),
-                IdItemDetailsLookup(binding.recyclerView, activityViewModel.bookIdList),
-                StorageStrategy.createLongStorage()
-        ).withSelectionPredicate(SelectionPredicates.createSelectSingleAnything())
-         .build().also {
-             adapter.tracker = it
-         }
-
-        val selectionObserver = object : SelectionTracker.SelectionObserver<Long>() {
-            override fun onSelectionChanged() {
-                super.onSelectionChanged()
-                if (!tracker.hasSelection()) {
-                    actionMode?.finish()
-                } else {
-                    activityViewModel.bookListLiveData.value?.let {
-                        viewModel.refreshLongPressedBook(it, tracker.selection.first())
-                    }
-                    if (actionMode == null) {
-                        actionMode = (activity as AppCompatActivity)
-                                .startSupportActionMode(actionModeCallback)
-                    }
-                }
-            }
-        }
-
-        tracker.addObserver(selectionObserver)
-    }
-
-    //set actionMode, for multiple selection
-    private val actionModeCallback = object : ActionMode.Callback {
-        /**對於搜尋結果進行操作, 會將ActionMode疊在SearchView上方, 此時鍵盤不會消失
-        造成使用者能在看不到搜尋框時查詢, 因此ActionMode出現就必須關閉鍵盤
-         */
-        override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-            mode.menuInflater.inflate(R.menu.book_action_mode, menu)
-            closeKeyboard()
-            return true
-        }
-
-        override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = false
-
-        override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-            actionModeMenuCallback(item?.itemId)
-            return true
-        }
-
-        override fun onDestroyActionMode(mode: ActionMode) {
-            tracker.clearSelection()
-            actionMode = null
-        }
-    }
-
-    private fun actionModeMenuCallback(itemId: Int){
-        when (itemId) {
-            R.id.action_delete -> {
-                viewModel.longPressedBook?.let {
-                    val action = BookFragmentDirections.actionGlobalDialogDeleteCommon(
-                            "刪除題庫", "刪除「${it.bookName}」?"
-                    )
-                    findNavController().navigate(action)
-                }
-            }
-            R.id.action_edit -> {
-                viewModel.longPressedBook?.let {
-                    val action = BookFragmentDirections.actionBookFragmentToEditBookDialog(
-                            it.bookName
-                    )
-                    findNavController().navigate(action)
-                }
-            }
-            R.id.action_archive -> {
-                viewModel.longPressedBook?.let {
-                }
-            }
-        }
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -280,15 +191,8 @@ class BookFragment : Fragment() {
         inflater.inflate(R.menu.book_toolbar, menu)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if(::tracker.isInitialized)
-            tracker.onSaveInstanceState(outState)
+    fun setLongPressedBook(book: Book) {
+        viewModel.longPressedBook = book
     }
 
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        if(::tracker.isInitialized)
-            tracker.onRestoreInstanceState(savedInstanceState)
-    }
 }

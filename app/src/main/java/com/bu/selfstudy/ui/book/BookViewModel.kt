@@ -21,18 +21,7 @@ class BookViewModel : ViewModel(){
     }
 
     var longPressedBook: Book? = null
-    fun refreshLongPressedBook(bookList: List<Book>, bookId: Long){
-        viewModelScope.launch(Dispatchers.Default) {
-            longPressedBook = bookList.firstOrNull{ it.id==bookId }
-        }
-    }
 
-    fun deleteBook(bookId: Long, bookName: String){
-        viewModelScope.launch {
-            if(BookRepository.updateBookIsTrash(bookId, true) > 0)
-                databaseEvent.postValue("delete" to putBundle("bookName", bookName))
-        }
-    }
 
     fun insertBook(bookName: String){
         viewModelScope.launch {
@@ -48,6 +37,20 @@ class BookViewModel : ViewModel(){
             if(BookRepository.updateBook(book)>0) {
                 databaseEvent.postValue("update" to null)
             }
+        }
+    }
+
+    fun deleteBook(bookId: Long, bookName: String){
+        viewModelScope.launch {
+            if(BookRepository.updateBookIsTrash(bookId, true) > 0)
+                databaseEvent.postValue("delete" to putBundle("bookName", bookName))
+        }
+    }
+
+    fun archiveBook(bookId: Long, bookName: String){
+        viewModelScope.launch {
+            if(BookRepository.updateBookIsArchive(bookId, true) > 0)
+                databaseEvent.postValue("archive" to putBundle("bookName", bookName))
         }
     }
 

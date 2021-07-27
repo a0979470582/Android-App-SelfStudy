@@ -31,19 +31,17 @@
 
     <color name="searchQuerySpan">#FF777C</color>
 
+    <color name="book_color_1">#F44336</color>
+    <color name="book_color_2">#FFEB3B</color>
+    <color name="book_color_3">#3F51B5</color>
+    <color name="book_color_4">#4CAF50</color>
+    <color name="book_color_5">#673AB7</color>
+    <color name="book_color_6">#DEFF7373</color>
+    <color name="book_color_7">#FF5722</color>
+    <color name="book_color_8">#03A9F4</color>
+    <color name="book_color_9">#8BC34A</color>
+    <color name="book_color_10">#DEB2A7A7</color>
 
-    <color name="book_color_1">#DEB2A7A7</color>
-    <color name="book_color_2">#DEFF5454</color>
-    <color name="book_color_3">#DEF1FF51</color>
-    <color name="book_color_4">#DE99F94F</color>
-    <color name="book_color_5">#DE3EEA4F</color>
-    <color name="book_color_6">#DE8EF5F5</color>
-    <color name="book_color_7">#DE0B49E9</color>
-    <color name="book_color_8">#DEBB86FC</color>
-    <color name="book_color_9">#DE4DE0D7</color>
-    <color name="book_color_10">#DEFF8126</color>
-    <color name="book_color_11">#DEFF7373</color>
-    <color name="book_color_12">#DEF32F2F</color>
 
 
 

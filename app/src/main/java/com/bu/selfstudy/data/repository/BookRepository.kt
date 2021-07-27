@@ -25,11 +25,18 @@ object BookRepository {
     suspend fun loadLocalBookNames() = LoadLocalBook.loadNames()
 
     suspend fun insertBook(book: Book) = withContext(Dispatchers.IO){
-        if(book.colorInt == 0){
-            book.colorInt = SelfStudyApplication.context.resources.getIntArray(
-                    R.array.book_color_list).random()
+        val resultId = bookDao.insert(book).also {
+
+            if(book.colorInt == 0){
+                val intArray = SelfStudyApplication.context.resources.getIntArray(
+                        R.array.book_color_list)
+
+                bookDao.updateBookColorInt(
+                        it[0], intArray[it[0].toInt() % intArray.size])
+            }
         }
-        bookDao.insert(book)
+
+        return@withContext resultId
     }
 
 
@@ -68,5 +75,9 @@ object BookRepository {
             //wordDao.updateWordIsTrash(bookId, isTrash)
             DeleteRecordRepository.handleBookTrash(bookId, isTrash)
         }
+    }
+
+    suspend fun updateBookIsArchive(bookId: Long, isArchive: Boolean) = withContext(Dispatchers.IO){
+        bookDao.updateBookIsArchive(bookId, isArchive)
     }
 }

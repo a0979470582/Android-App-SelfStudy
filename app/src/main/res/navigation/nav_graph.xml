@@ -22,6 +22,15 @@
         <action
             android:id="@+id/action_bookFragment_to_recentWordFragment"
             app:destination="@id/recentWordFragment" />
+        <action
+            android:id="@+id/action_bookFragment_to_dialogArchiveBook"
+            app:destination="@id/dialogArchiveBook" />
+        <action
+            android:id="@+id/action_bookFragment_to_wordListFragment"
+            app:destination="@id/wordListFragment" />
+        <action
+            android:id="@+id/action_bookFragment_to_dialogChooseColor"
+            app:destination="@id/dialogChooseColor" />
     </fragment>
 
     <fragment
@@ -180,6 +189,23 @@
             android:id="@+id/action_recentWordFragment_to_wordCardFragment"
             app:destination="@id/wordCardFragment" />
     </fragment>
+
+    <dialog
+        android:id="@+id/dialogArchiveBook"
+        android:name="com.bu.selfstudy.ui.book.DialogArchiveBook"
+        android:label="DialogArchiveBook" >
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="message"
+            app:argType="string" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/dialogChooseColor"
+        android:name="com.bu.selfstudy.ui.book.DialogChooseColor"
+        android:label="DialogChooseColor" />
 
 
 </navigation>
