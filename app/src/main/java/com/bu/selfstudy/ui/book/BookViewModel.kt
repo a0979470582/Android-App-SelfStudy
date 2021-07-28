@@ -7,7 +7,6 @@ import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.tool.SingleLiveData
 import com.bu.selfstudy.tool.putBundle
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
@@ -20,7 +19,7 @@ class BookViewModel : ViewModel(){
         }
     }
 
-    var longPressedBook: Book? = null
+    var chosenBook: Book? = null
 
 
     fun insertBook(bookName: String){
@@ -32,25 +31,41 @@ class BookViewModel : ViewModel(){
         }
     }
 
-    fun updateBook(book: Book){
+    //, explanation:String
+    fun editBook(bookName:String){
         viewModelScope.launch{
-            if(BookRepository.updateBook(book)>0) {
-                databaseEvent.postValue("update" to null)
+            chosenBook?.copy()?.let {
+                it.bookName = bookName
+                if(BookRepository.updateBook(it)>0) {
+                    databaseEvent.postValue("update" to null)
+                }
             }
         }
     }
 
-    fun deleteBook(bookId: Long, bookName: String){
+    fun deleteBook(){
         viewModelScope.launch {
-            if(BookRepository.updateBookIsTrash(bookId, true) > 0)
-                databaseEvent.postValue("delete" to putBundle("bookName", bookName))
+            chosenBook?.let {
+                if(BookRepository.updateBookIsTrash(it.id, true) > 0)
+                    databaseEvent.postValue("delete" to putBundle("bookName", it.bookName))
+            }
         }
     }
 
-    fun archiveBook(bookId: Long, bookName: String){
+    fun archiveBook(){
         viewModelScope.launch {
-            if(BookRepository.updateBookIsArchive(bookId, true) > 0)
-                databaseEvent.postValue("archive" to putBundle("bookName", bookName))
+            chosenBook?.let {
+                if(BookRepository.updateBookIsArchive(it.id, true) > 0)
+                    databaseEvent.postValue("archive" to putBundle("bookName", it.bookName))
+            }
+        }
+    }
+
+    fun updateBookColor(colorInt: Int) {
+        viewModelScope.launch {
+            chosenBook?.let {
+                BookRepository.updateBookColor(it.id, colorInt)
+            }
         }
     }
 

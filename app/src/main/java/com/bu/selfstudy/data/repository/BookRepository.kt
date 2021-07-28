@@ -80,4 +80,8 @@ object BookRepository {
     suspend fun updateBookIsArchive(bookId: Long, isArchive: Boolean) = withContext(Dispatchers.IO){
         bookDao.updateBookIsArchive(bookId, isArchive)
     }
+
+    suspend fun updateBookColor(bookId: Long, colorInt: Int) {
+        bookDao.updateBookColorInt(bookId, colorInt)
+    }
 }

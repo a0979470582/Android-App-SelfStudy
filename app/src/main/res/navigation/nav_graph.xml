@@ -28,9 +28,6 @@
         <action
             android:id="@+id/action_bookFragment_to_wordListFragment"
             app:destination="@id/wordListFragment" />
-        <action
-            android:id="@+id/action_bookFragment_to_dialogChooseColor"
-            app:destination="@id/dialogChooseColor" />
     </fragment>
 
     <fragment
@@ -201,11 +198,6 @@
             android:name="message"
             app:argType="string" />
     </dialog>
-
-    <dialog
-        android:id="@+id/dialogChooseColor"
-        android:name="com.bu.selfstudy.ui.book.DialogChooseColor"
-        android:label="DialogChooseColor" />
 
 
 </navigation>

@@ -4,26 +4,17 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.activity.addCallback
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.ActionMode
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.selection.SelectionPredicates
-import androidx.recyclerview.selection.SelectionTracker
-import androidx.recyclerview.selection.StorageStrategy
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.FragmentBookBinding
 import com.bu.selfstudy.tool.*
-import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
-import com.bu.selfstudy.tool.myselectiontracker.IdItemKeyProvider
-import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
@@ -83,24 +74,19 @@ class BookFragment : Fragment() {
 
     private fun setDialogResultListener() {
         setFragmentResultListener("DialogDeleteCommon") { _, _ ->
-            viewModel.longPressedBook?.let {
-                viewModel.deleteBook(it.id, it.bookName)
-            }
+            viewModel.deleteBook()
         }
         setFragmentResultListener("DialogEditBook"){ _, bundle->
-            viewModel.longPressedBook?.copy()?.let {
-                it.bookName = bundle.getString("bookName")!!
-                viewModel.updateBook(it)
-            }
+            val newBookName = bundle.getString("bookName")!!
+            //val newBookExplanation = bundle.getString("explanation")!!
+            viewModel.editBook(newBookName)
         }
         setFragmentResultListener("DialogAddBook"){ _, bundle->
-            val bookName = bundle.getString("bookName")!!
-            viewModel.insertBook(bookName)
+            val newBookName = bundle.getString("bookName")!!
+            viewModel.insertBook(newBookName)
         }
         setFragmentResultListener("DialogArchiveBook"){ _, bundle->
-            viewModel.longPressedBook?.let {
-                viewModel.archiveBook(it.id, it.bookName)
-            }
+            viewModel.archiveBook()
         }
     }
 
@@ -191,8 +177,12 @@ class BookFragment : Fragment() {
         inflater.inflate(R.menu.book_toolbar, menu)
     }
 
-    fun setLongPressedBook(book: Book) {
-        viewModel.longPressedBook = book
+    fun setChosenBook(book: Book) {
+        viewModel.chosenBook = book
+    }
+
+    fun updateBookColor(colorInt: Int){
+        viewModel.updateBookColor(colorInt)
     }
 
 }

@@ -217,7 +217,7 @@ class WordListFragment : Fragment() {
             }
             R.id.action_move -> {
                 //navigateToChooseBookDialog("move")
-                /*viewModel.longPressedBook?.let {
+                /*viewModel.ChoosedBook?.let {
                     val action = BookFragmentDirections.actionBookFragmentToEditBookDialog(it.bookName)
                     findNavController().navigate(action)
                 }*/
