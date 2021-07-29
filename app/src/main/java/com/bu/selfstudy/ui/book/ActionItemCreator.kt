@@ -8,7 +8,7 @@ object ActionItemCreator {
     private val _resources = SelfStudyApplication.context.resources
 
     val addBookItem = SpeedDialActionItem
-            .Builder(R.id.book_fragment_fab_add_book, R.drawable.ic_baseline_menu_book_24)
+            .Builder(R.id.book_fragment_fab_add_book, R.drawable.ic_baseline_bookmark_24)
             .setLabel(_resources.getString(R.string.FAB_add_book))
             .create()
 

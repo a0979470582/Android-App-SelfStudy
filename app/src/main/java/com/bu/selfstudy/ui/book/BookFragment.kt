@@ -1,15 +1,21 @@
 package com.bu.selfstudy.ui.book
 
+import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ScrollView
 import androidx.activity.addCallback
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
@@ -18,6 +24,8 @@ import com.bu.selfstudy.tool.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.absoluteValue
 
 class BookFragment : Fragment() {
 
@@ -25,6 +33,9 @@ class BookFragment : Fragment() {
     private val viewModel: BookViewModel by viewModels()
     private val binding : FragmentBookBinding by viewBinding()
     private val adapter = BookAdapter(this)
+    private var verticalScrollOffset = AtomicInteger(0)
+
+    private lateinit var searchView: SearchView
 
     override fun onCreateView(
             inflater: LayoutInflater,

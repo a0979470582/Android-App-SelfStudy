@@ -19,25 +19,31 @@
     </style>
 
     <style name="Theme.SelfStudy2" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
         <!-- Primary brand color. -->
         <item name="colorPrimary">#425C5A</item>
         <item name="colorPrimaryVariant">#425C5A</item>
         <item name="colorOnPrimary">#BA946C</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/colorSecondaryVariant</item>
+        <item name="colorSecondary">#FDCDA1</item>
         <item name="colorSecondaryVariant">#FDCDA1</item>
         <item name="colorOnSecondary">@color/white</item>
+
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <item name="android:statusBarColor" tools:targetApi="l">@color/toolbar_title_color</item>
 
         <!-- display ActionMode over toolbar -->
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24</item>
+
+        <!--cancel underline in search view -->
+        <item name="searchViewStyle">@style/MySearchView</item>
     </style>
 
     <style name="SplashScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen_drawable</item>
     </style>
+
+
 
 </resources>

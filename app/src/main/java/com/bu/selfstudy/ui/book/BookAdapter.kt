@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable
 import android.view.*
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.annotation.MenuRes
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.BookListItemBinding
+import com.bu.selfstudy.tool.log
 import com.google.android.material.button.MaterialButton
 
 
@@ -118,7 +120,7 @@ class BookAdapter(val fragment: BookFragment):
             MaterialButton(
                     fragment.requireContext(),
                     null,
-                    R.style.Widget_App_Button_OutlinedButton_IconOnly
+                    R.style.color_picker_IconOnly
             ).let { button ->
                 button.icon = fragment.resources.getDrawable(R.drawable.ic_baseline_bookmark_24)
                 button.iconTint = ColorStateList.valueOf(colorInt)
@@ -137,6 +139,7 @@ class BookAdapter(val fragment: BookFragment):
 
 
         popupWindow.run {
+            animationStyle = R.style.color_picker_animation
             width = ViewGroup.LayoutParams.WRAP_CONTENT
             height = ViewGroup.LayoutParams.WRAP_CONTENT
             isFocusable = true//將焦點放在popupWindow, 彈出時可避免其他元件的點擊事件

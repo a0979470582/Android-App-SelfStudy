@@ -114,15 +114,13 @@ class SearchFragment: Fragment()  {
 
         with(searchView){
 
+            setPadding(-44,0,0,0)//修改hint的位置
+
             //移除搜尋框內的search_icon
             findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
                     ?.setImageDrawable(null)
 
-            //修改hint的位置
-            addOnLayoutChangeListener {_,_,_,_,_,_,_,_,_ ->
-                (findViewById<SearchView.SearchAutoComplete>(R.id.search_src_text)
-                        ?.layoutParams as LinearLayout.LayoutParams).leftMargin = -21
-            }
+
 
             setIconifiedByDefault(false)//展開SearchView
             requestFocus()//加入光標

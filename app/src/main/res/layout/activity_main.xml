@@ -16,23 +16,39 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.google.android.material.appbar.AppBarLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.appbar.MaterialToolbar
-                    android:id="@+id/toolbar"
+                <com.google.android.material.appbar.AppBarLayout
+                    android:id="@+id/appBarLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    app:navigationIcon="@drawable/ic_round_menu_24"
-                    android:backgroundTint="@color/divide_color"
-                    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                    tools:title="SelfStudy"
-                    tools:menu="@menu/book_toolbar">
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@color/white">
 
-                </com.google.android.material.appbar.MaterialToolbar>
-            </com.google.android.material.appbar.AppBarLayout>
+                    <com.google.android.material.appbar.MaterialToolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        app:navigationIcon="@drawable/ic_round_menu_24"
+                        android:theme="@style/ThemeOverlay.AppCompat.Light"
+                        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                        app:layout_scrollFlags="scroll|enterAlways|snap"
+                        tools:title="從字典搜尋"
+                        tools:menu="@menu/book_toolbar">
+
+
+                        <TextView
+                            android:id="@+id/toolbarTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:textSize="16sp"
+                            android:textColor="@color/toolbar_title_color"
+                            android:text="從字典搜尋"/>
+
+                    </com.google.android.material.appbar.MaterialToolbar>
+
+                </com.google.android.material.appbar.AppBarLayout>
+
 
             <fragment
                 android:id="@+id/nav_host_fragment"
@@ -43,7 +59,6 @@
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:navGraph="@navigation/nav_graph"
                 tools:layout="@layout/fragment_book"/>
-
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <com.google.android.material.navigation.NavigationView

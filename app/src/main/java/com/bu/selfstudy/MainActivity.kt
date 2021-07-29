@@ -64,6 +64,10 @@ class MainActivity : AppCompatActivity(){
                     DrawerLayout.LOCK_MODE_UNLOCKED
             )
         }
+
+        binding.toolbarTextView.setOnClickListener {
+            navController.navigate(R.id.searchFragment)
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
