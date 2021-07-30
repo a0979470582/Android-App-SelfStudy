@@ -20,14 +20,12 @@
                     android:id="@+id/appBarLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="6dp"
                     android:background="@color/white">
 
                     <com.google.android.material.appbar.MaterialToolbar
                         android:id="@+id/toolbar"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
+                        android:layout_height="?actionBarSize"
                         app:navigationIcon="@drawable/ic_round_menu_24"
                         android:theme="@style/ThemeOverlay.AppCompat.Light"
                         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
@@ -48,7 +46,6 @@
                     </com.google.android.material.appbar.MaterialToolbar>
 
                 </com.google.android.material.appbar.AppBarLayout>
-
 
             <fragment
                 android:id="@+id/nav_host_fragment"

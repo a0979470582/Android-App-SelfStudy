@@ -10,8 +10,10 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.marginStart
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -19,44 +21,53 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
+import com.bu.selfstudy.databinding.BookListHeaderBinding
 import com.bu.selfstudy.databinding.BookListItemBinding
 import com.bu.selfstudy.tool.log
 import com.google.android.material.button.MaterialButton
+import org.w3c.dom.Text
 
 
 class BookAdapter(val fragment: BookFragment):
-        RecyclerView.Adapter<BookAdapter.ViewHolder>() {
+        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val asyncListDiffer = object: AsyncListDiffer<Book>(this, BookDiffCallback){}
 
-    var tracker: SelectionTracker<Long>? = null
-
-    inner class ViewHolder(val binding: BookListItemBinding): RecyclerView.ViewHolder(binding.root)
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = BookListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        val holder = ViewHolder(binding)
+    inner class ItemViewHolder(val binding: BookListItemBinding): RecyclerView.ViewHolder(binding.root)
+    inner class HeaderViewHolder(val headerBinding: BookListHeaderBinding) : RecyclerView.ViewHolder(headerBinding.root)
 
 
-        holder.itemView.setOnClickListener {
-            fragment.navigateToWordCardFragment(
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        if(viewType == 1){
+            val binding = BookListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            val holder = ItemViewHolder(binding)
+
+
+            holder.itemView.setOnClickListener {
+                fragment.navigateToWordCardFragment(
                     asyncListDiffer.currentList[holder.adapterPosition].id)
-        }
-
-        holder.binding.bookIcon.setOnClickListener { v: View ->
-            fragment.setChosenBook(asyncListDiffer.currentList[holder.adapterPosition])
-            initPopupWindow(v)
-        }
-
-        holder.binding.moreIcon.setOnClickListener { v: View ->
-            asyncListDiffer.currentList[holder.adapterPosition].let { book->
-                fragment.setChosenBook(book)
-                showMenu(v, R.menu.book_action_mode, book)
-
             }
 
+            holder.binding.bookIcon.setOnClickListener { v: View ->
+                fragment.setChosenBook(asyncListDiffer.currentList[holder.adapterPosition])
+                initPopupWindow(v)
+            }
+
+            holder.binding.moreIcon.setOnClickListener { v: View ->
+                asyncListDiffer.currentList[holder.adapterPosition].let { book->
+                    fragment.setChosenBook(book)
+                    showMenu(v, R.menu.book_action_mode, book)
+
+                }
+
+            }
+            return holder
+        }else{
+            val binding = BookListHeaderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+
+            return HeaderViewHolder(binding)
         }
-        return holder
     }
 
     private fun showMenu(v: View, @MenuRes menuRes: Int, book: Book) {
@@ -161,23 +172,27 @@ class BookAdapter(val fragment: BookFragment):
         }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val book = asyncListDiffer.currentList[position]
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when(holder){
+            is ItemViewHolder->{
+                val book = asyncListDiffer.currentList[position]
 
-        with(holder.binding){
-            bookNameTextView.text = book.bookName
-            bookSizeTextView.text = "${book.size}"
+                with(holder.binding){
+                    bookNameTextView.text = book.bookName
+                    bookSizeTextView.text = "${book.size}"
 
-            bookIcon.iconTint = ColorStateList.valueOf(book.colorInt)
-        }
+                    bookIcon.iconTint = ColorStateList.valueOf(book.colorInt)
+                }
+            }
+            is HeaderViewHolder->{
 
-        tracker?.let {
-            holder.itemView.isActivated = it.isSelected(book.id)
+            }
         }
     }
 
     override fun getItemCount() = asyncListDiffer.currentList.size
     override fun getItemId(position: Int): Long = asyncListDiffer.currentList[position].id
+    override fun getItemViewType(position: Int) = if(position == 0) 0 else 1
 
     companion object BookDiffCallback : DiffUtil.ItemCallback<Book>(){
         override fun areItemsTheSame(oldItem: Book, newItem: Book): Boolean {
@@ -189,7 +204,7 @@ class BookAdapter(val fragment: BookFragment):
     }
 
     fun submitList(bookList: List<Book>){
-        asyncListDiffer.submitList(bookList)
+        asyncListDiffer.submitList(listOf(Book()).plus(bookList))
     }
 
 }

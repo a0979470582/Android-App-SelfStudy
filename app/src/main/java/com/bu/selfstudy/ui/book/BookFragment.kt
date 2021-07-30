@@ -54,10 +54,6 @@ class BookFragment : Fragment() {
             adapter.submitList(it)
         }
 
-        binding.firstRow.setOnClickListener {
-            val action = BookFragmentDirections.actionBookFragmentToRecentWordFragment()
-            findNavController().navigate(action)
-        }
 
         lifecycleScope.launch {
             initSpeedDial()
