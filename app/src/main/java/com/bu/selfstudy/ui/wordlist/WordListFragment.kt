@@ -1,11 +1,13 @@
 package com.bu.selfstudy.ui.wordlist
 
+import android.graphics.Color
 import android.graphics.drawable.StateListDrawable
 import androidx.appcompat.view.ActionMode
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.iterator
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
@@ -56,15 +58,19 @@ class WordListFragment : Fragment() {
      override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
          setHasOptionsMenu(true)
 
-         activityViewModel.getBookWithId(args.bookId)?.let { book ->
-             viewModel.bookLiveData.value = book
+         viewModel.bookIdLiveData.value = args.bookId
+
+         viewModel.bookLiveData.observe(viewLifecycleOwner){book ->
              (requireActivity() as AppCompatActivity)
                      .supportActionBar?.title = book.bookName
          }
 
+         //採用PagedList, 因此會觸發兩次, 首先是size=0的列表, 再來才是正常大小的列表
+         //該列表在介面滾動到底部之前, 只有前120筆(依設置)是非null
          viewModel.wordListLiveData.observe(viewLifecycleOwner){
              listAdapter.submitList(it)
              refreshWordIdList(it)
+
          }
 
          viewModel.databaseEvent.observe(viewLifecycleOwner){
@@ -162,6 +168,10 @@ class WordListFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.wordlist_toolbar, menu)
+
+        menu.iterator().forEach {
+            it.icon.mutate().setTint(Color.WHITE)
+        }
     }
 
 

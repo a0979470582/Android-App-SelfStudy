@@ -18,7 +18,7 @@ object ActionItemCreator {
             .create()
 
     val addItem = SpeedDialActionItem
-            .Builder(R.id.fab_add_word, R.drawable.ic_baseline_add_24)
+            .Builder(R.id.fab_add_word, R.drawable.ic_baseline_search_24)
             .setLabel(_resources.getString(R.string.FAB_add))
             .create()
 

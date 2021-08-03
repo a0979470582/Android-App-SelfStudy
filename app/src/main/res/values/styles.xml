@@ -25,12 +25,15 @@
         <item name="android:windowExitAnimation">@anim/color_picker_hide</item>
     </style>
 
-    <style name="book_toolbar_text_appearance" parent="@style/TextAppearance.MaterialComponents.Caption">
+    <style name="title_text_style" parent="@style/TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/icon_black</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
     <style name="MySearchView" parent="Widget.AppCompat.Light.SearchView">
         <item name="submitBackground">@color/white</item>
         <item name="queryBackground">@color/white</item>
     </style>
+
 </resources>

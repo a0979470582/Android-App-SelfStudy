@@ -16,6 +16,7 @@ import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import com.bu.selfstudy.ActivityViewModel
+import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.RecentWord
 import com.bu.selfstudy.data.model.WordTuple
@@ -30,8 +31,6 @@ class RecentWordFragment : Fragment() {
     private val viewModel: RecentWordViewModel by viewModels()
     private val binding: FragmentWordListBinding by viewBinding()
     private val listAdapter = RecentWordAdapter(fragment = this)
-
-    private var actionMode: ActionMode? = null
 
 
     override fun onCreateView(
@@ -54,7 +53,6 @@ class RecentWordFragment : Fragment() {
          viewModel.recentWordLiveData.observe(viewLifecycleOwner){
              listAdapter.submitList(it)
          }
-
     }
 
 
@@ -77,11 +75,12 @@ class RecentWordFragment : Fragment() {
 
 
     fun navigateWordCardFragment(recentWord: RecentWord) {
-        val action = RecentWordFragmentDirections.actionRecentWordFragmentToWordCardFragment(
-                bookId = recentWord.bookId,
-                wordId = recentWord.wordId
+        findNavController().navigate(
+                NavGraphDirections.actionGlobalWordCardFragment(
+                        bookId = recentWord.bookId,
+                        wordId = recentWord.wordId
+                )
         )
-        findNavController().navigate(action)
     }
 
     fun refreshRecentWord(recentWord: RecentWord) {

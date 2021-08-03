@@ -5,6 +5,7 @@
         android:id="@+id/action_search"
         android:icon="@drawable/ic_baseline_search_24"
         android:title="@string/icon_search"
+        android:iconTint="@color/white"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView"/>
 
@@ -12,6 +13,7 @@
         android:id="@+id/action_edit_book"
         android:icon="@drawable/ic_baseline_view_list_24"
         android:title="@string/icon_to_list"
-        app:showAsAction="never"/>
+        android:iconTint="@color/white"
+        app:showAsAction="ifRoom"/>
 
 </menu>

@@ -42,7 +42,7 @@ class AddWordFragment: Fragment() {
         setHasOptionsMenu(true)
 
         //監聽從DialogChooseBook返回的bookId
-        setFragmentResultListener("bookId"){_, bundle ->
+        setFragmentResultListener("DialogChooseBook"){_, bundle ->
             val word = Word(
                 bookId = bundle.getLong("bookId"),
                 wordName = wordName,
@@ -72,6 +72,9 @@ class AddWordFragment: Fragment() {
         binding.soundField.setStartIconOnClickListener {
         }
 
+        /**
+         * wordname輸入完按下確認後, 可跳到輸入translation處
+         */
         binding.wordField.editText!!.setOnEditorActionListener { view, actionId, event ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
@@ -85,6 +88,9 @@ class AddWordFragment: Fragment() {
         }
     }
 
+    /**
+     * 避免焦點還在輸入框, 按退回鍵就離開了
+     */
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
@@ -102,6 +108,11 @@ class AddWordFragment: Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(
                 this, // LifecycleOwner
                 callback)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.addword_toolbar, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -126,9 +137,6 @@ class AddWordFragment: Fragment() {
         return true
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.addword_toolbar, menu)
-    }
+
 
 }

@@ -28,11 +28,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display3"
-                android:textSize="24sp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="20/24" />
+                tools:text="24" />
 
             <TextView
                 android:id="@+id/wordNameTextView"
@@ -53,11 +53,12 @@
                 android:layout_height="wrap_content"
                 android:textIsSelectable="true"
                 android:text="@{word.pronunciation}"
-                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
+                android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/wordNameTextView"
-                tools:text="[rɪˋzɝv]" />
+                tools:text="/ rɪˋzɝv /" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/sound_button"
@@ -69,7 +70,7 @@
                 android:insetBottom="0dp"
                 app:icon="@drawable/ic_baseline_volume_up_24"
                 app:iconGravity="textStart"
-                app:iconTint="@color/purple_500"
+                app:iconTint="@color/colorButtonEnabled"
                 app:layout_constraintBottom_toBottomOf="@+id/pronunciationTextView"
                 app:layout_constraintStart_toEndOf="@+id/pronunciationTextView"
                 app:layout_constraintTop_toTopOf="@+id/pronunciationTextView" />

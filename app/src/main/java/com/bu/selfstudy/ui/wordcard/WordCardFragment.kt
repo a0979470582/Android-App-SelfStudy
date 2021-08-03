@@ -1,10 +1,13 @@
 package com.bu.selfstudy.ui.wordcard
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.iterator
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
@@ -12,11 +15,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.viewpager2.widget.ViewPager2
 import com.bu.selfstudy.ActivityViewModel
+import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.databinding.FragmentWordCardBinding
 import com.bu.selfstudy.tool.*
+import com.leinardi.android.speeddial.SpeedDialActionItem
+import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
@@ -29,7 +36,8 @@ class WordCardFragment : Fragment() {
     private val pagerAdapter = WordCardPagerAdapter(fragment = this)
 
     private var viewPagerCallback: ViewPager2.OnPageChangeCallback? = null
-    private var firstLoadViewPager = true
+
+    private lateinit var speedDialView: SpeedDialView
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -51,11 +59,11 @@ class WordCardFragment : Fragment() {
 
          lifecycleScope.launch {
              setDialogResultListener()
-             initSpeedDial()
          }
 
-         activityViewModel.getBookWithId(args.bookId)?.let { book ->
-             viewModel.bookLiveData.value = book
+         viewModel.bookIdLiveData.value = args.bookId
+
+         viewModel.bookLiveData.observe(viewLifecycleOwner){book ->
              (requireActivity() as AppCompatActivity)
                      .supportActionBar?.title = book.bookName
          }
@@ -66,6 +74,7 @@ class WordCardFragment : Fragment() {
          viewModel.wordListLiveData.observe(viewLifecycleOwner) {
              binding.explainImage.visibility = if(it.isEmpty()) View.VISIBLE else View.INVISIBLE
              binding.explainText.visibility = if(it.isEmpty()) View.VISIBLE else View.INVISIBLE
+
              pagerAdapter.submitList(it)
              setPagerViewItem()
         }
@@ -77,16 +86,24 @@ class WordCardFragment : Fragment() {
          /**
           * 修正頁數ViewPager的時機:
           * 初始化頁面時, 退回到此頁時(ViewModel存在), 配置變更(同退回到此頁時),
-          * 刪除單字或新增單字造成List長度改變(待解決)
+          * 刪除單字或新增單字造成List長度改變
+          *
+          * submitList()先將wordlist傳給viewpager, 會顯示第一頁並觸發以下callback,
+          * 接著setPagerViewItem()會從book取得初始position, 來設定正確頁數, 觸發第二次callback
+          * 當 size>=2 , 兩次觸發會依序收到position=0, size*100+position
+          * 當 size=1 , 只會收到一次position=0, 因為只有一頁不會顯示無盡畫廊, 也就沒有對應的fakePosition
+          * 當 size=0, 不會觸發任何事情
           */
          viewPagerCallback = object: ViewPager2.OnPageChangeCallback(){
              override fun onPageSelected(position: Int) {
                  super.onPageSelected(position)
-                 if(!firstLoadViewPager){
-                     viewModel.updateCurrentPosition(
-                             pagerAdapter.mapToRealPosition(position))
+                 if(position != 0)
+                     viewModel.updateCurrentPosition(pagerAdapter.mapToRealPosition(position))
+
+                 viewModel.wordListLiveData.value?.let {
+                     if(it.size == 1)
+                         viewModel.updateCurrentPosition(0)
                  }
-                 firstLoadViewPager = false
              }
          }
 
@@ -100,6 +117,15 @@ class WordCardFragment : Fragment() {
                  "update"->"更新已保存".showToast()
              }
          }
+
+
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        speedDialView = requireActivity().findViewById(R.id.speedDialView)
+        speedDialView.setMainFabClosedDrawable(resources.getDrawable(R.drawable.ic_baseline_edit_24))
+        initSpeedDial()
     }
 
     private fun setPagerViewItem() {
@@ -124,6 +150,10 @@ class WordCardFragment : Fragment() {
     }
 
 
+    /**
+     * 注意在size為1的時候, 並不會觸發設定, 而size>=2時, 經過mapToFakePosition轉換,
+     * 都會變成78600之類的數字, 就可以觸發設定
+     */
     private fun setPagerViewCurrentItem(position: Int, smooth: Boolean=false){
         binding.viewPager.post {
             binding.viewPager.setCurrentItem(
@@ -150,23 +180,28 @@ class WordCardFragment : Fragment() {
         val oldActionItem = if(isMark) ActionItemCreator.markItem else ActionItemCreator.cancelMarkItem
         val newActionItem = if(isMark) ActionItemCreator.cancelMarkItem else ActionItemCreator.markItem
 
-        binding.speedDial.actionItems.firstOrNull{
+        speedDialView.actionItems.firstOrNull{
             it == oldActionItem
         }?.let {
-            binding.speedDial.replaceActionItem(oldActionItem, newActionItem)
+            speedDialView.replaceActionItem(oldActionItem, newActionItem)
+
         }
+
+
     }
 
     private fun initSpeedDial() {
-        if(binding.speedDial.actionItems.isNotEmpty())
-            return
+        //if(speedDialView.actionItems.isNotEmpty())
+            //return
 
-        with(binding.speedDial){
+        with(speedDialView){
             this.mainFab.setOnLongClickListener {
                 resources.getString(R.string.FAB_main).showToast()
                 return@setOnLongClickListener true
             }
 
+
+            this.clearActionItems()
             this.addAllActionItems(listOf(
                     ActionItemCreator.addItem,
                     ActionItemCreator.editItem,
@@ -178,9 +213,9 @@ class WordCardFragment : Fragment() {
             this.setOnActionSelectedListener { actionItem ->
                 when (actionItem.id) {
                     R.id.fab_add_word -> {
-                        val action = WordCardFragmentDirections.actionGlobalAddWordFragment(
-                            bookId = args.bookId)
-                        findNavController().navigate(action)
+                        //val action = WordCardFragmentDirections.actionGlobalAddWordFragment(
+                            //bookId = args.bookId)
+                        findNavController().navigate(R.id.searchFragment)
                     }
                     R.id.fab_edit_word -> {
                         viewModel.currentOpenWord?.let {
@@ -222,8 +257,8 @@ class WordCardFragment : Fragment() {
         super.onAttach(context)
 
         requireActivity().onBackPressedDispatcher.addCallback(this){
-            if(binding.speedDial.isOpen){
-                binding.speedDial.close()
+            if(speedDialView.isOpen){
+                speedDialView.close()
             }else{
                 findNavController().popBackStack()
             }
@@ -237,10 +272,10 @@ class WordCardFragment : Fragment() {
             }
             R.id.action_edit_book -> {
                 viewModel.bookLiveData.value?.let {
-                    findNavController().navigate(WordCardFragmentDirections
-                            .actionWordCardFragmentToWordListFragment(bookId = it.id))
+                    findNavController().navigate(
+                            NavGraphDirections.actionGlobalWordListFragment(bookId = it.id)
+                    )
                 }
-
             }
 
         }
@@ -250,6 +285,11 @@ class WordCardFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.wordcard_toolbar, menu)
+
+        menu.iterator().forEach {
+            it.icon.mutate().setTint(Color.WHITE)
+        }
+
     }
 
     override fun onDestroyView() {

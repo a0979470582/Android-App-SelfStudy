@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SelfStudy2">
 
-        <activity android:name=".ui.SplashActivity"
+        <activity android:name=".SplashActivity"
             android:theme="@style/SplashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

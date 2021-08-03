@@ -1,4 +1,4 @@
-package com.bu.selfstudy.ui.book
+package com.bu.selfstudy.ui.archive
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -7,15 +7,11 @@ import android.graphics.drawable.ColorDrawable
 import android.view.*
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import android.widget.PopupWindow
-import android.widget.TextView
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.view.marginStart
 import androidx.navigation.fragment.NavHostFragment.findNavController
-import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -23,13 +19,11 @@ import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.BookListItemBinding
 import com.bu.selfstudy.databinding.RecyclerviewHeaderBinding
-import com.bu.selfstudy.tool.log
-import com.bu.selfstudy.ui.archive.ArchiveFragmentDirections
+import com.bu.selfstudy.ui.book.BookFragmentDirections
 import com.google.android.material.button.MaterialButton
-import org.w3c.dom.Text
 
 
-class BookAdapter(val fragment: BookFragment):
+class ArchiveAdapter(val fragment: ArchiveFragment):
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val asyncListDiffer = object: AsyncListDiffer<Book>(this, BookDiffCallback){}
@@ -58,7 +52,7 @@ class BookAdapter(val fragment: BookFragment):
             holder.binding.moreIcon.setOnClickListener { v: View ->
                 asyncListDiffer.currentList[holder.adapterPosition].let { book->
                     fragment.setChosenBook(book)
-                    showMenu(v, R.menu.book_action_mode, book)
+                    showMenu(v, R.menu.archive_action_mode, book)
 
                 }
 
@@ -89,15 +83,17 @@ class BookAdapter(val fragment: BookFragment):
                 }
                 R.id.action_edit -> {
                     findNavController(fragment).navigate(
-                            BookFragmentDirections.actionBookFragmentToEditBookDialog(book.bookName)
+                            ArchiveFragmentDirections.actionArchiveFragmentToEditBookDialog(book.bookName)
                     )
                 }
+
                 R.id.action_archive -> {
-                    fragment.archiveBook(true)
+                    fragment.archiveBook(false)
                 }
+
                 R.id.action_delete -> {
                     findNavController(fragment).navigate(
-                            BookFragmentDirections.actionGlobalDialogDeleteCommon(
+                            ArchiveFragmentDirections.actionGlobalDialogDeleteCommon(
                                     "刪除題庫", "刪除「${book.bookName}」?")
                     )
                 }
@@ -183,7 +179,7 @@ class BookAdapter(val fragment: BookFragment):
                 }
             }
             is HeaderViewHolder->{
-                holder.headerBinding.firstRow.text = "我的題庫"
+                holder.headerBinding.firstRow.text = "封存"
             }
         }
     }

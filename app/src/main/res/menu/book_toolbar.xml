@@ -13,14 +13,8 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/action_test"
-        android:icon="@drawable/ic_round_pending_actions_24"
-        android:title="@string/icon_test"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/action_download_book"
-        android:icon="@drawable/ic_baseline_add_24"
+        android:icon="@drawable/ic_baseline_archive_24"
         android:title="@string/icon_download_book"
         app:showAsAction="never"/>
 </menu>

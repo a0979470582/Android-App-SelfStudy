@@ -12,26 +12,40 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- Circular progress indicator -->
-        <TextView
-            android:id="@+id/explainText"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="目前這裡還沒有單字唷~ 可以點擊右下角的按鈕來新增單字"
-            android:gravity="center"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
         <ImageView
             android:id="@+id/explainImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/app_icon"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="64dp"
+            android:layout_marginBottom="312dp"
             android:alpha="0.1"
+            android:src="@drawable/app_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             android:visibility="gone"/>
 
+        <TextView
+            android:id="@+id/explainText"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="48dp"
+            android:layout_marginTop="24dp"
+            android:gravity="center_horizontal"
+            android:text="目前沒有單字唷~ 可以使用搜尋功能來加入單字"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:textColor="@color/black60"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/explainImage"
+            android:visibility="gone"/>
+
+        <!-- Circular progress indicator -->
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progressIndicator"
             android:layout_width="wrap_content"
@@ -50,27 +64,10 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.29000002">
 
         </androidx.viewpager2.widget.ViewPager2>
-
-        <com.leinardi.android.speeddial.SpeedDialOverlayLayout
-            android:id="@+id/overlayLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:clickable_overlay="true" />
-
-        <com.leinardi.android.speeddial.SpeedDialView
-            android:id="@+id/speedDial"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:sdMainFabClosedSrc="@drawable/ic_baseline_edit_24"
-            app:sdMainFabOpenedSrc="@drawable/ic_baseline_close_24"
-            app:sdOverlayLayout="@id/overlayLayout" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

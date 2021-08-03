@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 @Dao
 interface BookDao : BaseDao<Book>{
     //select
+    @Query("SELECT * FROM Book WHERE id=:bookId AND memberID =:memberId ")
+    fun loadBook(bookId: Long, memberId: Long): Flow<Book>
+
     @Query("SELECT * FROM Book WHERE isTrash=0 AND isArchive=0  AND memberID =:memberId ")
     fun loadBooks(memberId: Long=SelfStudyApplication.memberId): Flow<List<Book>>
 
@@ -20,6 +23,10 @@ interface BookDao : BaseDao<Book>{
 
     @Query("SELECT * FROM Book WHERE id =:bookId")
     fun loadBook(bookId: Long): Flow<Book>
+
+    @Query("SELECT * FROM Book WHERE isTrash=0 AND isArchive=1  AND memberID =:memberId ")
+    fun loadBooksArchive(memberId: Long=SelfStudyApplication.memberId): Flow<List<Book>>
+
 
     //update
     @Query("UPDATE Book SET isTrash = :isTrash WHERE id=:bookId")

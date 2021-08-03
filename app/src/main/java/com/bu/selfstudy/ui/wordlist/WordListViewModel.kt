@@ -23,11 +23,17 @@ class WordListViewModel() : ViewModel() {
 
     val databaseEvent = SingleLiveData<Pair<String, Bundle?>>()
 
-    val bookLiveData = MutableLiveData<Book>()
 
-    val wordListLiveData = bookLiveData.switchMap {
+
+    val bookIdLiveData = MutableLiveData<Long>()
+
+    val bookLiveData = bookIdLiveData.switchMap {
+        BookRepository.loadBook(it).asLiveData()
+    }
+
+    val wordListLiveData = bookIdLiveData.switchMap {
         LivePagedListBuilder(
-                WordRepository.loadWordTuplesWithPaging(it.id, "%"),
+                WordRepository.loadWordTuplesWithPaging(it, "%"),
                 Config(100)
         ).build()
     }

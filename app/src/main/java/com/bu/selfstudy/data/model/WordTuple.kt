@@ -7,12 +7,12 @@ import java.util.*
 
 @Parcelize
 data class WordTuple(
-        var id:Long,
-        var bookId: Long,
-        var wordName: String,
-        var pronunciation: String,
-        var audioFilePath:String,
-        var isMark: Boolean,
-        var timestamp: Date,
-        var isTrash:Boolean
+        var id:Long=0,
+        var bookId: Long=0,
+        var wordName: String="",
+        var pronunciation: String="",
+        var audioFilePath:String="",
+        var isMark: Boolean=false,
+        var timestamp: Date?=null,
+        var isTrash:Boolean=false
 ): Parcelable

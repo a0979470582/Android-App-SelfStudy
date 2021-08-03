@@ -4,7 +4,7 @@
     <item
         android:id="@+id/action_send"
         android:orderInCategory="90"
-        android:icon="@drawable/ic_baseline_send_24"
+        android:icon="@drawable/ic_baseline_save_24"
         android:title="@string/icon_send"
         app:showAsAction="always"/>
     <item

@@ -1,5 +1,6 @@
 package com.bu.selfstudy.ui.wordcard
 
+import android.content.res.ColorStateList
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
@@ -46,17 +47,33 @@ class WordCardPagerAdapter(
             val binding: WordCardItemBinding
     ) : RecyclerView.ViewHolder(binding.root){
 
+        fun resetUi() {
+            resetExpandedState()
+            binding.scrollView.scrollTo(0, 0)
+        }
+
         fun resetExpandedState(){
             binding.translationTextView.expand(false)
             binding.variationTextView.expand(false)
             binding.exampleTextView.expand(false)
+            binding.synonymsTextView.expand((false))
             binding.noteTextView.expand(false)
         }
+
         fun bindData(word: Word){
             binding.word = word
             //binding.wordInfo.text = "${mapToRealPosition(adapterPosition)+1}/${wordList.size}"
             binding.wordInfo.text = "${mapToRealPosition(adapterPosition)+1}"
+
+
+            binding.soundButton.isVisible = word.audioFilePath.isNotEmpty()
+            binding.translationTextView.isVisible = word.translation.isNotEmpty()
+            binding.variationTextView.isVisible = word.variation.isNotEmpty()
+            binding.exampleTextView.isVisible = word.example.isNotEmpty()
+            binding.synonymsTextView.isVisible = word.synonyms.isNotEmpty()
+            binding.noteTextView.isVisible = word.note.isNotEmpty()
         }
+
     }
 
 
@@ -78,8 +95,10 @@ class WordCardPagerAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val word: Word = wordList[mapToRealPosition(position)]
+        holder.resetUi()
         holder.bindData(word)
-        checkAudioPath(word.id, word.audioFilePath)
+
+        //checkAudioPath(word.id, word.audioFilePath)
     }
 
     private fun checkAudioPath(wordId:Long, path:String){

@@ -35,7 +35,7 @@ class DialogChooseBook : AppCompatDialogFragment() {
                 position = which
             }
             .setPositiveButton("確認"){ _, _ ->
-                setFragmentResult("bookId", putBundle("bookId", bookList[position].id))
+                setFragmentResult("DialogChooseBook", putBundle("bookId", bookList[position].id))
                 findNavController().popBackStack()
             }
             .setNegativeButton("取消"){ _, _ ->

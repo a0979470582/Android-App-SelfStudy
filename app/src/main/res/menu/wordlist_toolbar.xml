@@ -11,7 +11,8 @@
     <item
         android:id="@+id/action_filter"
         android:icon="@drawable/ic_baseline_filter_list_24"
-        android:title="更改排序"
+        android:title="過濾"
+        android:iconTint="@color/white"
         app:showAsAction="ifRoom" />
 
 

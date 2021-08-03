@@ -38,7 +38,11 @@
 
         <!--cancel underline in search view -->
         <item name="searchViewStyle">@style/MySearchView</item>
+
     </style>
+
+
+
 
     <style name="SplashScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen_drawable</item>

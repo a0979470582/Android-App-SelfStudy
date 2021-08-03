@@ -19,8 +19,14 @@ object BookRepository {
     private val bookDao = getDatabase().bookDao()
     private val wordDao = getDatabase().wordDao()
 
+    fun loadBook(bookId: Long, memberId:Long=SelfStudyApplication.memberId) =
+            bookDao.loadBook(bookId, memberId)
+
     fun loadBooks(memberId:Long=SelfStudyApplication.memberId) =
             bookDao.loadDistinctBooks(memberId)
+
+    fun loadBooksArchive(memberId:Long=SelfStudyApplication.memberId) =
+            bookDao.loadBooksArchive(memberId)
 
     suspend fun loadLocalBookNames() = LoadLocalBook.loadNames()
 

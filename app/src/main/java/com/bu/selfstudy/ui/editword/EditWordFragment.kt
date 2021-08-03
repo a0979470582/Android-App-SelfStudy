@@ -194,7 +194,7 @@ class EditWordFragment: Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
-        inflater.inflate(R.menu.editword_toolbar, menu)
+        inflater.inflate(R.menu.only_save_toolbar, menu)
         menu.findItem(R.id.action_save).isEnabled = viewModel.hasEditLiveData.value?:false
     }
     override fun onPrepareOptionsMenu(menu: Menu) {

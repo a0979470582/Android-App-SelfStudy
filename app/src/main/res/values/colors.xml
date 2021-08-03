@@ -26,6 +26,14 @@
     <color name="colorSecondaryVariant">#FDCDA1</color>
     <color name="colorOnSecondary">#FFF</color>
 
+    <color name="iris100">#5D5FEF</color>
+    <color name="iris80">#C1C1F6</color>
+    <color name="iris60">#A5A6F6</color>
+
+    <color name="blue100">#7091F3</color>
+    <color name="blue80">#7986cb</color>
+    <color name="blue60">#A2B7F4</color>
+
     <color name="black100">#000000</color>
     <color name="black87">#DE000000</color>
     <color name="black60">#99000000</color>
@@ -52,6 +60,8 @@
 
     <color name="toolbar_title_color">#8C8B8B</color>
 
-
+    <!-- component -->
+    <color name="colorButtonEnabled">#FF6200EE</color>
+    <color name="colorButtonDisabled">#B8B8B8</color>
 
 </resources>

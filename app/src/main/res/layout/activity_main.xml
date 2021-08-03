@@ -16,34 +16,30 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <!--toolbar的高度過高可能造成陰影不美觀, 例如8dp可能會看出明顯的邊角痕跡-->
                 <com.google.android.material.appbar.AppBarLayout
                     android:id="@+id/appBarLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/white">
+                    android:layout_marginTop="8dp"
+                    android:layout_marginHorizontal="12dp"
+                    android:background="@android:color/transparent"
+                    app:elevation="0dp">
+
 
                     <com.google.android.material.appbar.MaterialToolbar
                         android:id="@+id/toolbar"
                         android:layout_width="match_parent"
-                        android:layout_height="?actionBarSize"
-                        app:navigationIcon="@drawable/ic_round_menu_24"
+                        android:layout_height="match_parent"
+                        android:elevation="4dp"
+                        android:layout_margin="4dp"
+                        android:background="@drawable/toolbar_background_corner"
                         android:theme="@style/ThemeOverlay.AppCompat.Light"
                         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                        app:titleTextAppearance="@style/title_text_style"
                         app:layout_scrollFlags="scroll|enterAlways|snap"
                         tools:title="從字典搜尋"
-                        tools:menu="@menu/book_toolbar">
-
-
-                        <TextView
-                            android:id="@+id/toolbarTextView"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@android:color/transparent"
-                            android:textSize="16sp"
-                            android:textColor="@color/toolbar_title_color"
-                            android:text="從字典搜尋"/>
-
-                    </com.google.android.material.appbar.MaterialToolbar>
+                        tools:menu="@menu/book_toolbar"/>
 
                 </com.google.android.material.appbar.AppBarLayout>
 
@@ -56,6 +52,20 @@
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:navGraph="@navigation/nav_graph"
                 tools:layout="@layout/fragment_book"/>
+
+            <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+                android:id="@+id/overlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:clickable_overlay="true" />
+            <com.leinardi.android.speeddial.SpeedDialView
+                android:id="@+id/speedDialView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                app:sdMainFabClosedSrc="@drawable/ic_baseline_add_24"
+                app:sdMainFabOpenedSrc="@drawable/ic_baseline_close_24"
+                app:sdOverlayLayout="@id/overlay" />
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <com.google.android.material.navigation.NavigationView

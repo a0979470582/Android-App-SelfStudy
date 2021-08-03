@@ -31,13 +31,7 @@ class ActivityViewModel : ViewModel() {
             bookIdList.addAll(bookList.map { it.id })
         }
     }
-    fun getBookWithId(bookId: Long): Book?{
-        val index = bookIdList.indexOfFirst { it == bookId }
-        return if(index == -1)
-            null
-        else
-            bookListLiveData.value!![index]
-    }
+
 
     //新增單字是多個頁面共同的操作
     fun insertWord(word: Word){
@@ -47,6 +41,14 @@ class ActivityViewModel : ViewModel() {
                 databaseEvent.postValue("insertWord" to
                         putBundle("wordId", resultIdList.first())
                         .putBundle("bookId", word.bookId))
+        }
+    }
+
+    fun insertBook(book: Book){
+        viewModelScope.launch {
+            if(BookRepository.insertBook(book).isNotEmpty()) {
+                databaseEvent.postValue("insertBook" to null)
+            }
         }
     }
 }

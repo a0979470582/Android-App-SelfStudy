@@ -1,4 +1,4 @@
-package com.bu.selfstudy.ui.book
+package com.bu.selfstudy.ui.archive
 
 import android.os.Bundle
 import androidx.lifecycle.*
@@ -10,8 +10,10 @@ import com.bu.selfstudy.tool.putBundle
 import kotlinx.coroutines.launch
 
 
-class BookViewModel : ViewModel(){
+class ArchiveViewModel : ViewModel(){
     val databaseEvent = SingleLiveData<Pair<String, Bundle?>>()
+
+    val bookListLiveData = BookRepository.loadBooksArchive().asLiveData()
 
     fun calculateBookSize(){
         viewModelScope.launch {
@@ -22,7 +24,16 @@ class BookViewModel : ViewModel(){
     var chosenBook: Book? = null
 
 
-    // explanation:String
+    fun insertBook(bookName: String){
+        viewModelScope.launch {
+            val book = Book(bookName = bookName, memberId = SelfStudyApplication.memberId)
+            if(BookRepository.insertBook(book).isNotEmpty()) {
+                databaseEvent.postValue("insertBook" to null)
+            }
+        }
+    }
+
+    //, explanation:String
     fun editBook(bookName:String){
         viewModelScope.launch{
             chosenBook?.copy()?.let {

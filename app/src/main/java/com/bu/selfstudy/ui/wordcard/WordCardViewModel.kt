@@ -20,10 +20,15 @@ import kotlinx.coroutines.launch
  */
 class WordCardViewModel : ViewModel() {
 
-    val bookLiveData = MutableLiveData<Book>()
 
-    val wordListLiveData = bookLiveData.switchMap {
-        WordRepository.loadWords(it.id, "%").asLiveData()
+    val bookIdLiveData = MutableLiveData<Long>()
+
+    val bookLiveData = bookIdLiveData.switchMap {
+        BookRepository.loadBook(it).asLiveData()
+    }
+
+    val wordListLiveData = bookIdLiveData.switchMap {
+        WordRepository.loadWords(it, "%").asLiveData()
     }
 
     val databaseEvent = SingleLiveData<Pair<String, Bundle?>>()

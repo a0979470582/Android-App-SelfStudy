@@ -13,7 +13,7 @@ object ActionItemCreator {
             .create()
 
     val addWordItem = SpeedDialActionItem
-            .Builder(R.id.book_fragment_fab_add_word, R.drawable.ic_baseline_add_word_24)
+            .Builder(R.id.book_fragment_fab_add_word, R.drawable.ic_baseline_search_24)
             .setLabel(_resources.getString(R.string.FAB_add_word))
             .create()
 }
