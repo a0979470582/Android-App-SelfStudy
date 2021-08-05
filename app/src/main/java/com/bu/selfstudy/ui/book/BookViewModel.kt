@@ -2,7 +2,6 @@ package com.bu.selfstudy.ui.book
 
 import android.os.Bundle
 import androidx.lifecycle.*
-import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.tool.SingleLiveData
@@ -37,7 +36,7 @@ class BookViewModel : ViewModel(){
     fun deleteBook(){
         viewModelScope.launch {
             chosenBook?.let {
-                if(BookRepository.updateBookIsTrash(it.id, true) > 0)
+                if(BookRepository.delete(it.id) > 0)
                     databaseEvent.postValue("delete" to putBundle("bookName", it.bookName))
             }
         }
@@ -46,7 +45,7 @@ class BookViewModel : ViewModel(){
     fun archiveBook(isArchive: Boolean){
         viewModelScope.launch {
             chosenBook?.let {
-                if(BookRepository.updateBookIsArchive(it.id, isArchive) > 0)
+                if(BookRepository.updateIsArchive(it.id, isArchive) > 0)
                     databaseEvent.postValue("archive" to putBundle("bookName", it.bookName))
             }
         }
@@ -55,7 +54,7 @@ class BookViewModel : ViewModel(){
     fun updateBookColor(colorInt: Int) {
         viewModelScope.launch {
             chosenBook?.let {
-                BookRepository.updateBookColor(it.id, colorInt)
+                BookRepository.updateColor(it.id, colorInt)
             }
         }
     }

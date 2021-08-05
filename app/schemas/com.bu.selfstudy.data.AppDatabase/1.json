@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "6612c2f7fde2a4c6b2b5b3688c45c75d",
+    "identityHash": "1587d067308729b3c9a49c6e668cbbba",
     "entities": [
       {
         "tableName": "Member",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `email` TEXT NOT NULL, `password` TEXT NOT NULL, `userName` TEXT NOT NULL, `sex` TEXT NOT NULL, `position` INTEGER NOT NULL, `backgroundImageIndex` INTEGER NOT NULL, `iconPath` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `email` TEXT NOT NULL, `password` TEXT NOT NULL, `userName` TEXT NOT NULL, `sex` TEXT NOT NULL, `position` INTEGER NOT NULL, `backgroundImageIndex` INTEGER NOT NULL, `iconPath` TEXT NOT NULL, `timestamp` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -61,12 +61,6 @@
             "columnName": "timestamp",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "isTrash",
-            "columnName": "isTrash",
-            "affinity": "INTEGER",
-            "notNull": true
           }
         ],
         "primaryKey": {
@@ -80,7 +74,7 @@
       },
       {
         "tableName": "Book",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `memberId` INTEGER NOT NULL, `bookName` TEXT NOT NULL, `size` INTEGER NOT NULL, `position` INTEGER NOT NULL, `sortState` TEXT NOT NULL, `displayMode` TEXT NOT NULL, `colorInt` INTEGER NOT NULL, `explanation` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL, `isArchive` INTEGER NOT NULL, FOREIGN KEY(`memberId`) REFERENCES `Member`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `memberId` INTEGER NOT NULL, `bookName` TEXT NOT NULL, `size` INTEGER NOT NULL, `position` INTEGER NOT NULL, `sortState` TEXT NOT NULL, `displayMode` TEXT NOT NULL, `colorInt` INTEGER NOT NULL, `explanation` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `isArchive` INTEGER NOT NULL, FOREIGN KEY(`memberId`) REFERENCES `Member`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -143,12 +137,6 @@
             "notNull": true
           },
           {
-            "fieldPath": "isTrash",
-            "columnName": "isTrash",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
             "fieldPath": "isArchive",
             "columnName": "isArchive",
             "affinity": "INTEGER",
@@ -178,7 +166,7 @@
       },
       {
         "tableName": "Word",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bookId` INTEGER NOT NULL, `wordName` TEXT NOT NULL, `pronunciation` TEXT NOT NULL, `translation` TEXT NOT NULL, `variation` TEXT NOT NULL, `example` TEXT NOT NULL, `synonyms` TEXT NOT NULL, `note` TEXT NOT NULL, `audioFilePath` TEXT NOT NULL, `dictionaryPath` TEXT NOT NULL, `isMark` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, `isTrash` INTEGER NOT NULL, FOREIGN KEY(`bookId`) REFERENCES `Book`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bookId` INTEGER NOT NULL, `wordName` TEXT NOT NULL, `pronunciation` TEXT NOT NULL, `translation` TEXT NOT NULL, `variation` TEXT NOT NULL, `example` TEXT NOT NULL, `synonyms` TEXT NOT NULL, `note` TEXT NOT NULL, `audioFilePath` TEXT NOT NULL, `dictionaryPath` TEXT NOT NULL, `isMark` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, FOREIGN KEY(`bookId`) REFERENCES `Book`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -255,12 +243,6 @@
           {
             "fieldPath": "timestamp",
             "columnName": "timestamp",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isTrash",
-            "columnName": "isTrash",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -409,7 +391,7 @@
       },
       {
         "tableName": "RecentWord",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `wordId` INTEGER NOT NULL, `bookId` INTEGER NOT NULL, `wordName` TEXT NOT NULL, `bookName` TEXT NOT NULL, `isTrash` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `wordId` INTEGER NOT NULL, `bookId` INTEGER NOT NULL, `wordName` TEXT NOT NULL, `bookName` TEXT NOT NULL, `timestamp` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -439,12 +421,6 @@
             "fieldPath": "bookName",
             "columnName": "bookName",
             "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isTrash",
-            "columnName": "isTrash",
-            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -471,118 +447,12 @@
           }
         ],
         "foreignKeys": []
-      },
-      {
-        "tableName": "DeleteRecordBook",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bookId` INTEGER NOT NULL, `bookName` TEXT NOT NULL, `bookSize` INTEGER NOT NULL, `bookColorInt` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL)",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "bookId",
-            "columnName": "bookId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "bookName",
-            "columnName": "bookName",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "bookSize",
-            "columnName": "bookSize",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "bookColorInt",
-            "columnName": "bookColorInt",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "timestamp",
-            "columnName": "timestamp",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "id"
-          ],
-          "autoGenerate": true
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "DeleteRecordWord",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `wordId` INTEGER NOT NULL, `wordName` TEXT NOT NULL, `bookId` INTEGER NOT NULL, `bookName` TEXT NOT NULL, `theBookDeleted` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL)",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "wordId",
-            "columnName": "wordId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "wordName",
-            "columnName": "wordName",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "bookId",
-            "columnName": "bookId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "bookName",
-            "columnName": "bookName",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "theBookDeleted",
-            "columnName": "theBookDeleted",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "timestamp",
-            "columnName": "timestamp",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "id"
-          ],
-          "autoGenerate": true
-        },
-        "indices": [],
-        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6612c2f7fde2a4c6b2b5b3688c45c75d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1587d067308729b3c9a49c6e668cbbba')"
     ]
   }
 }

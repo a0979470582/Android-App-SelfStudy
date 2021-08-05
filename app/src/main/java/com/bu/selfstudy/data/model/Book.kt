@@ -30,7 +30,6 @@ data class Book(
 
 
         var timestamp: Date = Date(),
-        var isTrash:Boolean = false,
         var isArchive: Boolean = false
 )
 

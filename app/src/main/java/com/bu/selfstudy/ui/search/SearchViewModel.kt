@@ -68,7 +68,7 @@ class SearchViewModel : ViewModel() {
     fun getWordPage(wordName: String) {
         viewModelScope.launch {
             lastSearchQuery = wordName
-            wordLiveData.value = WordRepository.getWord(wordName)
+            wordLiveData.value = WordRepository.getYahooWord(wordName)
         }
     }
 

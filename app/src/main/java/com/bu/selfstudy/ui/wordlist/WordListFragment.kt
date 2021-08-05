@@ -1,13 +1,20 @@
 package com.bu.selfstudy.ui.wordlist
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.StateListDrawable
 import androidx.appcompat.view.ActionMode
 import android.os.Bundle
 import android.view.*
+import android.widget.Button
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.GravityCompat
 import androidx.core.view.iterator
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
@@ -20,7 +27,10 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
+import com.bu.selfstudy.data.dao.WordDao
+import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.model.WordTuple
+import com.bu.selfstudy.data.repository.WordRepository
 import com.bu.selfstudy.databinding.FragmentWordListBinding
 import com.bu.selfstudy.tool.*
 import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
@@ -31,7 +41,6 @@ import kotlinx.coroutines.launch
 class WordListFragment : Fragment() {
     private val args: WordListFragmentArgs by navArgs()
     private val viewModel: WordListViewModel by viewModels()
-    private val activityViewModel: ActivityViewModel by activityViewModels()
     private val binding: FragmentWordListBinding by viewBinding()
     private val listAdapter = WordListAdapter(listFragment = this)
 
@@ -60,24 +69,26 @@ class WordListFragment : Fragment() {
 
          viewModel.bookIdLiveData.value = args.bookId
 
-         viewModel.bookLiveData.observe(viewLifecycleOwner){book ->
+         viewModel.bookLiveData.observe(viewLifecycleOwner) { book ->
              (requireActivity() as AppCompatActivity)
                      .supportActionBar?.title = book.bookName
          }
 
-         //採用PagedList, 因此會觸發兩次, 首先是size=0的列表, 再來才是正常大小的列表
-         //該列表在介面滾動到底部之前, 只有前120筆(依設置)是非null
-         viewModel.wordListLiveData.observe(viewLifecycleOwner){
+
+         /**
+          * MediatorLiveData會先傳來null值
+          * 但switchMap不會
+          */
+         viewModel.wordListLiveData.observe(viewLifecycleOwner) {
              listAdapter.submitList(it)
              refreshWordIdList(it)
-
          }
 
-         viewModel.databaseEvent.observe(viewLifecycleOwner){
-             when(it?.first){
-                 "delete"-> return@observe
-                 "mark"->return@observe
-                 "cancelMark"->return@observe
+         viewModel.databaseEvent.observe(viewLifecycleOwner) {
+             when (it?.first) {
+                 "delete" -> return@observe
+                 "mark" -> return@observe
+                 "cancelMark" -> return@observe
              }
          }
 
@@ -85,10 +96,51 @@ class WordListFragment : Fragment() {
              initSelectionTracker()
              setDialogResultListener()
              initFastScroll()
+             initSlideSheetListener()
          }
 
 
      }
+
+    private fun initSlideSheetListener() {
+        binding.navView.getHeaderView(0)?.run {
+            findViewById<Button>(R.id.closeIcon).setOnClickListener {
+                binding.slideSheet.closeDrawer(GravityCompat.END)
+            }
+            findViewById<Button>(R.id.resetIcon).setOnClickListener {
+                findViewById<RadioButton>(R.id.buttonAll).isChecked = true
+                findViewById<RadioButton>(R.id.buttonOldest).isChecked = true
+            }
+            findViewById<RadioGroup>(R.id.radioGroupLabel).setOnCheckedChangeListener { group, checkedId ->
+                when(checkedId){
+                    R.id.buttonAll->{
+                        viewModel.onlyMarkLiveData.value = false
+                    }
+                    R.id.buttonMark->{
+                        viewModel.onlyMarkLiveData.value = true
+                    }
+                }
+            }
+            findViewById<RadioGroup>(R.id.radioGroupOrder).setOnCheckedChangeListener { group, checkedId ->
+                viewModel.SortStateEnum.let {
+                    when(checkedId){
+                        R.id.buttonOldest->{
+                            viewModel.sortStateLiveData.value = it.OLDEST
+                        }
+                        R.id.buttonNewest->{
+                            viewModel.sortStateLiveData.value = it.NEWEST
+                        }
+                        R.id.buttonAZ-> {
+                            viewModel.sortStateLiveData.value = it.AZ
+                        }
+                        R.id.buttonZA->{
+                            viewModel.sortStateLiveData.value = it.ZA
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     private fun initFastScroll() {
         FastScroller(binding.recyclerView,
@@ -106,12 +158,12 @@ class WordListFragment : Fragment() {
         setFragmentResultListener("DialogDeleteCommon") { _, _ ->
             viewModel.longPressedWordIdList.let {
             if(it.isNotEmpty())
-                viewModel.deleteWordToTrash(it)
+                viewModel.deleteWord(it)
             }
         }
     }
 
-    fun refreshWordIdList(wordList: List<WordTuple>){
+    fun refreshWordIdList(wordList: List<Word>){
         viewModel.refreshWordIdList(wordList)
     }
 
@@ -122,8 +174,8 @@ class WordListFragment : Fragment() {
         tracker = SelectionTracker.Builder(
                 "recycler-view-word-fragment",
                 binding.recyclerView,
-                IdItemKeyProvider(viewModel.wordIdList),
-                IdItemDetailsLookup(binding.recyclerView, viewModel.wordIdList),
+                IdItemKeyProvider(viewModel.wordIdList, true),
+                IdItemDetailsLookup(binding.recyclerView, viewModel.wordIdList, true),
                 StorageStrategy.createLongStorage()
         ).withSelectionPredicate(SelectionPredicates.createSelectAnything())
                 .build().also {
@@ -160,6 +212,12 @@ class WordListFragment : Fragment() {
             R.id.action_search -> {
             }
             R.id.action_filter->{
+                binding.slideSheet.run{
+                    if(isDrawerOpen(GravityCompat.END))
+                        closeDrawer(GravityCompat.END)
+                    else
+                        openDrawer(GravityCompat.END)
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -185,24 +243,24 @@ class WordListFragment : Fragment() {
         tracker.onRestoreInstanceState(savedInstanceState)
     }
 
-    val actionModeCallback = object : androidx.appcompat.view.ActionMode.Callback {
+    val actionModeCallback = object : ActionMode.Callback {
         /**對於搜尋結果進行操作, 會將ActionMode疊在SearchView上方, 此時鍵盤不會消失
         造成使用者能在看不到搜尋框時查詢, 因此ActionMode出現就必須關閉鍵盤
          */
-        override fun onCreateActionMode(mode: androidx.appcompat.view.ActionMode, menu: Menu): Boolean {
+        override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
             mode.menuInflater.inflate(R.menu.wordlist_action_mode, menu)
             closeKeyboard()
             return true
         }
 
-        override fun onPrepareActionMode(mode: androidx.appcompat.view.ActionMode, menu: Menu) = false
+        override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = false
 
-        override fun onActionItemClicked(mode: androidx.appcompat.view.ActionMode, item: MenuItem): Boolean {
+        override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
             actionModeMenuCallback(item.itemId)
             return true
         }
 
-        override fun onDestroyActionMode(mode: androidx.appcompat.view.ActionMode) {
+        override fun onDestroyActionMode(mode: ActionMode) {
             tracker.clearSelection()
             actionMode = null
         }
@@ -234,6 +292,20 @@ class WordListFragment : Fragment() {
             }
         }
     }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+
+        requireActivity().onBackPressedDispatcher.addCallback(this){
+            if(binding.slideSheet.isDrawerOpen(GravityCompat.END)){
+                binding.slideSheet.closeDrawer(GravityCompat.END)
+            }else{
+                findNavController().popBackStack()
+            }
+        }
+    }
+
 }
 
 /*

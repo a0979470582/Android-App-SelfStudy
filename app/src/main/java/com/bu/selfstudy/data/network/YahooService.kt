@@ -1,12 +1,8 @@
 package com.bu.selfstudy.data.network
 
-import com.bu.selfstudy.data.model.ExamplePartOfSpeech
 import com.bu.selfstudy.data.model.Word
-import com.bu.selfstudy.tool.log
 import okhttp3.*
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
 import java.lang.Exception
 
 object YahooService {

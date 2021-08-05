@@ -1,93 +1,86 @@
 package com.bu.selfstudy.data.repository
 
-import androidx.room.Delete
 import com.bu.selfstudy.R
 import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.model.Book
-import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.AppDatabase.Companion.getDatabase
 import com.bu.selfstudy.data.local.LoadLocalBook
-import com.bu.selfstudy.data.model.DeleteRecord
-import com.bu.selfstudy.data.model.DeleteRecordBook
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 //use coroutine, try-catch, don't write many code here
 object BookRepository {
     private val bookDao = getDatabase().bookDao()
-    private val wordDao = getDatabase().wordDao()
 
-    fun loadBook(bookId: Long, memberId:Long=SelfStudyApplication.memberId) =
-            bookDao.loadBook(bookId, memberId)
 
-    fun loadBooks(memberId:Long=SelfStudyApplication.memberId) =
-            bookDao.loadDistinctBooks(memberId)
+    //load
+    fun loadOneBook(bookId: Long) = bookDao.loadOneBook(bookId)
 
-    fun loadBooksArchive(memberId:Long=SelfStudyApplication.memberId) =
-            bookDao.loadBooksArchive(memberId)
+    fun loadBooks() = bookDao.loadBooks()
+
+    fun loadBooksArchive() = bookDao.loadBooksArchived()
 
     suspend fun loadLocalBookNames() = LoadLocalBook.loadNames()
 
+
+    //insert
     suspend fun insertBook(book: Book) = withContext(Dispatchers.IO){
-        val resultId = bookDao.insert(book).also {
+
+        return@withContext bookDao.insert(book).also { idList->
 
             if(book.colorInt == 0){
-                val intArray = SelfStudyApplication.context.resources.getIntArray(
-                        R.array.book_color_list)
+                val intArray = SelfStudyApplication.context.resources
+                    .getIntArray(R.array.book_color_list)
 
-                bookDao.updateBookColorInt(
-                        it[0], intArray[it[0].toInt() % intArray.size])
+                bookDao.updateColorInt(idList[0], intArray[idList[0].toInt() % intArray.size])
             }
         }
-
-        return@withContext resultId
     }
 
 
     suspend fun insertLocalBook(bookName: String) = withContext(Dispatchers.IO) {
-        val bookId = insertBook(Book(
+        val bookId = insertBook(
+            Book(
                 memberId = SelfStudyApplication.memberId,
-                bookName = bookName))[0]
+                bookName = bookName
+            )
+        )[0]
 
-        val wordList = LoadLocalBook.loadBookData(bookName)
+        LoadLocalBook.loadBookData(bookName).let { wordList->
+            wordList.forEach { it.bookId = bookId }
 
-        wordList.forEach { it.bookId = bookId }
-
-        val wordIdList = WordRepository.insertWord(*wordList.toTypedArray())
-        return@withContext if(wordIdList.isNotEmpty())
-            "新增成功"
-        else
-            "新增失敗"
-    }
-
-    suspend fun updateBook(vararg book: Book) = withContext(Dispatchers.IO){
-        bookDao.update(*book)
-    }
-    suspend fun updateBookPosition(bookId: Long, position: Int) = withContext(Dispatchers.IO){
-        bookDao.updateBookPosition(bookId, position)
-    }
-
-    suspend fun updateBookSize() = withContext(Dispatchers.IO){
-        bookDao.updateBookSize()
-    }
-
-    /**
-     * 如果刪除三千筆單字, 由於只更動欄位的0或1, 並不會感到延遲
-     */
-    suspend fun updateBookIsTrash(bookId: Long, isTrash: Boolean) = withContext(Dispatchers.IO){
-        bookDao.updateBookIsTrash(bookId, isTrash).also {
-            //wordDao.updateWordIsTrash(bookId, isTrash)
-            DeleteRecordRepository.handleBookTrash(bookId, isTrash)
+            WordRepository.insertWord(*wordList.toTypedArray()).also { idList->
+                return@withContext if(idList.isNotEmpty())
+                    "新增成功"
+                else
+                    "新增失敗"
+            }
         }
     }
 
-    suspend fun updateBookIsArchive(bookId: Long, isArchive: Boolean) = withContext(Dispatchers.IO){
-        bookDao.updateBookIsArchive(bookId, isArchive)
+    //update
+    suspend fun updateBook(vararg book: Book) = withContext(Dispatchers.IO){
+        bookDao.update(*book)
     }
 
-    suspend fun updateBookColor(bookId: Long, colorInt: Int) {
-        bookDao.updateBookColorInt(bookId, colorInt)
+    suspend fun updatePosition(bookId: Long, position: Int) = withContext(Dispatchers.IO){
+        bookDao.updatePosition(bookId, position)
+    }
+
+    suspend fun updateBookSize() = withContext(Dispatchers.IO){
+        bookDao.updateSize()
+    }
+
+    suspend fun updateIsArchive(bookId: Long, isArchive: Boolean) = withContext(Dispatchers.IO){
+        bookDao.updateIsArchive(bookId, isArchive)
+    }
+
+    suspend fun updateColor(bookId: Long, colorInt: Int) {
+        bookDao.updateColorInt(bookId, colorInt)
+    }
+
+    //delete
+    suspend fun delete(bookId: Long) = withContext(Dispatchers.IO){
+        bookDao.delete(bookId)
     }
 }

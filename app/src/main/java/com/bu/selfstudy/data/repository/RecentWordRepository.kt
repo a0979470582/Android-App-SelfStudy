@@ -1,21 +1,9 @@
 package com.bu.selfstudy.data.repository
 
-import androidx.lifecycle.liveData
-import androidx.paging.Config
-import androidx.paging.LivePagedListBuilder
-import com.bu.selfstudy.SelfStudyApplication
-import com.bu.selfstudy.data.model.Book
-import com.bu.selfstudy.data.model.Member
-import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.AppDatabase.Companion.getDatabase
 import com.bu.selfstudy.data.model.RecentWord
-import com.bu.selfstudy.tool.log
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 object RecentWordRepository {
@@ -31,14 +19,14 @@ object RecentWordRepository {
     }
 
     suspend fun refreshRecentWord(recentWord: RecentWord) = withContext(Dispatchers.Default){
-        val word = wordDao.loadWord(recentWord.wordId).firstOrNull()
+        val word = wordDao.loadOneWord(recentWord.wordId).firstOrNull()
 
         if(word == null) {
             recentWordDao.delete(recentWord)
             return@withContext
         }
 
-        val book = bookDao.loadBook(word.bookId).firstOrNull()
+        val book = bookDao.loadOneBook(word.bookId).firstOrNull()
         if(book == null ) {
             recentWordDao.delete(recentWord)
             return@withContext

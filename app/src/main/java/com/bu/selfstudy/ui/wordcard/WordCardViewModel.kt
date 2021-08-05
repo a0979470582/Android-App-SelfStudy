@@ -3,7 +3,6 @@ package com.bu.selfstudy.ui.wordcard
 
 import android.os.Bundle
 import androidx.lifecycle.*
-import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.model.RecentWord
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.repository.BookRepository
@@ -24,11 +23,11 @@ class WordCardViewModel : ViewModel() {
     val bookIdLiveData = MutableLiveData<Long>()
 
     val bookLiveData = bookIdLiveData.switchMap {
-        BookRepository.loadBook(it).asLiveData()
+        BookRepository.loadOneBook(it).asLiveData()
     }
 
     val wordListLiveData = bookIdLiveData.switchMap {
-        WordRepository.loadWords(it, "%").asLiveData()
+        WordRepository.loadBookWords(it).asLiveData()
     }
 
     val databaseEvent = SingleLiveData<Pair<String, Bundle?>>()
@@ -52,7 +51,7 @@ class WordCardViewModel : ViewModel() {
         }
 
         bookLiveData.value!!.position = realPosition
-        BookRepository.updateBookPosition(bookLiveData.value!!.id, realPosition)
+        BookRepository.updatePosition(bookLiveData.value!!.id, realPosition)
     }
 
 
@@ -63,7 +62,7 @@ class WordCardViewModel : ViewModel() {
 
     fun updateMarkWord(wordId:Long, isMark: Boolean){
         viewModelScope.launch(Dispatchers.IO) {
-            if(WordRepository.updateWordMark(wordId, isMark)>0){
+            if(WordRepository.updateMark(wordId, isMark)>0){
                 databaseEvent.postValue((if(isMark) "mark" else "cancelMark") to null)
             }
         }
@@ -76,10 +75,9 @@ class WordCardViewModel : ViewModel() {
         }
     }
 
-    fun deleteWordToTrash(wordId: Long){
+    fun deleteWord(wordId: Long){
         viewModelScope.launch(Dispatchers.IO) {
-            if(WordRepository.updateWordIsTrash(wordId, isTrash = true) > 0
-            )
+            if(WordRepository.delete(wordId) > 0)
                 databaseEvent.postValue("delete" to null)
         }
     }

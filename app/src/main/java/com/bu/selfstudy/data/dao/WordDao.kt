@@ -2,48 +2,54 @@ package com.bu.selfstudy.data.dao
 
 import androidx.paging.DataSource
 import androidx.room.*
+import androidx.sqlite.db.SimpleSQLiteQuery
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.model.WordTuple
+import com.bu.selfstudy.data.repository.WordRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Dao
 interface WordDao : BaseDao<Word>{
+    companion object{
+        const val OLDEST = 0
+        const val NEWEST = 1
+        const val AZ = 2
+        const val ZA = 3
+    }
+
     //select with one wordId
     @Query("SELECT * FROM Word WHERE id=:wordId")
-    fun loadWord(wordId:Long): Flow<Word>
-    fun loadDistinctWord(wordId:Long) = loadWord(wordId).distinctUntilChanged()
-
-    //one bookId, query
-    @Query("SELECT * FROM Word WHERE isTrash=0 AND bookId=:bookId AND wordName LIKE :query")
-    fun loadWords(bookId:Long, query: String): Flow<List<Word>>
-    fun loadDistinctWords(bookId:Long, query: String) = loadWords(bookId, query).distinctUntilChanged()
+    fun loadOneWord(wordId:Long): Flow<Word>
 
     //all book, query
-    @Query("SELECT wordName FROM Word WHERE isTrash=0 AND wordName LIKE :query || '%' ORDER BY wordName")
-    fun loadWords(query: String): Flow<List<String>>
+    @Query("SELECT wordName FROM Word WHERE wordName LIKE :query || '%'")
+    fun searchWords(query: String): Flow<List<String>>
 
-    //select with paging3
-    @Query("SELECT * FROM Word WHERE isTrash=0 AND bookId=:bookId AND wordName LIKE :query")
-    fun loadWordsWithPaging(bookId:Long, query: String): DataSource.Factory<Int, Word>
 
-    @Query("SELECT * FROM Word WHERE isTrash=0 AND bookId=:bookId AND wordName LIKE :query")
-    fun loadWordTuplesWithPaging(bookId:Long, query: String): DataSource.Factory<Int, WordTuple>
-
-    //delete
-    @Query("DELETE FROM Word WHERE id IN (:wordId)")
-    suspend fun deleteWord(vararg wordId: Long): Int
+    @Query("""SELECT * FROM Word WHERE bookId=:bookId AND isMark in (:markList) Order by
+        CASE WHEN :sortState=0 THEN timestamp END ASC,
+        CASE WHEN :sortState=1 THEN timestamp END DESC,
+        CASE WHEN :sortState=2 THEN wordName END ASC,
+        CASE WHEN :sortState=3 THEN wordName END DESC
+        """)
+    fun loadBookWords(
+            bookId: Long,
+            sortState: Int,
+            markList: List<Int>
+    ): Flow<List<Word>>
 
     //update
     @Query("UPDATE Word SET isMark = :isMark WHERE id =:wordId")
-    suspend fun updateWordMark(wordId:Long, isMark: Boolean): Int
-
-    @Query("UPDATE Word SET isTrash = :isTrash WHERE id IN (:wordId)")
-    suspend fun updateWordIsTrash(vararg wordId: Long, isTrash: Boolean): Int
-
-    @Query("UPDATE Word SET isTrash = :isTrash WHERE bookId =:bookId")
-    suspend fun updateWordIsTrash(bookId: Long, isTrash: Boolean): Int
+    suspend fun updateMark(wordId:Long, isMark: Boolean): Int
 
     @Query("UPDATE Word SET audioFilePath = :filePath WHERE id = :wordId")
     suspend fun updateAudioFilePath(wordId: Long, filePath: String): Int
+
+    //delete
+    @Query("DELETE FROM Word WHERE id IN (:wordId)")
+    suspend fun delete(vararg wordId: Long): Int
+
+
 }

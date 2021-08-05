@@ -14,13 +14,4 @@ object MemberRepository {
     fun loadMember(memberId:Long=SelfStudyApplication.memberId)
         = memberDao.loadDistinctMember(memberId)
 
-    suspend fun insertMember(member: Member) = withContext(Dispatchers.IO){
-        memberDao.insert(member)
-    }
-    suspend fun updateMember(member: Member) = withContext(Dispatchers.IO){
-        memberDao.update(member)
-    }
-    suspend fun deleteMember(member: Member) = withContext(Dispatchers.IO){
-        memberDao.delete(member)
-    }
 }

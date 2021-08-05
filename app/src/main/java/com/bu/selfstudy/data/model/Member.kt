@@ -20,5 +20,4 @@ data class Member(
     var iconPath: String = "",
 
     var timestamp: Date = Date(),
-    var isTrash:Boolean = false
 )

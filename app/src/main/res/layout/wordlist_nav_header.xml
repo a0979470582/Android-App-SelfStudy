@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/closeIcon"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingTop="9dp"
+            app:icon="@drawable/ic_baseline_close_24"
+            app:iconGravity="textStart"
+            app:iconTint="@color/black60"
+            android:layout_alignParentStart="true"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/closeIcon"
+            android:paddingStart="12dp"
+            android:paddingTop="14dp"
+            android:paddingEnd="12dp"
+            android:text="Filters"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:textColor="@color/black87"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/resetIcon"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingTop="6dp"
+            app:icon="@drawable/ic_baseline_refresh_24"
+            app:iconGravity="textStart"
+            app:iconTint="@color/black60"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+
+    <com.google.android.material.textview.MaterialTextView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:paddingStart="16dp"
+        android:paddingBottom="8dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:textSize="18sp"
+        android:textColor="@color/black60"
+        android:text="Label"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupLabel"
+        android:checkedButton="@+id/buttonAll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp">
+        <RadioButton
+            android:id="@+id/buttonAll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="All" />
+        <RadioButton
+            android:id="@+id/buttonMark"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Only Mark"/>
+    </RadioGroup>
+
+    <com.google.android.material.textview.MaterialTextView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:paddingStart="16dp"
+        android:paddingBottom="8dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:textColor="@color/black60"
+        android:textSize="18sp"
+        android:text="Order by"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupOrder"
+        android:checkedButton="@+id/buttonOldest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp">
+        <RadioButton
+            android:id="@+id/buttonOldest"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Created Time (Oldest)"/>
+        <RadioButton
+            android:id="@+id/buttonNewest"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Created Time (Newest)"/>
+        <RadioButton
+            android:id="@+id/buttonAZ"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Alphabet (A→Z)"/>
+        <RadioButton
+            android:id="@+id/buttonZA"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Alphabet (Z→A)"/>
+    </RadioGroup>
+</LinearLayout>

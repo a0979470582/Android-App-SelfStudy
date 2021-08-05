@@ -1,7 +1,6 @@
 package com.bu.selfstudy.ui.wordcard
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.view.*
@@ -15,14 +14,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.viewpager2.widget.ViewPager2
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.databinding.FragmentWordCardBinding
 import com.bu.selfstudy.tool.*
-import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.coroutines.launch
 import java.lang.Exception
@@ -169,7 +166,7 @@ class WordCardFragment : Fragment() {
         setFragmentResultListener("DialogDeleteCommon") { _, _ ->
             viewModel.currentOpenWord?.let {
                 //pagerAdapter.notifyRemoveOneWord(viewModel.currentPosition!!)
-                viewModel.deleteWordToTrash(it.id)
+                viewModel.deleteWord(it.id)
             }
         }
     }

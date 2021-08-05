@@ -36,5 +36,4 @@ data class Word(
     var isMark: Boolean = false,
 
     var timestamp: Date = Date(),
-    var isTrash:Boolean = false
 ):Parcelable

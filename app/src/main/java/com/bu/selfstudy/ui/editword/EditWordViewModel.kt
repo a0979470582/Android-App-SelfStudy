@@ -12,7 +12,7 @@ class EditWordViewModel(val word: Word) : ViewModel()  {
 
     val databaseEvent = SingleLiveData<Pair<String, Bundle?>>()
 
-    val wordLiveData = WordRepository.loadWord(word.id).asLiveData()
+    val wordLiveData = WordRepository.loadOneWord(word.id).asLiveData()
 
     val hasEditLiveData = MutableLiveData(false)
 

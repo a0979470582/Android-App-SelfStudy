@@ -2,6 +2,7 @@ package com.bu.selfstudy.data.repository
 
 import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.AppDatabase.Companion.getDatabase
+import com.bu.selfstudy.data.dao.WordDao
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.network.SelfStudyNetwork
 import com.bu.selfstudy.data.network.YahooService
@@ -15,18 +16,20 @@ import java.io.File
 object WordRepository {
     private val wordDao = getDatabase().wordDao()
 
-    //get a word
-    fun loadWord(wordId: Long) = wordDao.loadWord(wordId)
+    val SortStateEnum = WordDao.Companion
 
-    //find word
-    fun loadWords(query: String) = wordDao.loadWords(query)
+    //select
+    fun loadOneWord(wordId: Long) = wordDao.loadOneWord(wordId)
 
-    //find word in one book
-    fun loadWords(bookId: Long, query: String) = wordDao.loadDistinctWords(bookId, query)
-
-    //paging3
-    fun loadWordTuplesWithPaging(bookId: Long, query: String) =
-            wordDao.loadWordTuplesWithPaging(bookId, query)
+    fun loadBookWords(
+            bookId: Long,
+            sortState: Int=SortStateEnum.OLDEST,
+            onlyMark: Boolean=false
+    ) = wordDao.loadBookWords(
+            bookId,
+            sortState,
+            if(onlyMark) listOf(1) else listOf(0, 1)
+    )
 
 
     //insert
@@ -39,27 +42,14 @@ object WordRepository {
         wordDao.update(*word)
     }
 
-    suspend fun updateWordMark(wordId: Long, isMark: Boolean) = withContext(Dispatchers.IO){
-        wordDao.updateWordMark(wordId, isMark)
+    suspend fun updateMark(wordId: Long, isMark: Boolean) = withContext(Dispatchers.IO){
+        wordDao.updateMark(wordId, isMark)
     }
 
 
-    //delete
-    suspend fun updateWordIsTrash(vararg wordId: Long, isTrash: Boolean) = withContext(Dispatchers.IO){
-        if(isTrash){
-            wordDao.updateWordIsTrash(wordId = *wordId, isTrash).also {
-                DeleteRecordRepository.handleWordTrash(*wordId, isTrash=isTrash)
-            }
-        }else{
-            "現在要回復單字, 必須先做原有book是否存在的判斷".showToast()
-            wordDao.updateWordIsTrash(wordId = *wordId, isTrash).also {
-                DeleteRecordRepository.handleWordTrash(*wordId, isTrash=isTrash)
-            }
-        }
-    }
 
     //network
-    suspend fun getWord(wordName: String): Result<Word> = withContext(Dispatchers.IO){
+    suspend fun getYahooWord(wordName: String): Result<Word> = withContext(Dispatchers.IO){
         kotlin.runCatching {
             SelfStudyNetwork.getYahooWord(wordName)
         }
@@ -67,7 +57,7 @@ object WordRepository {
 
     suspend fun downloadAudio(wordId: Long)
     = withContext(Dispatchers.IO){
-        val wordName = wordDao.loadWord(wordId).first().wordName
+        val wordName = wordDao.loadOneWord(wordId).first().wordName
 
         YahooService.getAudioResponse(wordName)?.let { response->
             val file = File(SelfStudyApplication.context.filesDir, "${wordName}.mp3")
@@ -79,5 +69,10 @@ object WordRepository {
                 wordDao.updateAudioFilePath(wordId, file.name)
             }
         }
+    }
+
+    //delete
+    suspend fun delete(vararg wordId: Long) = withContext(Dispatchers.IO){
+        wordDao.delete(*wordId)
     }
 }

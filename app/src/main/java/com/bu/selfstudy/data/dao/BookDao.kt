@@ -12,40 +12,36 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 @Dao
 interface BookDao : BaseDao<Book>{
     //select
-    @Query("SELECT * FROM Book WHERE id=:bookId AND memberID =:memberId ")
-    fun loadBook(bookId: Long, memberId: Long): Flow<Book>
+    @Query("SELECT * FROM Book WHERE id =:bookId")
+    fun loadOneBook(bookId: Long): Flow<Book>
 
-    @Query("SELECT * FROM Book WHERE isTrash=0 AND isArchive=0  AND memberID =:memberId ")
+    @Query("SELECT * FROM Book WHERE isArchive=1  AND memberID =:memberId ")
+    fun loadBooksArchived(memberId: Long=SelfStudyApplication.memberId): Flow<List<Book>>
+
+    @Query("SELECT * FROM Book WHERE isArchive=0  AND memberID =:memberId ")
     fun loadBooks(memberId: Long=SelfStudyApplication.memberId): Flow<List<Book>>
 
-    fun loadDistinctBooks(memberId: Long=SelfStudyApplication.memberId) =
-            loadBooks(memberId).distinctUntilChanged()
-
-    @Query("SELECT * FROM Book WHERE id =:bookId")
-    fun loadBook(bookId: Long): Flow<Book>
-
-    @Query("SELECT * FROM Book WHERE isTrash=0 AND isArchive=1  AND memberID =:memberId ")
-    fun loadBooksArchive(memberId: Long=SelfStudyApplication.memberId): Flow<List<Book>>
-
-
     //update
-    @Query("UPDATE Book SET isTrash = :isTrash WHERE id=:bookId")
-    suspend fun updateBookIsTrash(bookId: Long, isTrash: Boolean): Int
-
     @Query("UPDATE Book SET isArchive = :isArchive WHERE id=:bookId")
-    suspend fun updateBookIsArchive(bookId: Long, isArchive: Boolean): Int
+    suspend fun updateIsArchive(bookId: Long, isArchive: Boolean): Int
 
-    @Query("UPDATE Book SET size=(SELECT COUNT(Word.id) FROM Word WHERE bookId=Book.id AND Word.isTrash=0)")
-    suspend fun updateBookSize(): Int
+    @Query("UPDATE Book SET size=(SELECT COUNT(Word.id) FROM Word WHERE bookId=Book.id)")
+    suspend fun updateSize(): Int
 
     @Query("UPDATE Book SET position=:position WHERE id=:bookId")
-    suspend fun updateBookPosition(bookId: Long, position: Int): Int
+    suspend fun updatePosition(bookId: Long, position: Int): Int
 
     @Query("UPDATE Book SET colorInt=:colorInt WHERE id=:bookId")
-    suspend fun updateBookColorInt(bookId: Long, colorInt: Int): Int
+    suspend fun updateColorInt(bookId: Long, colorInt: Int): Int
 
     //delete
-    @Query("DELETE FROM Book WHERE id=:bookId")
-    suspend fun delete(bookId: Long): Int
+    suspend fun delete(bookId: Long) = deleteBook(bookId).also {
+        deleteBookWord(bookId)
+    }
 
+    @Query("DELETE FROM Book WHERE id=:bookId")
+    suspend fun deleteBook(bookId: Long): Int
+
+    @Query("DELETE FROM Word WHERE bookid=:bookId")
+    suspend fun deleteBookWord(bookId: Long): Int
 }

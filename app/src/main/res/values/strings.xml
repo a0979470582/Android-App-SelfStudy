@@ -81,5 +81,5 @@ The particular may have to be satisfied to the general.
     <string name="toast_cancel_mark">取消標記</string>
     <string name="toast_exit_app">再按一次離開程式</string>
 
-
+    <string name="button_reset"><u>Reset</u></string>
 </resources>

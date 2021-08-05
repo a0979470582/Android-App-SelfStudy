@@ -3,11 +3,7 @@ package com.bu.selfstudy.ui.wordlist
 
 import android.os.Bundle
 import androidx.lifecycle.*
-import androidx.paging.Config
-import androidx.paging.LivePagedListBuilder
-import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.model.Word
-import com.bu.selfstudy.data.model.WordTuple
 import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.data.repository.WordRepository
 import com.bu.selfstudy.tool.SingleLiveData
@@ -15,32 +11,57 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
- * 更改資料庫中的wordList都會透過LiveData反應在目前的ViewPager, 例如新增,刪除,修改都會同步到資料庫,
- * 接著透過LiveData傳回並在ViewPager看到更新, 而wordFragment的生命週期進入onStop時, 會同步目前使用者所
- * 看到的單字頁(wordId)到資料庫
+ * 上一個fragment傳入bookId, 另外設置有默認值的兩個條件onlyMark和sortState,
+ * 這三個變數的變更會觸發wordlist刷新
  */
 class WordListViewModel() : ViewModel() {
 
     val databaseEvent = SingleLiveData<Pair<String, Bundle?>>()
 
-
+    val SortStateEnum = WordRepository.SortStateEnum
 
     val bookIdLiveData = MutableLiveData<Long>()
+    val onlyMarkLiveData = MutableLiveData<Boolean>(false)
+    val sortStateLiveData=  MutableLiveData<Int>(SortStateEnum.OLDEST)
+
 
     val bookLiveData = bookIdLiveData.switchMap {
-        BookRepository.loadBook(it).asLiveData()
+        BookRepository.loadOneBook(it).asLiveData()
     }
 
-    val wordListLiveData = bookIdLiveData.switchMap {
-        LivePagedListBuilder(
-                WordRepository.loadWordTuplesWithPaging(it, "%"),
-                Config(100)
-        ).build()
+    val conditionLiveData = MediatorLiveData<Boolean>().also {
+        it.addSource(bookIdLiveData){
+            combineCondition()
+        }
+        it.addSource(onlyMarkLiveData){
+            combineCondition()
+        }
+        it.addSource(sortStateLiveData){
+            combineCondition()
+        }
     }
+
+    private fun combineCondition(){
+        if(bookIdLiveData.value == null)
+            return
+
+        conditionLiveData.value = true
+    }
+
+    val wordListLiveData = conditionLiveData.switchMap {
+        WordRepository.loadBookWords(
+                bookId = bookIdLiveData.value!!,
+                sortState = sortStateLiveData.value!!,
+                onlyMark = onlyMarkLiveData.value!!
+        ).asLiveData()
+    }
+
+
+
 
 
     val wordIdList = ArrayList<Long>()
-    fun refreshWordIdList(wordList: List<WordTuple>){
+    fun refreshWordIdList(wordList: List<Word>){
         viewModelScope.launch {
             wordIdList.clear()
             wordIdList.addAll(wordList.map { if(it != null) it.id else 0 })
@@ -76,19 +97,19 @@ class WordListViewModel() : ViewModel() {
 
     fun updateMarkWord(wordId: Long, isMark: Boolean){
         viewModelScope.launch(Dispatchers.IO) {
-            if(WordRepository.updateWordMark(wordId, isMark)>0){
+            if(WordRepository.updateMark(wordId, isMark)>0){
                 databaseEvent.postValue((if(isMark) "mark" else "cancelMark") to null)
             }
         }
     }
 
-    fun deleteWordToTrash(wordIdList:List<Long>){
+    fun deleteWord(wordIdList:List<Long>){
         viewModelScope.launch(Dispatchers.IO) {
-            if(WordRepository.updateWordIsTrash(*wordIdList.toLongArray(),
-                            isTrash = true) > 0
-            )
+            if(WordRepository.delete(*wordIdList.toLongArray()) > 0)
                 databaseEvent.postValue("delete" to null)
         }
     }
+
+
 
 }

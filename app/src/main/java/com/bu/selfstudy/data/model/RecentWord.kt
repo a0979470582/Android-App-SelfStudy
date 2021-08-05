@@ -21,6 +21,5 @@ data class RecentWord(
     var bookId: Long = 0,
     var wordName: String = "",
     var bookName: String = "",
-    var isTrash: Boolean = false,//目前是否存在於回收桶(未來可能回復)
     var timestamp: Date = Date()
 )

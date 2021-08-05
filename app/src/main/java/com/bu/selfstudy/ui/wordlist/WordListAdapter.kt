@@ -11,16 +11,48 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.R
+import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.WordListItemBinding
 import com.bu.selfstudy.data.model.WordTuple
 import com.bu.selfstudy.databinding.RecyclerviewHeaderBinding
+import com.bu.selfstudy.tool.log
 import com.bu.selfstudy.tool.showToast
 import com.bu.selfstudy.ui.book.BookAdapter
 
-class WordListAdapter(val listFragment: WordListFragment):
-        PagedListAdapter<WordTuple, RecyclerView.ViewHolder>(WordDiffCallback){
+/**
+ * About SelectionTracker
+ *
+ * idList: Share Data
+ * Fragment: Mediator
+ * RecyclerView UI
+ * RecyclerView Adapter
+ * ItemDetails: [key, position]
+ * ItemDetailsLookup: According to click point get RecyclerView.ViewHolder.adapterPosition,
+ *                    map to ItemDetails = [idList[position], position]
+ * ItemKeyProvider: from idList, key->position or position->key
+ * EventBridge
+ *
+ * in Fragment:
+ *      build SelectionTracker( IdItemKeyProvider, IdItemDetailsLookup ) then
+ *      put in RecyclerView Adapter
+ *
+ * when touchEvent:
+ *      ItemDetailsLookup output [key, position],
+ *      -> add in selection
+ *      -> EventBridge get position from ItemKeyProvider
+ *      -> EventBridge run notifyItemChanged in adapter
+ *
+ * if Adapter has HeaderView(index=0), when touchEvent(index = 2):
+ *      None      0
+ *      idList[0] 1
+ *      idList[1] 2
+ *      idList[2] 3
+ * Should revise ItemKeyProvider
+ *
+ */
+class WordListAdapter(val listFragment: WordListFragment):RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
-    private val asyncListDiffer = object: AsyncListDiffer<WordTuple>(this, WordDiffCallback){}
+    private val asyncListDiffer = object: AsyncListDiffer<Word>(this, WordDiffCallback){}
     var tracker: SelectionTracker<Long>? = null
 
     inner class ItemViewHolder(val binding: WordListItemBinding) : RecyclerView.ViewHolder(binding.root)
@@ -33,13 +65,13 @@ class WordListAdapter(val listFragment: WordListFragment):
             val holder = ItemViewHolder(binding)
 
             holder.itemView.setOnClickListener {
-                val word = getItem(holder.adapterPosition)
+                val word = asyncListDiffer.currentList[holder.adapterPosition]
                 if(word != null)
                     "已點擊 ${word.wordName}".showToast()
             }
 
             holder.binding.markButton.setOnClickListener{
-                val word = getItem(holder.adapterPosition)
+                val word = asyncListDiffer.currentList[holder.adapterPosition]
                 if(word != null)
                     listFragment.updateMarkWord(word.id, !word.isMark)
             }
@@ -54,16 +86,9 @@ class WordListAdapter(val listFragment: WordListFragment):
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        currentList?.let {
-            if(it.size > it.loadedCount)
-                it.loadAround(it.size-1)
-            if(it.size == it.loadedCount)
-                listFragment.refreshWordIdList(it)
-        }
-
         when(holder){
             is ItemViewHolder -> {
-                val word = getItem(position)
+                val word = asyncListDiffer.currentList[position]
                 if (word != null) {
                     holder.binding.wordNameTextView.text = word.wordName
                     holder.binding.pronunciationTextView.text = word.pronunciation
@@ -100,19 +125,21 @@ class WordListAdapter(val listFragment: WordListFragment):
      * 在一千筆數據中修改其中兩百筆資料, 其比對速度約在13ms,
      * 尤其預期使用者並不會在題庫中加入超過一千個單字, 因此可以使用DiffUtil
      */
-    companion object WordDiffCallback : DiffUtil.ItemCallback<WordTuple>(){
-        override fun areItemsTheSame(oldItem: WordTuple, newItem: WordTuple): Boolean {
+    companion object WordDiffCallback : DiffUtil.ItemCallback<Word>(){
+        override fun areItemsTheSame(oldItem: Word, newItem: Word): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: WordTuple, newItem: WordTuple): Boolean {
+        override fun areContentsTheSame(oldItem: Word, newItem: Word): Boolean {
             return oldItem.isMark == newItem.isMark &&
                     oldItem.pronunciation == newItem.pronunciation
                     oldItem.wordName == newItem.wordName
         }
     }
 
-    override fun getItem(position: Int): WordTuple? {
-        return super.getItem(position)
+    override fun getItemCount() = asyncListDiffer.currentList.size
+
+    fun submitList(words: List<Word>){
+        asyncListDiffer.submitList(listOf(Word()).plus(words))
     }
 }

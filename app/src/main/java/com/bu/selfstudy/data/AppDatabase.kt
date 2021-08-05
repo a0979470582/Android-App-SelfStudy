@@ -21,9 +21,7 @@ import java.util.concurrent.Executors
     Word::class,
     SearchHistory::class,
     SearchAutoComplete::class,
-    RecentWord::class,
-    DeleteRecordBook::class,
-    DeleteRecordWord::class
+    RecentWord::class
 ])
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -33,7 +31,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun searchHistoryDao(): SearchHistoryDao
     abstract fun searchAutoCompleteDao(): SearchAutoCompleteDao
     abstract fun recentWordDao():RecentWordDao
-    abstract fun deleteRecordDao():DeleteRecordDao
 
 
 
