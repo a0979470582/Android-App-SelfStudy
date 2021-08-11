@@ -36,11 +36,13 @@
             android:visibility="invisible" />
 
         <include
-            layout="@layout/search_not_found"
             android:id="@+id/searchNotFound"
+            layout="@layout/not_found_search"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="invisible"/>
+            android:layout_height="240dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"

@@ -1,4 +1,4 @@
-package com.bu.selfstudy.ui.mark
+package com.bu.selfstudy.ui.word
 
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +13,7 @@ import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.WordListItemBinding
 import com.bu.selfstudy.databinding.RecyclerviewHeaderBinding
+import com.bu.selfstudy.databinding.WordListItem2Binding
 import com.bu.selfstudy.tool.log
 
 /**
@@ -46,12 +47,12 @@ import com.bu.selfstudy.tool.log
  * Should revise ItemKeyProvider
  *
  */
-class MarkAdapter(val fragment: MarkFragment):RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+class ListAdapter2(val fragment: WordFragment):RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
     private val asyncListDiffer = object: AsyncListDiffer<Word>(this, WordDiffCallback){}
     var tracker: SelectionTracker<Long>? = null
 
-    inner class ItemViewHolder(val binding: WordListItemBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ItemViewHolder(val binding: WordListItem2Binding) : RecyclerView.ViewHolder(binding.root)
     inner class HeaderViewHolder(val headerBinding: RecyclerviewHeaderBinding) : RecyclerView.ViewHolder(headerBinding.root)
 
     private val HEADER_VIEW_TYPE = 0
@@ -60,24 +61,14 @@ class MarkAdapter(val fragment: MarkFragment):RecyclerView.Adapter<RecyclerView.
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if(viewType == ITEM_VIEW_TYPE){
-            val binding = WordListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            val binding = WordListItem2Binding.inflate(LayoutInflater.from(parent.context), parent, false)
             val holder = ItemViewHolder(binding)
 
             holder.itemView.setOnClickListener {
-                val word = asyncListDiffer.currentList[holder.adapterPosition]
-                fragment.findNavController().navigate(
-                    NavGraphDirections.actionGlobalWordFragment(
-                        bookId = word.bookId,
-                        wordId = word.id
-                    )
-                )
+                fragment.switchRecyclerView(WordFragment.TYPE_CARD, holder.adapterPosition - 1)
             }
 
             holder.binding.markButton.setOnClickListener{
-                //連續點擊兩次時資料已移除, 但繼續執行造成錯誤
-                if(holder.adapterPosition < 0)
-                    return@setOnClickListener
-
                 val word = asyncListDiffer.currentList[holder.adapterPosition]
                 if(word != null)
                     fragment.updateMarkWord(word.id, !word.isMark)
@@ -107,12 +98,9 @@ class MarkAdapter(val fragment: MarkFragment):RecyclerView.Adapter<RecyclerView.
                     holder.itemView.isActivated = it.isSelected(word.id)
                 }
 
-                holder.binding.divider.visibility =
-                    if (position == itemCount-1) View.GONE else View.VISIBLE
-
             }
             is HeaderViewHolder ->{
-                holder.headerBinding.firstRow.text = "標記單字"
+                holder.headerBinding.firstRow.text = "單字列表"
             }
         }
     }
@@ -134,7 +122,8 @@ class MarkAdapter(val fragment: MarkFragment):RecyclerView.Adapter<RecyclerView.
             return oldItem.wordName == newItem.wordName &&
                     oldItem.pronunciation == newItem.pronunciation &&
                     oldItem.isMark == newItem.isMark &&
-                    oldItem.audioFilePath == newItem.audioFilePath
+                    oldItem.audioFilePath == newItem.audioFilePath&&
+                    oldItem.translation == newItem.translation
         }
     }
 

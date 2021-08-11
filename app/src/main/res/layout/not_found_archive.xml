@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.textview.MaterialTextView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/notFoundTextView"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:text="沒有封存的題庫"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:textSize="20sp"
+        android:textColor="@color/black75"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:layout_margin="48dp"
+        android:drawableTop="@drawable/ic_file_storage"
+        android:drawablePadding="16dp"/>

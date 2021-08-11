@@ -66,6 +66,8 @@ class WordFragment : Fragment() {
 
     private val cardAdapter = CardAdapter(fragment = this)
     private val listAdapter = ListAdapter(fragment = this)
+    private val listAdapter2 = ListAdapter2(fragment = this)
+
 
     private val pagerSnapHelper = PagerSnapHelper()
 
@@ -128,6 +130,8 @@ class WordFragment : Fragment() {
 
              listAdapter.submitList(it)
              viewModel.refreshWordIdList(it)
+
+             listAdapter2.submitList(it)
 
          }
 
@@ -281,7 +285,7 @@ class WordFragment : Fragment() {
                 }
                 TYPE_LIST -> {
                     layoutManager = v_LayoutManager
-                    adapter = listAdapter
+                    adapter = listAdapter2
                     pagerSnapHelper.attachToRecyclerView(null)
                     setChipState(R.id.chipList, true)
                     fastScroll?.attachToRecyclerView(binding.recyclerView)
@@ -316,6 +320,17 @@ class WordFragment : Fragment() {
 
                 if(fastScroll == null )
                     initFastScroll()
+
+            }
+
+            if(type == TYPE_CARD){
+                activity?.findViewById<DrawerLayout>(R.id.drawerLayout)?.setDrawerLockMode(
+                        DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                binding.slideSheet.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            }else{
+                activity?.findViewById<DrawerLayout>(R.id.drawerLayout)?.setDrawerLockMode(
+                        DrawerLayout.LOCK_MODE_UNLOCKED)
+                binding.slideSheet.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
 
             }
         }
@@ -446,6 +461,7 @@ class WordFragment : Fragment() {
         ).withSelectionPredicate(SelectionPredicates.createSelectAnything())
                 .build().also {
                     listAdapter.tracker = it
+                    listAdapter2.tracker = it
                 }
 
         val selectionObserver = object : SelectionTracker.SelectionObserver<Long>() {

@@ -33,11 +33,12 @@ class ArchiveViewModel : ViewModel(){
         }
     }
 
-    //, explanation:String
-    fun editBook(bookName:String){
+
+    fun editBook(bookName:String, explanation:String){
         viewModelScope.launch{
             chosenBook?.copy()?.let {
                 it.bookName = bookName
+                it.explanation = explanation
                 if(BookRepository.updateBook(it)>0) {
                     databaseEvent.postValue("update" to null)
                 }

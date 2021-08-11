@@ -83,7 +83,10 @@ class ArchiveAdapter(val fragment: ArchiveFragment):
                 }
                 R.id.action_edit -> {
                     findNavController(fragment).navigate(
-                            ArchiveFragmentDirections.actionArchiveFragmentToEditBookDialog(book.bookName)
+                            ArchiveFragmentDirections.actionArchiveFragmentToEditBookFragment(
+                                    book.bookName,
+                                    book.explanation
+                            )
                     )
                 }
 
@@ -197,8 +200,11 @@ class ArchiveAdapter(val fragment: ArchiveFragment):
         }
     }
 
-    fun submitList(bookList: List<Book>){
-        asyncListDiffer.submitList(listOf(Book()).plus(bookList))
+    fun submitList(books: List<Book>){
+        if(books.isEmpty())
+            asyncListDiffer.submitList(books)
+        else
+            asyncListDiffer.submitList(listOf(Book()).plus(books))
     }
 
 }

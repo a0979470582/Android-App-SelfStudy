@@ -6,6 +6,12 @@
             android:id="@+id/bookFragment"
             android:icon="@drawable/ic_baseline_bookmark_24"
             android:title="@string/activity_menu_book" />
+
+        <item
+            android:id="@+id/recentWordFragment"
+            android:icon="@drawable/ic_baseline_access_time_24"
+            android:title="@string/activity_menu_recent" />
+
         <item
             android:id="@+id/markFragment"
             android:icon="@drawable/ic_baseline_star_24"

@@ -2,6 +2,7 @@
     <string name="app_name">SelfStudy</string>
 
     <string name="activity_menu_book">我的題庫</string>
+    <string name="activity_menu_recent">最近單字</string>
     <string name="activity_menu_mark">標記單字</string>
     <string name="activity_menu_archive">封存</string>
     <string name="activity_menu_recycler">回收桶</string>

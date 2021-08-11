@@ -1,4 +1,4 @@
-package com.bu.selfstudy.ui.dialog
+package com.bu.selfstudy.ui.editword
 
 import android.content.Context
 import android.os.Bundle
@@ -8,17 +8,19 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
-import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.FragmentAddBookBinding
 import com.bu.selfstudy.tool.closeKeyboard
 import com.bu.selfstudy.tool.openKeyboard
+import com.bu.selfstudy.tool.putBundle
 import com.bu.selfstudy.tool.viewBinding
 
-class AddBookFragment: Fragment()  {
-
+class EditBookFragment: Fragment()  {
+    private val args: EditBookFragmentArgs by navArgs()//get bookName
     private val activityViewModel: ActivityViewModel by activityViewModels()
     private val binding : FragmentAddBookBinding by viewBinding()
 
@@ -32,6 +34,9 @@ class AddBookFragment: Fragment()  {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
+
+        binding.bookField.editText?.setText(args.bookName)
+        binding.explanationField.editText?.setText(args.explanation)
 
         /**
          * 1. bookname輸入完按下確認後, 可跳到輸入explanation處
@@ -62,22 +67,21 @@ class AddBookFragment: Fragment()  {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
-        inflater.inflate(R.menu.only_done_toolbar, menu)
+        inflater.inflate(R.menu.only_save_toolbar, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.action_done -> {
+            R.id.action_save -> {
                 bookName = binding.bookField.editText!!.text.toString()
 
                 if(bookName.isBlank())
                     binding.bookField.error = "請輸入正確的題庫名稱"
                 else{
-                    activityViewModel.insertBook(
-                            Book(
-                                    bookName = bookName,
-                                    explanation =  binding.explanationField.editText!!.text.toString()
-                            )
+                    setFragmentResult(
+                            "EditBookFragment",
+                            putBundle("bookName", binding.bookField.editText!!.text.toString())
+                            .putBundle("explanation", binding.explanationField.editText!!.text.toString())
                     )
                     closeKeyboard()
                     findNavController().popBackStack()

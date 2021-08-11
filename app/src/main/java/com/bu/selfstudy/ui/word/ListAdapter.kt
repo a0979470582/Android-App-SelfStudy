@@ -23,7 +23,7 @@ import com.bu.selfstudy.tool.log
  * RecyclerView UI
  * RecyclerView Adapter
  * ItemDetails: [key, position]
- * ItemDetailsLookup: According to click point get RecyclerView.ViewHolder.adapterPosition,
+ * ItemDetailsLookup: According to click point get RecyclerView.ItemViewHolder.adapterPosition,
  *                    map to ItemDetails = [idList[position], position]
  * ItemKeyProvider: from idList, key->position or position->key
  * EventBridge

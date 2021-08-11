@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.activity.addCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
@@ -14,6 +15,7 @@ import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
+import com.bu.selfstudy.databinding.FragmentArchiveBinding
 import com.bu.selfstudy.databinding.FragmentBookBinding
 import com.bu.selfstudy.tool.*
 import com.leinardi.android.speeddial.SpeedDialView
@@ -23,7 +25,7 @@ import java.util.*
 
 class ArchiveFragment : Fragment() {
     private val viewModel: ArchiveViewModel by viewModels()
-    private val binding : FragmentBookBinding by viewBinding()
+    private val binding : FragmentArchiveBinding by viewBinding()
     private val adapter = ArchiveAdapter(this)
 
     override fun onCreateView(
@@ -40,6 +42,8 @@ class ArchiveFragment : Fragment() {
         setHasOptionsMenu(true)
 
         viewModel.bookListLiveData.observe(viewLifecycleOwner){
+            binding.archiveNotFound.root.isVisible = it.isEmpty()
+
             adapter.submitList(it)
 
         }
@@ -75,10 +79,11 @@ class ArchiveFragment : Fragment() {
         setFragmentResultListener("DialogDeleteCommon") { _, _ ->
             viewModel.deleteBook()
         }
-        setFragmentResultListener("DialogEditBook"){ _, bundle->
-            val newBookName = bundle.getString("bookName")!!
+        setFragmentResultListener("EditBookFragment"){ _, bundle->
+            val bookName = bundle.getString("bookName")!!
+            val explanation = bundle.getString("explanation")!!
             //val newBookExplanation = bundle.getString("explanation")!!
-            viewModel.editBook(newBookName)
+            viewModel.editBook(bookName, explanation)
         }
         setFragmentResultListener("DialogAddBook"){ _, bundle->
             val newBookName = bundle.getString("bookName")!!

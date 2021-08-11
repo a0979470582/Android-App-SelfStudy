@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.activity.addCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
@@ -46,6 +47,8 @@ class BookFragment : Fragment() {
         setHasOptionsMenu(true)
 
         activityViewModel.bookListLiveData.observe(viewLifecycleOwner){
+            binding.bookNotFound.root.isVisible = it.isEmpty()
+
             adapter.submitList(it)
         }
 
@@ -87,10 +90,11 @@ class BookFragment : Fragment() {
         setFragmentResultListener("DialogDeleteCommon") { _, _ ->
             viewModel.deleteBook()
         }
-        setFragmentResultListener("DialogEditBook"){ _, bundle->
-            val newBookName = bundle.getString("bookName")!!
+        setFragmentResultListener("EditBookFragment"){ _, bundle->
+            val bookName = bundle.getString("bookName")!!
+            val explanation = bundle.getString("explanation")!!
             //val newBookExplanation = bundle.getString("explanation")!!
-            viewModel.editBook(newBookName)
+            viewModel.editBook(bookName, explanation)
         }
     }
 

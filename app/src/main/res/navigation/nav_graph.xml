@@ -9,13 +9,13 @@
         android:id="@+id/bookFragment"
         android:name="com.bu.selfstudy.ui.book.BookFragment"
         android:label="從字典搜尋" >
-        <action
-            android:id="@+id/action_bookFragment_to_editBookDialog"
-            app:destination="@id/editBookDialog" />
 
         <action
             android:id="@+id/action_bookFragment_to_recentWordFragment"
             app:destination="@id/recentWordFragment" />
+        <action
+            android:id="@+id/action_bookFragment_to_editBookFragment"
+            app:destination="@id/editBookFragment" />
     </fragment>
 
     <fragment
@@ -80,14 +80,6 @@
         android:name="com.bu.selfstudy.ui.editword.DialogSaveAndExit"
         android:label="ExitEditingDialog" />
 
-    <dialog
-        android:id="@+id/editBookDialog"
-        android:name="com.bu.selfstudy.ui.book.DialogEditBook"
-        android:label="EditBookDialog" >
-        <argument
-            android:name="bookName"
-            app:argType="string" />
-    </dialog>
     <action android:id="@+id/action_global_dialogDeleteCommon" app:destination="@id/dialogDeleteCommon" />
     <fragment
         android:id="@+id/searchFragment"
@@ -112,8 +104,8 @@
         android:name="com.bu.selfstudy.ui.archive.ArchiveFragment"
         android:label="從字典搜尋" >
         <action
-            android:id="@+id/action_archiveFragment_to_editBookDialog"
-            app:destination="@id/editBookDialog" />
+            android:id="@+id/action_archiveFragment_to_editBookFragment"
+            app:destination="@id/editBookFragment" />
     </fragment>
     <fragment
         android:id="@+id/markFragment"
@@ -160,6 +152,16 @@
         android:id="@+id/action_global_searchFragment"
         app:destination="@id/searchFragment"
         app:launchSingleTop="true" />
+    <fragment
+        android:id="@+id/editBookFragment"
+        android:name="com.bu.selfstudy.ui.editword.EditBookFragment"
+        android:label="編輯題庫" >
+        <argument
+            android:name="bookName"
+            app:argType="string" />
+        <argument android:name="explanation"
+            app:argType="string" />
+    </fragment>
 
 
 </navigation>

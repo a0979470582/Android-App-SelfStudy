@@ -7,13 +7,21 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.data.model.RecentWord
 import com.bu.selfstudy.databinding.RecentWordListItemBinding
+import com.bu.selfstudy.databinding.RecyclerviewHeaderBinding
+import com.bu.selfstudy.databinding.WordListItemBinding
+import com.bu.selfstudy.ui.mark.MarkAdapter
 
 class RecentWordAdapter(val fragment: RecentWordFragment):
-        RecyclerView.Adapter<RecentWordAdapter.ViewHolder>(){
+        RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
     private val asyncListDiffer = object: AsyncListDiffer<RecentWord>(this, Diff_Callback){}
 
-    inner class ViewHolder(val binding: RecentWordListItemBinding): RecyclerView.ViewHolder(binding.root){
+
+    private val HEADER_VIEW_TYPE = 0
+    private val ITEM_VIEW_TYPE = 1
+
+    inner class HeaderViewHolder(val headerBinding: RecyclerviewHeaderBinding) : RecyclerView.ViewHolder(headerBinding.root)
+    inner class ItemViewHolder(val binding: RecentWordListItemBinding): RecyclerView.ViewHolder(binding.root){
 
         fun bindData(recentWord: RecentWord){
             binding.wordNameTextView.text = recentWord.wordName
@@ -23,28 +31,48 @@ class RecentWordAdapter(val fragment: RecentWordFragment):
     }
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = RecentWordListItemBinding.inflate(
-                LayoutInflater.from(parent.context), parent, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        if(viewType == ITEM_VIEW_TYPE) {
 
-        val holder = ViewHolder(binding)
+            val binding = RecentWordListItemBinding.inflate(
+                    LayoutInflater.from(parent.context), parent, false)
 
-        holder.itemView.setOnClickListener {
-            val recentWord = asyncListDiffer.currentList[holder.adapterPosition]
-            fragment.navigateWordCardFragment(recentWord)
+            val holder = ItemViewHolder(binding)
 
+            holder.itemView.setOnClickListener {
+                val recentWord = asyncListDiffer.currentList[holder.adapterPosition]
+                fragment.navigateWordCardFragment(recentWord)
+
+            }
+
+            return holder
+        }else{
+            val binding = RecyclerviewHeaderBinding.inflate(
+                    LayoutInflater.from(parent.context), parent, false)
+
+            return HeaderViewHolder(binding)
         }
-
-        return holder
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        asyncListDiffer.currentList[position].let { recentWord ->
-            holder.bindData(recentWord)
-            fragment.refreshRecentWord(recentWord)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when(holder){
+            is ItemViewHolder -> {
+                asyncListDiffer.currentList[position].let { recentWord ->
+                    holder.bindData(recentWord)
+                    fragment.refreshRecentWord(recentWord)
+                }
+            }
+            is HeaderViewHolder ->{
+                holder.headerBinding.firstRow.text = "最近單字"
+            }
         }
 
     }
+
+
+    override fun getItemViewType(position: Int) =
+            if(position == 0) HEADER_VIEW_TYPE else ITEM_VIEW_TYPE
+
 
     companion object Diff_Callback : DiffUtil.ItemCallback<RecentWord>(){
         override fun areItemsTheSame(oldItem: RecentWord, newItem: RecentWord): Boolean {
@@ -60,7 +88,10 @@ class RecentWordAdapter(val fragment: RecentWordFragment):
 
 
     fun submitList(recentWordList: List<RecentWord>){
-        asyncListDiffer.submitList(recentWordList)
+        if(recentWordList.isEmpty())
+            asyncListDiffer.submitList(recentWordList)
+        else
+            asyncListDiffer.submitList(listOf(RecentWord()).plus(recentWordList))
     }
 
 }

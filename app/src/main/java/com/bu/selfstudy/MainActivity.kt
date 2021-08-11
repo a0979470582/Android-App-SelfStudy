@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.core.view.setMargins
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
@@ -21,7 +20,9 @@ import com.bu.selfstudy.databinding.ActivityMainBinding
 import com.bu.selfstudy.tool.*
 import com.bu.selfstudy.ui.search.SearchFragment
 import com.google.android.material.appbar.AppBarLayout
-import java.lang.reflect.Method
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
+
 
 /**
  * 單一Activity設計
@@ -89,14 +90,6 @@ class MainActivity : AppCompatActivity(){
          */
         navController.addOnDestinationChangedListener { _, destination, _ ->
 
-            //單字卡頁關閉DrawerLayout, 避免滑動衝突
-            binding.drawerLayout.setDrawerLockMode(
-                    if (destination.id == R.id.wordFragment)
-                        DrawerLayout.LOCK_MODE_LOCKED_CLOSED
-                    else
-                        DrawerLayout.LOCK_MODE_UNLOCKED
-            )
-
             //特定頁才會顯示FABs
             binding.speedDialView.isVisible =
                     (destination.id == R.id.bookFragment) ||
@@ -138,7 +131,7 @@ class MainActivity : AppCompatActivity(){
                 val lp2 = CoordinatorLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
                 )
-                lp2.setMargins(36,24,36,0)
+                lp2.setMargins(36, 24, 36, 0)
                 binding.appBarLayout.layoutParams = lp2
 
                 val lp = AppBarLayout.LayoutParams(
@@ -178,13 +171,17 @@ class MainActivity : AppCompatActivity(){
      * 新增單字後顯示Snackbar, 可點擊檢視跳轉
      */
     private fun showInsertMessage(bundle: Bundle) {
-        binding.root.showSnackbar("新增成功", "檢視"){
-            navController.navigate(
-                    NavGraphDirections.actionGlobalWordFragment(
-                            bookId = bundle.getLong("bookId"),
-                            wordId = bundle.getLong("wordId")
-                    )
-            )
+        Snackbar.make(binding.root, "新增成功", Snackbar.LENGTH_LONG).run {
+            setAction("檢視") {
+                navController.navigate(
+                        NavGraphDirections.actionGlobalWordFragment(
+                                bookId = bundle.getLong("bookId"),
+                                wordId = bundle.getLong("wordId")
+                        )
+                )
+            }
+            setAnchorView(binding.speedDialView)
+            show()
         }
     }
 
