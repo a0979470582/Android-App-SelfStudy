@@ -4,10 +4,16 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.AttributeSet
+import android.view.ActionMode
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.navigation.fragment.findNavController
+import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
+import com.bu.selfstudy.tool.log
 
 
 /**
@@ -28,6 +34,8 @@ class DropdownTextView(context: Context, attrs: AttributeSet): LinearLayout(cont
     private var expandDuration: Int = -1
     private var isExpanded: Boolean = false
     private var isExpandedByUser: Boolean = false
+
+    private var selectionTextCallback: SelectionTextCallback? = null
 
     init {
         context.theme.obtainStyledAttributes(
@@ -76,6 +84,28 @@ class DropdownTextView(context: Context, attrs: AttributeSet): LinearLayout(cont
                 collapseInternal(false)
             }
             setArrowViewState(isExpanded, false)
+        }
+
+        contentTextView.customSelectionActionModeCallback = object : ActionMode.Callback {
+
+            override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                mode?.menu?.removeItem(android.R.id.shareText)
+                mode?.menuInflater?.inflate(R.menu.selection_copy_paste, menu)
+                return true//false則不彈窗
+            }
+
+            override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?) = false
+
+            override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+                when(item?.itemId){
+                    R.id.search->{
+                        selectionTextCallback?.onSelectionTextChanged(getSelectionText())
+                    }
+                }
+                return false//返回true则系统的"复制"、"搜索"之类的item将无效，只有自定义item有响应
+            }
+
+            override fun onDestroyActionMode(mode: ActionMode?) {}
         }
 
     }
@@ -175,10 +205,6 @@ class DropdownTextView(context: Context, attrs: AttributeSet): LinearLayout(cont
         }
     }
 
-    fun getTitleText() = titleTextView.text
-
-    fun getContent() = contentTextView.text
-
     override fun onSaveInstanceState(): Parcelable? {
         val bundle = Bundle()
         bundle.putParcelable("superState", super.onSaveInstanceState())
@@ -194,6 +220,17 @@ class DropdownTextView(context: Context, attrs: AttributeSet): LinearLayout(cont
         }
 
         super.onRestoreInstanceState(superState)
+    }
+
+    fun setSelectionTextCallback(callback: SelectionTextCallback){
+        selectionTextCallback = callback
+    }
+
+
+    fun getSelectionText(): String?{
+        with(contentTextView){
+            return text.subSequence(selectionStart, selectionEnd).toString()
+        }
     }
 
 }

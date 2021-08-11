@@ -79,7 +79,7 @@ class ArchiveAdapter(val fragment: ArchiveFragment):
             when (menuItem.itemId) {
                 R.id.action_list -> {
                     findNavController(fragment).navigate(
-                            ArchiveFragmentDirections.actionGlobalWordListFragment(bookId = book.id))
+                            ArchiveFragmentDirections.actionGlobalWordFragment(bookId = book.id))
                 }
                 R.id.action_edit -> {
                     findNavController(fragment).navigate(
@@ -108,7 +108,7 @@ class ArchiveAdapter(val fragment: ArchiveFragment):
 
     private fun initPopupWindow(v: View) {
 
-        val linearLayout = LinearLayout(fragment.requireContext(), null, R.style.Theme_SelfStudy2).also {
+        val linearLayout = LinearLayout(fragment.requireContext(), null, R.style.Theme_SelfStudy).also {
             it.layoutParams =  ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT

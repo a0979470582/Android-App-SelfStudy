@@ -20,6 +20,26 @@ fun Activity.getClipboardText(): String?{
     val text = clipboard.primaryClip!!.getItemAt(0).text
 
 
+
+    if(text.isNullOrBlank())
+        return null
+
+    return text.toString()
+}
+
+fun Context.getClipboardText(): String?{
+    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+    if(!clipboard.hasPrimaryClip())
+        return null
+
+    if(!clipboard.primaryClipDescription!!.hasMimeType(MIMETYPE_TEXT_PLAIN))
+        return null
+
+    val text = clipboard.primaryClip!!.getItemAt(0).text
+
+
+
     if(text.isNullOrBlank())
         return null
 

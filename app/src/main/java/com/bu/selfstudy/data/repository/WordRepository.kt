@@ -31,6 +31,8 @@ object WordRepository {
             if(onlyMark) listOf(1) else listOf(0, 1)
     )
 
+    fun loadMarkWords() = wordDao.loadMarkWords()
+
 
     //insert
     suspend fun insertWord(vararg word: Word) = withContext(Dispatchers.IO){

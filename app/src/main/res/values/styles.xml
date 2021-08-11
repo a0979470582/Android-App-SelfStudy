@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="arrow_default_size">25dp</dimen>
+
     <style name="Divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
@@ -31,9 +32,15 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
+    <!--cancel underline in search view -->
     <style name="MySearchView" parent="Widget.AppCompat.Light.SearchView">
-        <item name="submitBackground">@color/white</item>
-        <item name="queryBackground">@color/white</item>
+        <item name="submitBackground">@android:color/white</item>
+        <item name="queryBackground">@android:color/white</item>
     </style>
 
+    <!--chip color-->
+    <style name="MyChipGroup" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/chip_background_color</item>
+        <item name="android:textColor">@color/chip_text_color</item>
+    </style>
 </resources>

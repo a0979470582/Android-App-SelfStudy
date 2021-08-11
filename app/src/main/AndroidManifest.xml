@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/app_icon_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SelfStudy2">
+        android:theme="@style/Theme.SelfStudy">
 
         <activity android:name=".SplashActivity"
             android:theme="@style/SplashScreenTheme">

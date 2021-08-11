@@ -31,10 +31,10 @@
             android:paddingStart="12dp"
             android:paddingTop="14dp"
             android:paddingEnd="12dp"
-            android:text="Filters"
+            android:text="檢視"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:textColor="@color/black87"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <com.google.android.material.button.MaterialButton
@@ -51,6 +51,7 @@
             android:layout_alignParentEnd="true"/>
     </RelativeLayout>
 
+
     <com.google.android.material.textview.MaterialTextView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -60,9 +61,61 @@
         android:paddingStart="16dp"
         android:paddingBottom="8dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textColor="@color/black60"
-        android:text="Label"
+        android:text="版面"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/radioGroupMode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        app:singleSelection="true"
+        app:selectionRequired="true"
+        app:chipSpacingHorizontal="12dp">
+
+        <com.google.android.material.chip.Chip
+            style="@style/MyChipGroup"
+            android:id="@+id/chipCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:textSize="12sp"
+            android:text="卡片"/>
+
+        <com.google.android.material.chip.Chip
+            style="@style/MyChipGroup"
+            android:id="@+id/chipList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="列表"/>
+
+        <com.google.android.material.chip.Chip
+            style="@style/MyChipGroup"
+            android:id="@+id/chipSimple"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="清單"/>
+
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <com.google.android.material.textview.MaterialTextView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:paddingStart="16dp"
+        android:paddingBottom="8dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:textSize="16sp"
+        android:textColor="@color/black60"
+        android:text="標籤"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -76,12 +129,12 @@
             android:id="@+id/buttonAll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="All" />
+            android:text="所有" />
         <RadioButton
             android:id="@+id/buttonMark"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Only Mark"/>
+            android:text="標記單字"/>
     </RadioGroup>
 
     <com.google.android.material.textview.MaterialTextView
@@ -94,8 +147,8 @@
         android:paddingBottom="8dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:textColor="@color/black60"
-        android:textSize="18sp"
-        android:text="Order by"
+        android:textSize="16sp"
+        android:text="排序方式"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -109,21 +162,21 @@
             android:id="@+id/buttonOldest"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Created Time (Oldest)"/>
+            android:text="建立時間 (最舊)"/>
         <RadioButton
             android:id="@+id/buttonNewest"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Created Time (Newest)"/>
+            android:text="建立時間 (最新)"/>
         <RadioButton
             android:id="@+id/buttonAZ"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Alphabet (A→Z)"/>
+            android:text="字母 (A→Z)"/>
         <RadioButton
             android:id="@+id/buttonZA"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Alphabet (Z→A)"/>
+            android:text="字母 (Z→A)"/>
     </RadioGroup>
 </LinearLayout>

@@ -40,6 +40,11 @@ interface WordDao : BaseDao<Word>{
             markList: List<Int>
     ): Flow<List<Word>>
 
+
+    @Query("SELECT * FROM Word WHERE isMark = 1")
+    fun loadMarkWords(): Flow<List<Word>>
+
+
     //update
     @Query("UPDATE Word SET isMark = :isMark WHERE id =:wordId")
     suspend fun updateMark(wordId:Long, isMark: Boolean): Int

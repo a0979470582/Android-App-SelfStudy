@@ -1,4 +1,4 @@
-package com.bu.selfstudy.ui.wordlist;
+package com.bu.selfstudy.tool;
 
 
 import android.animation.Animator;
@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
 /**
  * Class responsible to animate and provide a fast scroller.
  */
@@ -108,7 +109,7 @@ public class FastScroller extends RecyclerView.ItemDecoration implements Recycle
                     recyclerView.computeVerticalScrollOffset());
         }
     };
-    FastScroller(RecyclerView recyclerView, StateListDrawable verticalThumbDrawable,
+    public FastScroller(RecyclerView recyclerView, StateListDrawable verticalThumbDrawable,
                  Drawable verticalTrackDrawable, StateListDrawable horizontalThumbDrawable,
                  Drawable horizontalTrackDrawable, int defaultWidth, int scrollbarMinimumRange,
                  int margin) {
@@ -143,12 +144,14 @@ public class FastScroller extends RecyclerView.ItemDecoration implements Recycle
             setupCallbacks();
         }
     }
-    private void setupCallbacks() {
+
+
+    public void setupCallbacks() {
         mRecyclerView.addItemDecoration(this);
         mRecyclerView.addOnItemTouchListener(this);
         mRecyclerView.addOnScrollListener(mOnScrollListener);
     }
-    private void destroyCallbacks() {
+    public void destroyCallbacks() {
         mRecyclerView.removeItemDecoration(this);
         mRecyclerView.removeOnItemTouchListener(this);
         mRecyclerView.removeOnScrollListener(mOnScrollListener);

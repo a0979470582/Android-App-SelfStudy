@@ -1,4 +1,4 @@
-package com.bu.selfstudy.ui.wordcard
+package com.bu.selfstudy.ui.word
 
 import com.bu.selfstudy.R
 import com.bu.selfstudy.SelfStudyApplication

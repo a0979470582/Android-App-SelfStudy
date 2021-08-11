@@ -17,6 +17,7 @@
     <string name="icon_background">切換背景</string>
     <string name="icon_send">保存</string>
     <string name="icon_save">保存</string>
+    <string name="icon_done">完成</string>
     <string name="icon_to_list">編輯題庫</string>
     <string name="icon_import_word">匯入</string>
     <string name="icon_mark">標記</string>
@@ -82,4 +83,7 @@ The particular may have to be satisfied to the general.
     <string name="toast_exit_app">再按一次離開程式</string>
 
     <string name="button_reset"><u>Reset</u></string>
+
+
+    <string name="search_fragment_search_word">搜尋單字</string>
 </resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/notFoundTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="找不到相符的搜尋結果"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:textSize="20sp"
+        android:textColor="@color/black87"
+        android:gravity="center"
+        android:drawableTop="@drawable/ic_search_not_found"
+        android:drawablePadding="16dp"/>
+
+</merge>

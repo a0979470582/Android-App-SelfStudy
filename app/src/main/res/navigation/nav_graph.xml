@@ -19,31 +19,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/wordCardFragment"
-        android:name="com.bu.selfstudy.ui.wordcard.WordCardFragment">
-        <argument
-            android:name="wordId"
-            app:argType="long"
-            android:defaultValue="0L" />
-        <argument
-            android:name="bookId"
-            app:argType="long" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/wordListFragment"
-        android:name="com.bu.selfstudy.ui.wordlist.WordListFragment"
-        tools:layout="@layout/fragment_word_list">
-        <argument
-            android:name="wordId"
-            app:argType="long"
-            android:defaultValue="0L" />
-        <argument
-            android:name="bookId"
-            app:argType="long" />
-    </fragment>
-
-    <fragment
         android:id="@+id/suggestFragment"
         android:name="com.bu.selfstudy.ui.SuggestFragment"
         android:label="使用者建議"
@@ -58,20 +33,6 @@
         android:name="com.bu.selfstudy.ui.ThemeFragment"
         android:label="更換主題"
         tools:layout="@layout/fragment_theme"/>
-    <dialog
-        android:id="@+id/dialogChooseBook"
-        android:name="com.bu.selfstudy.ui.dialog.DialogChooseBook"
-        android:label="">
-        <argument
-            android:name="title"
-            app:argType="string" />
-        <argument
-            android:name="bookId"
-            app:argType="long"
-            android:defaultValue="0L" />
-    </dialog>
-    <action android:id="@+id/action_global_chooseBookDialog"
-            app:destination="@id/dialogChooseBook" />
 
     <dialog
         android:id="@+id/dialogDeleteCommon"
@@ -87,7 +48,7 @@
 
     <fragment
         android:id="@+id/addWordFragment"
-        android:name="com.bu.selfstudy.ui.addword.AddWordFragment"
+        android:name="com.bu.selfstudy.ui.dialog.AddWordFragment"
         android:label="新增單字"
         tools:layout="@layout/fragment_add_word">
         <argument
@@ -131,7 +92,15 @@
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.bu.selfstudy.ui.search.SearchFragment"
-        android:label="從字典搜尋" ><!--避免SearchView還沒打開, 會短暫出現無意義的標題-->
+        android:label="從字典搜尋" >
+        <argument
+            android:name="bookId"
+            app:argType="long"
+            android:defaultValue="0L" />
+        <argument
+            android:name="query"
+            app:argType="string"
+            android:defaultValue=""/>
     </fragment>
     <fragment
         android:id="@+id/recentWordFragment"
@@ -146,16 +115,51 @@
             android:id="@+id/action_archiveFragment_to_editBookDialog"
             app:destination="@id/editBookDialog" />
     </fragment>
-    <action android:id="@+id/action_global_wordListFragment" app:destination="@id/wordListFragment" />
-    <action android:id="@+id/action_global_wordCardFragment" app:destination="@id/wordCardFragment" />
     <fragment
         android:id="@+id/markFragment"
-        android:name="com.bu.selfstudy.ui.MarkFragment"
+        android:name="com.bu.selfstudy.ui.mark.MarkFragment"
         android:label="從字典搜尋" />
     <fragment
         android:id="@+id/addBookFragment"
-        android:name="com.bu.selfstudy.ui.book.AddBookFragment"
-        android:label="AddBookFragment" />
+        android:name="com.bu.selfstudy.ui.dialog.AddBookFragment"
+        android:label="新增題庫" />
+    <fragment
+        android:id="@+id/wordFragment"
+        android:name="com.bu.selfstudy.ui.word.WordFragment"
+        android:label="WordFragment" >
+        <argument
+            android:name="wordId"
+            app:argType="long"
+            android:defaultValue="0L" />
+        <argument
+            android:name="bookId"
+            app:argType="long" />
+        <argument
+            android:name="type"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <action
+        android:id="@+id/action_global_wordFragment"
+        app:destination="@id/wordFragment"
+        app:enterAnim="@android:anim/fade_in" />
+    <dialog
+        android:id="@+id/dialogChooseBook"
+        android:name="com.bu.selfstudy.ui.dialog.DialogChooseBook"
+        android:label="DialogChooseBook">
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="bookId"
+            android:defaultValue="0L"
+            app:argType="long" />
+    </dialog>
+    <action android:id="@+id/action_global_dialogChooseBook" app:destination="@id/dialogChooseBook" />
+    <action
+        android:id="@+id/action_global_searchFragment"
+        app:destination="@id/searchFragment"
+        app:launchSingleTop="true" />
 
 
 </navigation>

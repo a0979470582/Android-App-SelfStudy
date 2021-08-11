@@ -1,23 +1,19 @@
-package com.bu.selfstudy.ui.wordlist
+package com.bu.selfstudy.ui.mark
 
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.paging.PagedList
-import androidx.paging.PagedListAdapter
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.WordListItemBinding
-import com.bu.selfstudy.data.model.WordTuple
 import com.bu.selfstudy.databinding.RecyclerviewHeaderBinding
 import com.bu.selfstudy.tool.log
-import com.bu.selfstudy.tool.showToast
-import com.bu.selfstudy.ui.book.BookAdapter
 
 /**
  * About SelectionTracker
@@ -50,7 +46,7 @@ import com.bu.selfstudy.ui.book.BookAdapter
  * Should revise ItemKeyProvider
  *
  */
-class WordListAdapter(val listFragment: WordListFragment):RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+class MarkAdapter(val fragment: MarkFragment):RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
     private val asyncListDiffer = object: AsyncListDiffer<Word>(this, WordDiffCallback){}
     var tracker: SelectionTracker<Long>? = null
@@ -58,22 +54,33 @@ class WordListAdapter(val listFragment: WordListFragment):RecyclerView.Adapter<R
     inner class ItemViewHolder(val binding: WordListItemBinding) : RecyclerView.ViewHolder(binding.root)
     inner class HeaderViewHolder(val headerBinding: RecyclerviewHeaderBinding) : RecyclerView.ViewHolder(headerBinding.root)
 
+    private val HEADER_VIEW_TYPE = 0
+    private val ITEM_VIEW_TYPE = 1
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        if(viewType == 1){
+        if(viewType == ITEM_VIEW_TYPE){
             val binding = WordListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             val holder = ItemViewHolder(binding)
 
             holder.itemView.setOnClickListener {
                 val word = asyncListDiffer.currentList[holder.adapterPosition]
-                if(word != null)
-                    "已點擊 ${word.wordName}".showToast()
+                fragment.findNavController().navigate(
+                    NavGraphDirections.actionGlobalWordFragment(
+                        bookId = word.bookId,
+                        wordId = word.id
+                    )
+                )
             }
 
             holder.binding.markButton.setOnClickListener{
+                //連續點擊兩次時資料已移除, 但繼續執行造成錯誤
+                if(holder.adapterPosition < 0)
+                    return@setOnClickListener
+
                 val word = asyncListDiffer.currentList[holder.adapterPosition]
                 if(word != null)
-                    listFragment.updateMarkWord(word.id, !word.isMark)
+                    fragment.updateMarkWord(word.id, !word.isMark)
             }
 
             return holder
@@ -89,36 +96,29 @@ class WordListAdapter(val listFragment: WordListFragment):RecyclerView.Adapter<R
         when(holder){
             is ItemViewHolder -> {
                 val word = asyncListDiffer.currentList[position]
-                if (word != null) {
-                    holder.binding.wordNameTextView.text = word.wordName
-                    holder.binding.pronunciationTextView.text = word.pronunciation
-                    holder.binding.markButton.setIconResource(
-                            if (word.isMark)
-                                R.drawable.ic_baseline_star_24
-                            else
-                                R.drawable.ic_round_star_border_24
-                    )
-                    tracker?.let {
-                        holder.itemView.isActivated = it.isSelected(word.id)
-                    }
-                } else {
-                    holder.binding.wordNameTextView.text = ""
-                    holder.binding.pronunciationTextView.text = ""
-                    holder.binding.markButton.setIconResource(R.drawable.ic_round_star_border_24
-                    )
+                holder.binding.word = word
+                holder.binding.markButton.setIconResource(
+                        if (word.isMark)
+                            R.drawable.ic_baseline_star_24
+                        else
+                            R.drawable.ic_round_star_border_24
+                )
+                tracker?.let {
+                    holder.itemView.isActivated = it.isSelected(word.id)
                 }
-                //holder.binding.wordInfoTextView.text = (position+1).toString()
+
                 holder.binding.divider.visibility =
-                        if (position == asyncListDiffer.currentList.size - 1) View.GONE else View.VISIBLE
+                    if (position == itemCount-1) View.GONE else View.VISIBLE
 
             }
             is HeaderViewHolder ->{
-                holder.headerBinding.firstRow.text = "單字列表"
+                holder.headerBinding.firstRow.text = "標記單字"
             }
         }
     }
 
-    override fun getItemViewType(position: Int) = if(position == 0) 0 else 1
+    override fun getItemViewType(position: Int) =
+        if(position == 0) HEADER_VIEW_TYPE else ITEM_VIEW_TYPE
 
 
     /**
@@ -131,15 +131,20 @@ class WordListAdapter(val listFragment: WordListFragment):RecyclerView.Adapter<R
         }
 
         override fun areContentsTheSame(oldItem: Word, newItem: Word): Boolean {
-            return oldItem.isMark == newItem.isMark &&
-                    oldItem.pronunciation == newItem.pronunciation
-                    oldItem.wordName == newItem.wordName
+            return oldItem.wordName == newItem.wordName &&
+                    oldItem.pronunciation == newItem.pronunciation &&
+                    oldItem.isMark == newItem.isMark &&
+                    oldItem.audioFilePath == newItem.audioFilePath
         }
     }
 
     override fun getItemCount() = asyncListDiffer.currentList.size
 
+
     fun submitList(words: List<Word>){
-        asyncListDiffer.submitList(listOf(Word()).plus(words))
+        if(words.isEmpty())
+            asyncListDiffer.submitList(words)
+        else
+            asyncListDiffer.submitList(listOf(Word()).plus(words))
     }
 }

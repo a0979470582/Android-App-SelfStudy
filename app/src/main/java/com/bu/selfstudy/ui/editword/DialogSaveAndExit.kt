@@ -23,7 +23,7 @@ class DialogSaveAndExit() : AppCompatDialogFragment() {
                     setFragmentResult("saveAndExit", Bundle())
                 }
                 .setNegativeButton("不保存") { dialog, which ->
-                    findNavController().popBackStack(R.id.wordCardFragment, false)
+                    findNavController().popBackStack(R.id.wordFragment, false)
                 }
                 .setNeutralButton("取消"){dialog, which ->
                     dialog.dismiss()

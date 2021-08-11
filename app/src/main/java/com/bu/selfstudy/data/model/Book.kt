@@ -24,7 +24,7 @@ data class Book(
 
         var position: Int = 0,
         var sortState:String = "time_asc",//time, letter, proficiency
-        var displayMode:String = "one",//one, list, grid
+        var displayMode:Int = 0,//card, list, simple
         var colorInt: Int = 0,
         var explanation: String="",
 

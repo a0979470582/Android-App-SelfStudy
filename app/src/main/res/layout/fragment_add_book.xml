@@ -28,8 +28,8 @@
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:singleLine="true"
             android:inputType="text"
-            android:imeOptions="actionDone"
-            />
+            android:imeOptions="actionDone">
+        </com.google.android.material.textfield.TextInputEditText>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout

@@ -15,16 +15,19 @@ import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.marginStart
 import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.BookListItemBinding
 import com.bu.selfstudy.databinding.RecyclerviewHeaderBinding
 import com.bu.selfstudy.tool.log
 import com.bu.selfstudy.ui.archive.ArchiveFragmentDirections
+import com.bu.selfstudy.ui.word.WordFragment
 import com.google.android.material.button.MaterialButton
 import org.w3c.dom.Text
 
@@ -46,8 +49,11 @@ class BookAdapter(val fragment: BookFragment):
 
 
             holder.itemView.setOnClickListener {
-                fragment.navigateToWordCardFragment(
-                    asyncListDiffer.currentList[holder.adapterPosition].id)
+                fragment.findNavController().navigate(
+                    NavGraphDirections.actionGlobalWordFragment(
+                        bookId = asyncListDiffer.currentList[holder.adapterPosition].id
+                    )
+                )
             }
 
             holder.binding.bookIcon.setOnClickListener { v: View ->
@@ -85,7 +91,11 @@ class BookAdapter(val fragment: BookFragment):
             when (menuItem.itemId) {
                 R.id.action_list -> {
                     findNavController(fragment).navigate(
-                            ArchiveFragmentDirections.actionGlobalWordListFragment(bookId = book.id))
+                        ArchiveFragmentDirections.actionGlobalWordFragment(
+                            bookId = book.id,
+                            type = WordFragment.TYPE_LIST
+                        )
+                    )
                 }
                 R.id.action_edit -> {
                     findNavController(fragment).navigate(
@@ -112,7 +122,7 @@ class BookAdapter(val fragment: BookFragment):
 
     private fun initPopupWindow(v: View) {
 
-        val linearLayout = LinearLayout(fragment.requireContext(), null, R.style.Theme_SelfStudy2).also {
+        val linearLayout = LinearLayout(fragment.requireContext(), null, R.style.Theme_SelfStudy).also {
             it.layoutParams =  ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT

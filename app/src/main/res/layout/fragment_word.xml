@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="ui.wordlist.WordListFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
     </data>
@@ -15,44 +14,53 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <!-- Circular progress indicator -->
-            <TextView
-                android:id="@+id/explainView"
+            <ImageView
+                android:id="@+id/explainImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone"
-                android:text="目前這裡還沒有單字唷~ 可以點擊右下角的按鈕來新增單字"
+                android:layout_marginStart="64dp"
+                android:layout_marginTop="64dp"
+                android:layout_marginEnd="64dp"
+                android:layout_marginBottom="312dp"
+                android:alpha="0.1"
+                android:src="@drawable/app_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="gone"/>
 
-            <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:id="@+id/progressIndicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="true"
-                android:visibility="gone"
+            <TextView
+                android:id="@+id/explainText"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="48dp"
+                android:layout_marginTop="24dp"
+                android:gravity="center_horizontal"
+                android:text="目前沒有單字唷~ 可以使用搜尋功能來加入單字"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                android:textColor="@color/black60"
+                android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/explainImage"
+                android:visibility="gone"/>
 
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/word_list_item"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/navView"
-            android:layout_width="wrap_content"
+            android:layout_width="240dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            app:headerLayout="@layout/wordlist_nav_header"
+            app:headerLayout="@layout/word_nav_header"
             android:theme="@style/ThemeOverlay.MaterialComponents.Light"
             />
     </androidx.drawerlayout.widget.DrawerLayout>

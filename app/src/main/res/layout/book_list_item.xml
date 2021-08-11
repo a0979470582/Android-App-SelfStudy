@@ -58,7 +58,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="1dp"
+            android:layout_marginTop="4dp"
             android:paddingEnd="16dp"
             android:paddingBottom="16dp"
             android:text="有關於多益的考試精選單字有關於多益的考試精選單字"

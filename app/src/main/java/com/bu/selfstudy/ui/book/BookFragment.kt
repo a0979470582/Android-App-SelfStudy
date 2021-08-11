@@ -1,24 +1,17 @@
 package com.bu.selfstudy.ui.book
 
-import android.app.Activity
-import android.app.SearchManager
+
 import android.content.Context
 import android.os.Bundle
 import android.view.*
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ScrollView
 import androidx.activity.addCallback
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.ActivityViewModel
-import com.bu.selfstudy.MainActivity
 import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
@@ -28,8 +21,6 @@ import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
-import java.util.concurrent.atomic.AtomicInteger
-import kotlin.math.absoluteValue
 
 class BookFragment : Fragment() {
 
@@ -46,6 +37,7 @@ class BookFragment : Fragment() {
             savedInstanceState: Bundle?):View{
 
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.setHasFixedSize(true)
 
         return binding.root
     }
@@ -76,7 +68,7 @@ class BookFragment : Fragment() {
 
     fun navigateToWordCardFragment(bookId: Long){
         findNavController().navigate(
-                NavGraphDirections.actionGlobalWordCardFragment(bookId = bookId)
+                NavGraphDirections.actionGlobalWordFragment(bookId = bookId)
         )
     }
 

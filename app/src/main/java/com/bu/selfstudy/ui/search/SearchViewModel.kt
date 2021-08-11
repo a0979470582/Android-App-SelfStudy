@@ -6,6 +6,7 @@ import com.bu.selfstudy.data.model.SearchRow
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.repository.SearchRepository
 import com.bu.selfstudy.data.repository.WordRepository
+import com.bu.selfstudy.tool.log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -50,7 +51,16 @@ class SearchViewModel : ViewModel() {
     }
 
     fun refreshClipboardText(text: String?){
-        clipboardText = text
+        clipboardText = checkClipboardText(text)
+    }
+
+    private fun checkClipboardText(text: String?): String?{
+        if(text.isNullOrBlank() || text.length > 25)
+            return null
+
+        return Regex("[a-zA-Z\\- ]{1,25}").find(text)?.value
+
+
     }
 
     fun addOneSearchHistory(searchName: String) {

@@ -1,33 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.SelfStudy" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
-
-        <!-- display ActionMode over toolbar -->
-        <item name="windowActionModeOverlay">true</item>
-        <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24</item>
-    </style>
-
-    <style name="Theme.SelfStudy2" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#425C5A</item>
-        <item name="colorPrimaryVariant">#425C5A</item>
-        <item name="colorOnPrimary">#BA946C</item>
+        <item name="colorPrimary">@color/blue80</item>
+        <item name="colorPrimaryVariant">@color/blue80</item>
+        <item name="colorOnPrimary">@android:color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">#FDCDA1</item>
-        <item name="colorSecondaryVariant">#FDCDA1</item>
-        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondary">@color/blue60</item>
+        <item name="colorSecondaryVariant">@color/blue60</item>
+        <item name="colorOnSecondary">@android:color/white</item>
 
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">@color/toolbar_title_color</item>
@@ -47,7 +29,5 @@
     <style name="SplashScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen_drawable</item>
     </style>
-
-
 
 </resources>

@@ -15,10 +15,10 @@ interface BookDao : BaseDao<Book>{
     @Query("SELECT * FROM Book WHERE id =:bookId")
     fun loadOneBook(bookId: Long): Flow<Book>
 
-    @Query("SELECT * FROM Book WHERE isArchive=1  AND memberID =:memberId ")
+    @Query("SELECT * FROM Book WHERE isArchive=1  AND memberID =:memberId Order by timestamp DESC")
     fun loadBooksArchived(memberId: Long=SelfStudyApplication.memberId): Flow<List<Book>>
 
-    @Query("SELECT * FROM Book WHERE isArchive=0  AND memberID =:memberId ")
+    @Query("SELECT * FROM Book WHERE isArchive=0  AND memberID =:memberId Order by timestamp DESC")
     fun loadBooks(memberId: Long=SelfStudyApplication.memberId): Flow<List<Book>>
 
     //update

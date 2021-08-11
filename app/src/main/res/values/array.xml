@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--BookFragment-->
     <array name="book_color_list">
         <item>@color/book_color_1</item>
         <item>@color/book_color_2</item>

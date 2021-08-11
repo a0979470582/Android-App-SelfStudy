@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--FABs-->
     <item name="fab_add_word" type="id"/>
     <item name="fab_edit_word" type="id"/>
     <item name="fab_delete_word" type="id"/>

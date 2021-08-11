@@ -8,23 +8,6 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="gray">#f5f5f5</color>
-    <color name="divide_color">#4D706A6A</color>
-    <color name="ripple_color">#BAADAD</color>
-    <color name="test">#2B2B2B</color>
-    <color name="toolbar_icon_color">#FFFFFFFF</color>
-    <color name="fast_scroll_icon_bg">#f5f5f5</color>
-    <color name="fast_scroll_icon_fg">#979191</color>
-    <color name="fast_scroll_icon_stroke">#AEA8A8</color>
-
-    <color name="status_bar_color">#99000000</color>
-
-    <color name="colorPrimary">#425C5A</color>
-    <color name="colorPrimaryVariant">#425C5A</color>
-    <color name="colorOnPrimary">#BA946C</color>
-    <color name="colorSecondary">#FDCDA1</color>
-    <color name="colorSecondaryVariant">#FDCDA1</color>
-    <color name="colorOnSecondary">#FFF</color>
 
     <color name="iris100">#5D5FEF</color>
     <color name="iris80">#C1C1F6</color>
@@ -41,12 +24,7 @@
     <color name="black17">#2B000000</color>
     <color name="black10">#1A000000</color>
 
-
-    <color name="searchQuerySpan">#FF777C</color>
-
-    <color name="icon_black">#686868</color>
-
-    <!-- book fragment -->
+    <!-- BookFragment -->
     <color name="book_color_1">#F44336</color>
     <color name="book_color_2">#FFEB3B</color>
     <color name="book_color_3">#3F51B5</color>
@@ -58,10 +36,32 @@
     <color name="book_color_9">#8BC34A</color>
     <color name="book_color_10">#DEB2A7A7</color>
 
-    <color name="toolbar_title_color">#8C8B8B</color>
+    <!--item_ripple-->
+    <color name="ripple_color">#BAADAD</color>
+
+    <!--item_divide-->
+    <color name="divide_color">#4D706A6A</color>
+
+    <!--drop_down_view-->
+    <color name="drop_down_background">#f5f5f5</color>
+
+    <!--fast_scroll-->
+    <color name="fast_scroll_icon_bg">#f5f5f5</color>
+    <color name="fast_scroll_icon_fg">#979191</color>
+    <color name="fast_scroll_icon_stroke">#AEA8A8</color>
+
+    <!--SearchView SuggestionList-->
+    <color name="searchQuerySpan">#FF777C</color>
+
+
+
 
     <!-- component -->
     <color name="colorButtonEnabled">#FF6200EE</color>
     <color name="colorButtonDisabled">#B8B8B8</color>
+
+    <color name="icon_black">#686868</color>
+
+    <color name="toolbar_title_color">#8C8B8B</color>
 
 </resources>

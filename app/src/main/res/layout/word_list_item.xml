@@ -5,7 +5,7 @@
 
     <data>
         <variable
-            name="word1"
+            name="word"
             type="com.bu.selfstudy.data.model.Word" />
     </data>
 
@@ -22,6 +22,7 @@
             android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
             android:textSize="20sp"
+            android:text="@{word.wordName}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="abide" />
@@ -33,6 +34,7 @@
             android:layout_marginBottom="8dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
             android:textSize="16sp"
+            android:text="@{word.pronunciation}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/wordNameTextView"
             app:layout_constraintTop_toBottomOf="@id/wordNameTextView"

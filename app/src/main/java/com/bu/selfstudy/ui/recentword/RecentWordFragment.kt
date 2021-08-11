@@ -1,35 +1,20 @@
 package com.bu.selfstudy.ui.recentword
 
-import androidx.appcompat.view.ActionMode
 import android.os.Bundle
 import android.view.*
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.selection.SelectionPredicates
-import androidx.recyclerview.selection.SelectionTracker
-import androidx.recyclerview.selection.StorageStrategy
-import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.RecentWord
-import com.bu.selfstudy.data.model.WordTuple
-import com.bu.selfstudy.databinding.FragmentWordListBinding
+import com.bu.selfstudy.databinding.FragmentMarkBinding
 import com.bu.selfstudy.tool.*
-import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
-import com.bu.selfstudy.tool.myselectiontracker.IdItemKeyProvider
-import kotlinx.coroutines.launch
 
 
 class RecentWordFragment : Fragment() {
     private val viewModel: RecentWordViewModel by viewModels()
-    private val binding: FragmentWordListBinding by viewBinding()
+    private val binding: FragmentMarkBinding by viewBinding()
     private val listAdapter = RecentWordAdapter(fragment = this)
 
 
@@ -70,13 +55,13 @@ class RecentWordFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.wordlist_toolbar, menu)
+        inflater.inflate(R.menu.word_toolbar, menu)
     }
 
 
     fun navigateWordCardFragment(recentWord: RecentWord) {
         findNavController().navigate(
-                NavGraphDirections.actionGlobalWordCardFragment(
+                NavGraphDirections.actionGlobalWordFragment(
                         bookId = recentWord.bookId,
                         wordId = recentWord.wordId
                 )

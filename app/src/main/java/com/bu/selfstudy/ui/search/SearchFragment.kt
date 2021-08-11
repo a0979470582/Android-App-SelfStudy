@@ -1,26 +1,22 @@
 package com.bu.selfstudy.ui.search
 
-import android.app.Activity
 import android.app.SearchManager
 import android.content.Context
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.*
-import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.Toolbar
 import androidx.activity.addCallback
 import androidx.appcompat.widget.SearchView
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
@@ -28,12 +24,13 @@ import com.bu.selfstudy.data.model.SearchHistory
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.FragmentSearchBinding
 import com.bu.selfstudy.tool.*
+import com.bu.selfstudy.tool.dropdowntextview.DropdownTextView
+import com.bu.selfstudy.tool.dropdowntextview.SelectionTextCallback
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
-
 
 /**
  * 焦點在搜尋框時: 秀出建議列表
@@ -43,7 +40,9 @@ import java.util.*
  * 退出建議列表時: 回到上一頁, 若已進行搜尋則回到該頁
  */
 class SearchFragment: Fragment()  {
+
     private val binding : FragmentSearchBinding by viewBinding()
+    private val args: SearchFragmentArgs by navArgs()
     private val adapter = SuggestionListAdapter(this)
     private val viewModel: SearchViewModel by viewModels()
     private val activityViewModel: ActivityViewModel by activityViewModels()
@@ -69,6 +68,7 @@ class SearchFragment: Fragment()  {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
+
         viewModel.searchQuery.value = ""//let it get data
 
         this@SearchFragment.refreshClipboardText()
@@ -100,7 +100,10 @@ class SearchFragment: Fragment()  {
 
         binding.extendedFab.setOnClickListener {
             findNavController().navigate(
-                    NavGraphDirections.actionGlobalChooseBookDialog("選擇加入的題庫")
+                NavGraphDirections.actionGlobalDialogChooseBook(
+                    "加入至題庫",
+                    bookId = args.bookId
+                )
             )
         }
 
@@ -112,6 +115,25 @@ class SearchFragment: Fragment()  {
             }
         }
 
+        setSelectionTextCallback(object: SelectionTextCallback {
+            override fun onSelectionTextChanged(text: String?) {
+                if(text.isNullOrBlank())
+                    return
+
+                startSearch(query = text)
+            }
+        })
+
+    }
+
+    fun setSelectionTextCallback(callback: SelectionTextCallback){
+        with(binding.wordCardItem){
+            translationTextView.setSelectionTextCallback(callback)
+            variationTextView.setSelectionTextCallback(callback)
+            exampleTextView.setSelectionTextCallback(callback)
+            synonymsTextView.setSelectionTextCallback(callback)
+            noteTextView.setSelectionTextCallback(callback)
+        }
     }
 
     override fun onStart() {
@@ -137,7 +159,7 @@ class SearchFragment: Fragment()  {
      */
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.search_toolbar, menu)
+        inflater.inflate(R.menu.only_search_toolbar, menu)
 
         searchView = menu.findItem(R.id.action_search).actionView as SearchView
 
@@ -189,6 +211,12 @@ class SearchFragment: Fragment()  {
         if(binding.wordCardItem.root.isVisible)
             searchView.setQuery(viewModel.lastSearchQuery, false)
 
+
+        if(args.query.isNotEmpty()) {
+            startSearch(args.query)
+            closeKeyboard()
+        }
+
     }
 
     //使用者可能關閉鍵盤而不是回上一頁
@@ -209,6 +237,7 @@ class SearchFragment: Fragment()  {
 
     //此方法會在使用語音查詢時從MainActivity調用
     fun startSearch(query: String){
+        binding.wordCardItem.scrollView.scrollTo(0, 0)
         binding.progressBar.visibility = View.VISIBLE
         searchView.setQuery(query, false)
         searchView.clearFocus()//顯示結果時關閉鍵盤
@@ -221,8 +250,8 @@ class SearchFragment: Fragment()  {
     //FAB會隨word-card一起出現, 且在建議列表出現時消失
     private fun showWordCard(result: Result<Word>) {
         val word = result.getOrNull()
-        binding.progressBar.visibility = View.INVISIBLE
-        binding.recyclerView.visibility = View.INVISIBLE
+        binding.progressBar.isVisible = false
+        binding.recyclerView.isVisible = false
         if(word != null){
             binding.wordCardItem.let {
                 it.root.visibility = View.VISIBLE
@@ -231,7 +260,8 @@ class SearchFragment: Fragment()  {
             }
             binding.extendedFab.isVisible = true
         }else{
-            binding.searchNotFound.root.visibility = View.VISIBLE
+            binding.wordCardItem.root.isVisible = false
+            binding.searchNotFound.root.isVisible = true
         }
     }
     private fun showSearchSuggestion(){

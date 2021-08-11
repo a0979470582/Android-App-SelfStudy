@@ -1,4 +1,4 @@
-package com.bu.selfstudy.ui.addword
+package com.bu.selfstudy.ui.dialog
 
 import android.content.Context
 import android.os.Bundle
@@ -8,7 +8,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -17,7 +16,6 @@ import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.FragmentAddWordBinding
 import com.bu.selfstudy.tool.*
-import com.bu.selfstudy.ui.wordcard.WordCardFragmentArgs
 
 
 class AddWordFragment: Fragment() {
@@ -57,13 +55,6 @@ class AddWordFragment: Fragment() {
             findNavController().popBackStack()
         }
 
-        binding.wordField.editText?.doOnTextChanged() { inputText, _, _, _ ->
-            inputText?.let {
-                if (it.isNotBlank())
-                    binding.wordField.error = null
-                binding.pronunciationField.editText!!.setText(it)
-            }
-        }
 
         binding.soundField.setEndIconOnClickListener {
 
@@ -86,6 +77,15 @@ class AddWordFragment: Fragment() {
                 else -> false
             }
         }
+
+        binding.wordField.editText?.doOnTextChanged{ inputText, _, _, _ ->
+            inputText?.let {
+                if (it.isNotBlank())
+                    binding.wordField.error = null
+                binding.pronunciationField.editText!!.setText(it)
+            }
+        }
+
     }
 
     /**
@@ -122,8 +122,8 @@ class AddWordFragment: Fragment() {
                 if(wordName.isBlank())
                     binding.wordField.error = "請輸入正確的英文單字"
                 else{
-                    val action = AddWordFragmentDirections.actionGlobalChooseBookDialog(
-                        "選擇加入的題庫", args.bookId)
+                    val action = AddWordFragmentDirections.actionGlobalDialogChooseBook(
+                            "選擇加入的題庫", args.bookId)
                     findNavController().navigate(action)
                 }
             }

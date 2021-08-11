@@ -55,7 +55,7 @@ class ArchiveFragment : Fragment() {
 
     fun navigateToWordCardFragment(bookId: Long){
         findNavController().navigate(
-                NavGraphDirections.actionGlobalWordCardFragment(bookId = bookId)
+                NavGraphDirections.actionGlobalWordFragment(bookId = bookId)
         )
     }
 

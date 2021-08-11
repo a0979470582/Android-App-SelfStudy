@@ -1,4 +1,4 @@
-package com.bu.selfstudy.ui.wordlist
+package com.bu.selfstudy.ui.mark
 
 
 import android.os.Bundle
@@ -14,51 +14,11 @@ import kotlinx.coroutines.launch
  * 上一個fragment傳入bookId, 另外設置有默認值的兩個條件onlyMark和sortState,
  * 這三個變數的變更會觸發wordlist刷新
  */
-class WordListViewModel() : ViewModel() {
+class MarkViewModel() : ViewModel() {
 
     val databaseEvent = SingleLiveData<Pair<String, Bundle?>>()
 
-    val SortStateEnum = WordRepository.SortStateEnum
-
-    val bookIdLiveData = MutableLiveData<Long>()
-    val onlyMarkLiveData = MutableLiveData<Boolean>(false)
-    val sortStateLiveData=  MutableLiveData<Int>(SortStateEnum.OLDEST)
-
-
-    val bookLiveData = bookIdLiveData.switchMap {
-        BookRepository.loadOneBook(it).asLiveData()
-    }
-
-    val conditionLiveData = MediatorLiveData<Boolean>().also {
-        it.addSource(bookIdLiveData){
-            combineCondition()
-        }
-        it.addSource(onlyMarkLiveData){
-            combineCondition()
-        }
-        it.addSource(sortStateLiveData){
-            combineCondition()
-        }
-    }
-
-    private fun combineCondition(){
-        if(bookIdLiveData.value == null)
-            return
-
-        conditionLiveData.value = true
-    }
-
-    val wordListLiveData = conditionLiveData.switchMap {
-        WordRepository.loadBookWords(
-                bookId = bookIdLiveData.value!!,
-                sortState = sortStateLiveData.value!!,
-                onlyMark = onlyMarkLiveData.value!!
-        ).asLiveData()
-    }
-
-
-
-
+    val wordListLiveData = WordRepository.loadMarkWords().asLiveData()
 
     val wordIdList = ArrayList<Long>()
     fun refreshWordIdList(wordList: List<Word>){
@@ -76,24 +36,9 @@ class WordListViewModel() : ViewModel() {
         }
     }
 
-
     var currentOpenWord: Word? = null
     var currentPosition: Int? = null
 
-    //將當前頁面同步到資料庫
-    fun updateCurrentPosition(){
-        viewModelScope.launch {
-            if(currentPosition==null || bookLiveData.value==null)
-                return@launch
-
-            BookRepository.updateBook(
-                bookLiveData.value!!.copy().also {
-                    it.position = currentPosition!!
-                }
-            )
-
-        }
-    }
 
     fun updateMarkWord(wordId: Long, isMark: Boolean){
         viewModelScope.launch(Dispatchers.IO) {
@@ -109,7 +54,4 @@ class WordListViewModel() : ViewModel() {
                 databaseEvent.postValue("delete" to null)
         }
     }
-
-
-
 }
