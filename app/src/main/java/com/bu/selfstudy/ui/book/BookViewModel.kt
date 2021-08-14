@@ -12,6 +12,9 @@ import kotlinx.coroutines.launch
 class BookViewModel : ViewModel(){
     val databaseEvent = SingleLiveData<Pair<String, Bundle?>>()
 
+    val bookListLiveData = BookRepository.loadBooks().asLiveData()
+
+
     fun calculateBookSize(){
         viewModelScope.launch {
             BookRepository.updateBookSize()

@@ -23,17 +23,6 @@ class ArchiveViewModel : ViewModel(){
 
     var chosenBook: Book? = null
 
-
-    fun insertBook(bookName: String){
-        viewModelScope.launch {
-            val book = Book(bookName = bookName, memberId = SelfStudyApplication.memberId)
-            if(BookRepository.insertBook(book).isNotEmpty()) {
-                databaseEvent.postValue("insertBook" to null)
-            }
-        }
-    }
-
-
     fun editBook(bookName:String, explanation:String){
         viewModelScope.launch{
             chosenBook?.copy()?.let {

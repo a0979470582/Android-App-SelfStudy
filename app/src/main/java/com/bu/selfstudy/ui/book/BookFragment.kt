@@ -12,12 +12,19 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.onNavDestinationSelected
+import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.ActivityViewModel
+import com.bu.selfstudy.MainActivity
 import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.FragmentBookBinding
 import com.bu.selfstudy.tool.*
+import com.google.android.material.navigation.NavigationView
 import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -25,20 +32,19 @@ import java.util.*
 
 class BookFragment : Fragment() {
 
-    private val activityViewModel: ActivityViewModel by activityViewModels()
     private val viewModel: BookViewModel by viewModels()
     private val binding : FragmentBookBinding by viewBinding()
-    private val adapter = BookAdapter(this)
-
-    private lateinit var speedDialView: SpeedDialView
+    private val adapter = BookAdapter(fragment = this)
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?):View{
 
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.setHasFixedSize(true)
+        binding.recyclerView.let {
+            it.adapter = adapter
+            it.setHasFixedSize(true)
+        }
 
         return binding.root
     }
@@ -46,33 +52,32 @@ class BookFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
 
-        activityViewModel.bookListLiveData.observe(viewLifecycleOwner){
+        viewModel.bookListLiveData.observe(viewLifecycleOwner){
             binding.bookNotFound.root.isVisible = it.isEmpty()
-
             adapter.submitList(it)
         }
 
-
-        lifecycleScope.launch {
-            setDialogResultListener()
-            setDatabaseListener()
+        binding.toolbar.setOnClickListener {
+            findNavController().navigate(R.id.searchFragment)
         }
 
 
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        speedDialView = requireActivity().findViewById(R.id.speedDialView)
-        speedDialView.setMainFabClosedDrawable(resources.getDrawable(R.drawable.ic_baseline_add_24))
+        setDialogResultListener()
+        setDatabaseListener()
         initSpeedDial()
     }
 
 
-    fun navigateToWordCardFragment(bookId: Long){
-        findNavController().navigate(
-                NavGraphDirections.actionGlobalWordFragment(bookId = bookId)
-        )
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        (activity as MainActivity).let {
+            it.setSupportActionBar(binding.toolbar)
+
+            NavigationUI.setupActionBarWithNavController(
+                it, findNavController(), it.appBarConfiguration)
+        }
+
     }
 
     private fun setDatabaseListener() {
@@ -93,26 +98,24 @@ class BookFragment : Fragment() {
         setFragmentResultListener("EditBookFragment"){ _, bundle->
             val bookName = bundle.getString("bookName")!!
             val explanation = bundle.getString("explanation")!!
-            //val newBookExplanation = bundle.getString("explanation")!!
             viewModel.editBook(bookName, explanation)
         }
     }
 
     private fun initSpeedDial() {
+        if(binding.speedDialView.actionItems.isNotEmpty())
+            return
 
-        with(speedDialView){
-            this.mainFab.setOnLongClickListener {
+        with(binding.speedDialView){
+
+            mainFab.setOnLongClickListener {
                 resources.getString(R.string.FAB_main).showToast()
                 return@setOnLongClickListener true
             }
 
-            this.clearActionItems()
-            this.addAllActionItems(listOf(
-                    ActionItemCreator.addWordItem,
-                    ActionItemCreator.addBookItem)
-            )
+            addActionItem(ActionItemCreator.addWordItem)
+            addActionItem(ActionItemCreator.addBookItem)
 
-            // Set option fabs click listeners.
             this.setOnActionSelectedListener { actionItem ->
                 when (actionItem.id) {
                     R.id.book_fragment_fab_add_word -> {
@@ -135,8 +138,8 @@ class BookFragment : Fragment() {
 
 
         requireActivity().onBackPressedDispatcher.addCallback(this){
-            if(speedDialView.isOpen){
-                speedDialView.close()
+            if(binding.speedDialView.isOpen){
+                binding.speedDialView.close()
                 return@addCallback
             }
 
@@ -159,25 +162,18 @@ class BookFragment : Fragment() {
         viewModel.calculateBookSize()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.action_search -> {
-                findNavController().navigate(R.id.searchFragment)
-            }
-            R.id.action_add_book -> {
-                findNavController().navigate(R.id.addBookFragment)
-            }
-            R.id.action_download_book -> {
-
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.book_toolbar, menu)
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        //自動連結與item id相同的fragment id
+        return item.onNavDestinationSelected(findNavController()) ||
+                super.onOptionsItemSelected(item)
+    }
+
 
     fun setChosenBook(book: Book) {
         viewModel.chosenBook = book

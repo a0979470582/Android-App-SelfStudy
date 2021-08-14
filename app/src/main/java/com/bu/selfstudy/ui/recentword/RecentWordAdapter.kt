@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.data.model.RecentWord
+import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.RecentWordListItemBinding
 import com.bu.selfstudy.databinding.RecyclerviewHeaderBinding
 import com.bu.selfstudy.databinding.WordListItemBinding
@@ -17,8 +18,8 @@ class RecentWordAdapter(val fragment: RecentWordFragment):
     private val asyncListDiffer = object: AsyncListDiffer<RecentWord>(this, Diff_Callback){}
 
 
-    private val HEADER_VIEW_TYPE = 0
-    private val ITEM_VIEW_TYPE = 1
+    private val HEADER_VIEW_HOLDER = 0
+    private val ITEM_VIEW_HOLDER = 1
 
     inner class HeaderViewHolder(val headerBinding: RecyclerviewHeaderBinding) : RecyclerView.ViewHolder(headerBinding.root)
     inner class ItemViewHolder(val binding: RecentWordListItemBinding): RecyclerView.ViewHolder(binding.root){
@@ -32,14 +33,14 @@ class RecentWordAdapter(val fragment: RecentWordFragment):
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        if(viewType == ITEM_VIEW_TYPE) {
+        if(viewType == ITEM_VIEW_HOLDER) {
 
             val binding = RecentWordListItemBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false)
 
             val holder = ItemViewHolder(binding)
 
-            holder.itemView.setOnClickListener {
+            binding.root.setOnClickListener {
                 val recentWord = asyncListDiffer.currentList[holder.adapterPosition]
                 fragment.navigateWordCardFragment(recentWord)
 
@@ -70,8 +71,10 @@ class RecentWordAdapter(val fragment: RecentWordFragment):
     }
 
 
+    //沒數據時會顯示HeaderView
+    override fun getItemCount() = asyncListDiffer.currentList.size
     override fun getItemViewType(position: Int) =
-            if(position == 0) HEADER_VIEW_TYPE else ITEM_VIEW_TYPE
+        if(position == 0) HEADER_VIEW_HOLDER else ITEM_VIEW_HOLDER
 
 
     companion object Diff_Callback : DiffUtil.ItemCallback<RecentWord>(){
@@ -84,14 +87,9 @@ class RecentWordAdapter(val fragment: RecentWordFragment):
         }
     }
 
-    override fun getItemCount() = asyncListDiffer.currentList.size
 
-
-    fun submitList(recentWordList: List<RecentWord>){
-        if(recentWordList.isEmpty())
-            asyncListDiffer.submitList(recentWordList)
-        else
-            asyncListDiffer.submitList(listOf(RecentWord()).plus(recentWordList))
+    fun submitList(wordList: List<RecentWord>){
+        asyncListDiffer.submitList(listOf(RecentWord()).plus(wordList))
     }
 
 }

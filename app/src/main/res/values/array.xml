@@ -18,4 +18,14 @@
     <string-array name="local_book_list">
         <item></item>
     </string-array>
+
+    <!--preference-->
+    <string-array name="theme_keys" >
+        <item>day</item>
+        <item>night</item>
+    </string-array>
+    <string-array name="theme_values" >
+        <item>白天模式</item>
+        <item>夜間模式</item>
+    </string-array>
 </resources>

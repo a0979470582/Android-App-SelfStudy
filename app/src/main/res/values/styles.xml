@@ -43,4 +43,26 @@
         <item name="chipBackgroundColor">@color/chip_background_color</item>
         <item name="android:textColor">@color/chip_text_color</item>
     </style>
+
+
+    <!--FirebaseUI-->
+    <style name="LoginTheme" parent="FirebaseUI">
+        <!--設置背景圖片-->
+        <item name="android:windowBackground">@drawable/app_icon_background2</item>
+        <!--移除標題列-->
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
+        <!--其他視需要添加-->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorButtonNormal">@color/colorAccent</item>
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="colorControlActivated">@android:color/white</item>
+        <item name="colorControlHighlight">@android:color/white</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorHint">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+    </style>
 </resources>

@@ -1,28 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@layout/activity_main">
 
     <data>
+
     </data>
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <!--toolbar的高度過高可能造成陰影不美觀, 例如8dp可能會看出明顯的邊角痕跡-->
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="12dp"
+            android:background="@android:color/transparent"
+            app:elevation="0dp">
+
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:elevation="4dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/toolbar_background_corner"
+                android:theme="@style/ThemeOverlay.AppCompat.Light"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:titleTextAppearance="@style/title_text_style"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                tools:title="從字典搜尋"
+                tools:menu="@menu/book_toolbar"/>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
 
         <include
             android:id="@+id/recentNotFound"
             layout="@layout/not_found_recent"
             android:layout_width="match_parent"
             android:layout_height="240dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_gravity="center_vertical"
             android:visibility="gone"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/recent_word_list_item"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            tools:itemCount="5"
+            tools:listitem="@layout/book_list_item"/>
+
+
+        <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:clickable_overlay="true" />
+        <com.leinardi.android.speeddial.SpeedDialView
+            android:id="@+id/speedDialView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            app:sdMainFabClosedSrc="@drawable/ic_baseline_add_24"
+            app:sdMainFabOpenedSrc="@drawable/ic_baseline_close_24"
+            app:sdOverlayLayout="@id/overlay" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </layout>

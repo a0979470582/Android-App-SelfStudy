@@ -33,7 +33,7 @@ class ActivityViewModel : ViewModel() {
     }
 
 
-    //新增單字是多個頁面共同的操作
+    //新增單字是多個頁面都可進行的操作
     fun insertWord(word: Word){
         viewModelScope.launch(Dispatchers.IO) {
             val resultIdList = WordRepository.insertWord(word)

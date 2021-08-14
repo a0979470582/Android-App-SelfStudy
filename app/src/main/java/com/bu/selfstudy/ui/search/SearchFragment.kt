@@ -17,7 +17,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.navigation.ui.NavigationUI
 import com.bu.selfstudy.ActivityViewModel
+import com.bu.selfstudy.MainActivity
 import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.SearchHistory
@@ -300,26 +302,15 @@ class SearchFragment: Fragment()  {
         }
     }
 
-    /**
-     * 1. 進入SearchFragment後取消Toolbar的滾動上移, 之後它將會固定
-     * 2. 若在onAttach()中搜尋toolbar, 可能activity還沒準備好, 這會發生在當fragment是
-     * activity的初始頁, 例如旋轉螢幕時, 兩者同時重建而錯誤
-     * 3. 根據搜尋結果來加入單字, 而開啟的chooseBookFragment退回後, toolbar又恢復滾動上移
-     * 稍後可能會用別的方式修改Toolbar
-     * TODO
-     */
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        if (scrollFlags != null)
-            return
+        (activity as MainActivity).let {
+            it.setSupportActionBar(binding.toolbar)
 
-        val layout = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
-        val params = layout.layoutParams as AppBarLayout.LayoutParams
-
-        scrollFlags = params.scrollFlags
-
-        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL
+            NavigationUI.setupActionBarWithNavController(
+                it, findNavController(), it.appBarConfiguration)
+        }
 
     }
 

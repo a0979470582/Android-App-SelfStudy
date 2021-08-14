@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "239240141472",
+    "project_id": "selfstudyapp-d161a",
+    "storage_bucket": "selfstudyapp-d161a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:239240141472:android:228b209fa1be60c27ec7c5",
+        "android_client_info": {
+          "package_name": "com.bu.selfstudy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "239240141472-s3fkuke9a7irdtksh94f9hrptds9dh6d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1x331H9a0TdXrCU6gdxUQxgzThQ0QPEg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "239240141472-s3fkuke9a7irdtksh94f9hrptds9dh6d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

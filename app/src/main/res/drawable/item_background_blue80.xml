@@ -9,7 +9,7 @@
     <item>
         <selector>
             <item android:drawable="@color/black10" android:state_activated="true" />
-            <item android:drawable="@android:color/transparent" />
+            <item android:drawable="@color/blue80" />
         </selector>
     </item>
 

@@ -27,7 +27,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/explainText"
@@ -43,7 +44,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/explainImage"/>
+                app:layout_constraintTop_toBottomOf="@id/explainImage"
+                android:visibility="gone"/>
 
 
             <androidx.recyclerview.widget.RecyclerView
@@ -55,7 +57,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/navView"
-            android:layout_width="210dp"
+            android:layout_width="240dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
             app:headerLayout="@layout/word_nav_header"

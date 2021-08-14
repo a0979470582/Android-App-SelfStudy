@@ -1,35 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="20dp"
-    android:background="@color/blue80"
-    >
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/iconImage"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/nav_icon"/>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/userNameField"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="16dp"
-        android:text="kimmmm kimmmm"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-        android:textColor="@color/white"
-        android:alpha="0.87"/>
+    <data>
+        <import type="com.bu.selfstudy.data.model.Member"/>
+        <variable
+            name="member"
+            type="Member" />
+    </data>
 
-    <TextView
-        android:id="@+id/mailField"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="a0979470582@gmail.com"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        android:textColor="@color/white"
-        android:alpha="0.87"/>
-</LinearLayout>
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:focusable="true"
+        android:clickable="true"
+        android:background="@color/blue80"
+        >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iconImage"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/nav_icon" />
+
+        <TextView
+            android:id="@+id/userNameField"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:text="@{member.userName}"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:textColor="@color/white"
+            android:alpha="0.87" />
+
+        <TextView
+            android:id="@+id/mailField"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{member.email}"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textColor="@color/white"
+            android:alpha="0.87" />
+    </LinearLayout>
+</layout>

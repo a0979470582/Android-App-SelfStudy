@@ -36,10 +36,6 @@ class MarkViewModel() : ViewModel() {
         }
     }
 
-    var currentOpenWord: Word? = null
-    var currentPosition: Int? = null
-
-
     fun updateMarkWord(wordId: Long, isMark: Boolean){
         viewModelScope.launch(Dispatchers.IO) {
             if(WordRepository.updateMark(wordId, isMark)>0){

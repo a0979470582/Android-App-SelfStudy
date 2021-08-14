@@ -28,11 +28,6 @@
         android:name="com.bu.selfstudy.ui.SettingFragment"
         android:label="設定"
         tools:layout="@layout/fragment_setting" />
-    <fragment
-        android:id="@+id/themeFragment"
-        android:name="com.bu.selfstudy.ui.ThemeFragment"
-        android:label="更換主題"
-        tools:layout="@layout/fragment_theme"/>
 
     <dialog
         android:id="@+id/dialogDeleteCommon"

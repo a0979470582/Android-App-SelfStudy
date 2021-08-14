@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
+import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.WordListItemBinding
 import com.bu.selfstudy.databinding.RecyclerviewHeaderBinding
@@ -54,16 +55,17 @@ class MarkAdapter(val fragment: MarkFragment):RecyclerView.Adapter<RecyclerView.
     inner class ItemViewHolder(val binding: WordListItemBinding) : RecyclerView.ViewHolder(binding.root)
     inner class HeaderViewHolder(val headerBinding: RecyclerviewHeaderBinding) : RecyclerView.ViewHolder(headerBinding.root)
 
-    private val HEADER_VIEW_TYPE = 0
-    private val ITEM_VIEW_TYPE = 1
+    private val HEADER_VIEW_HOLDER = 0
+    private val ITEM_VIEW_HOLDER = 1
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        if(viewType == ITEM_VIEW_TYPE){
-            val binding = WordListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        if(viewType == ITEM_VIEW_HOLDER){
+            val binding = WordListItemBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false)
             val holder = ItemViewHolder(binding)
 
-            holder.itemView.setOnClickListener {
+            binding.root.setOnClickListener {
                 val word = asyncListDiffer.currentList[holder.adapterPosition]
                 fragment.findNavController().navigate(
                     NavGraphDirections.actionGlobalWordFragment(
@@ -73,19 +75,19 @@ class MarkAdapter(val fragment: MarkFragment):RecyclerView.Adapter<RecyclerView.
                 )
             }
 
-            holder.binding.markButton.setOnClickListener{
+            binding.markButton.setOnClickListener{
                 //連續點擊兩次時資料已移除, 但繼續執行造成錯誤
                 if(holder.adapterPosition < 0)
                     return@setOnClickListener
 
                 val word = asyncListDiffer.currentList[holder.adapterPosition]
-                if(word != null)
-                    fragment.updateMarkWord(word.id, !word.isMark)
+                fragment.updateMarkWord(word.id, !word.isMark)
             }
 
             return holder
         }else{
-            val binding = RecyclerviewHeaderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            val binding = RecyclerviewHeaderBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false)
 
             return HeaderViewHolder(binding)
         }
@@ -117,9 +119,11 @@ class MarkAdapter(val fragment: MarkFragment):RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    override fun getItemViewType(position: Int) =
-        if(position == 0) HEADER_VIEW_TYPE else ITEM_VIEW_TYPE
 
+    //沒數據時會顯示HeaderView
+    override fun getItemCount() = asyncListDiffer.currentList.size
+    override fun getItemViewType(position: Int) =
+        if(position == 0) HEADER_VIEW_HOLDER else ITEM_VIEW_HOLDER
 
     /**
      * 在一千筆數據中修改其中兩百筆資料, 其比對速度約在13ms,
@@ -138,13 +142,8 @@ class MarkAdapter(val fragment: MarkFragment):RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    override fun getItemCount() = asyncListDiffer.currentList.size
-
-
-    fun submitList(words: List<Word>){
-        if(words.isEmpty())
-            asyncListDiffer.submitList(words)
-        else
-            asyncListDiffer.submitList(listOf(Word()).plus(words))
+    fun submitList(wordList: List<Word>){
+        asyncListDiffer.submitList(listOf(Word()).plus(wordList))
     }
+
 }

@@ -23,10 +23,6 @@
             android:title="@string/activity_menu_archive" />
 
         <item
-            android:id="@+id/themeFragment"
-            android:icon="@drawable/ic_round_color_lens_24"
-            android:title="@string/activity_menu_theme" />
-        <item
             android:id="@+id/settingFragment"
             android:icon="@drawable/ic_round_settings_24"
             android:title="@string/activity_menu_setting" />

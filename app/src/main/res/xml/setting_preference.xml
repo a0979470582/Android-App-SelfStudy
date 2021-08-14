@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <PreferenceCategory
+        app:key="theme_category"
+        app:title="主題">
+
+        <ListPreference
+            app:key="theme_list"
+            app:title="應用主題"
+            app:defaultValue="day"
+            app:entryValues="@array/theme_keys"
+            app:entries="@array/theme_values"
+            app:useSimpleSummaryProvider="true"
+            app:icon="@drawable/ic_round_color_lens_24" />
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        app:key="user_data_category"
+        app:title="使用者資料">
+
+        <Preference
+            app:key="backup"
+            app:title="備份"
+            app:icon="@drawable/ic_baseline_backup_24"
+            />
+
+        <Preference
+            app:key="restore"
+            app:title="還原"
+            app:icon="@drawable/ic_baseline_autorenew_24"
+            />
+
+        <Preference
+            app:key="clear_search"
+            app:title="清除搜尋紀錄"
+            />
+    </PreferenceCategory>
+
+</PreferenceScreen>
