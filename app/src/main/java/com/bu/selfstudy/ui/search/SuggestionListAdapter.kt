@@ -100,11 +100,10 @@ class SuggestionListAdapter(val fragment: SearchFragment):
     override fun getItemCount() = suggestionList.size
 
 
-    suspend fun submitList(_suggestionList: List<SearchRow>, ) = coroutineScope {
-        withContext(Dispatchers.Default){
-            suggestionList.clear()
-            suggestionList.addAll(_suggestionList)
-        }
+    fun submitList(list: List<SearchRow>){
+        suggestionList.clear()
+        suggestionList.addAll(list)
+
         if(deleteItemPosition != -1) {
             notifyItemRemoved(deleteItemPosition)
             deleteItemPosition = -1

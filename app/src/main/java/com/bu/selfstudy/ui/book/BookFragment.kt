@@ -50,7 +50,6 @@ class BookFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setHasOptionsMenu(true)
 
         viewModel.bookListLiveData.observe(viewLifecycleOwner){
             binding.bookNotFound.root.isVisible = it.isEmpty()
@@ -70,6 +69,8 @@ class BookFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        setHasOptionsMenu(true)
 
         (activity as MainActivity).let {
             it.setSupportActionBar(binding.toolbar)

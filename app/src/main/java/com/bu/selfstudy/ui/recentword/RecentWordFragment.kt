@@ -41,7 +41,6 @@ class RecentWordFragment : Fragment() {
 
 
      override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-         setHasOptionsMenu(true)
 
          viewModel.recentWordLiveData.observe(viewLifecycleOwner){
              binding.recentNotFound.root.isVisible = it.isEmpty()
@@ -61,6 +60,7 @@ class RecentWordFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        setHasOptionsMenu(true)
 
         (activity as MainActivity).let {
             it.setSupportActionBar(binding.toolbar)

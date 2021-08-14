@@ -30,6 +30,7 @@ import com.bu.selfstudy.tool.dropdowntextview.DropdownTextView
 import com.bu.selfstudy.tool.dropdowntextview.SelectionTextCallback
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
@@ -45,14 +46,13 @@ class SearchFragment: Fragment()  {
 
     private val binding : FragmentSearchBinding by viewBinding()
     private val args: SearchFragmentArgs by navArgs()
-    private val adapter = SuggestionListAdapter(this)
+    private val adapter = SuggestionListAdapter(fragment = this)
     private val viewModel: SearchViewModel by viewModels()
     private val activityViewModel: ActivityViewModel by activityViewModels()
 
     private lateinit var searchView: SearchView
 
     private var mediaPlayer: MediaPlayer? = null
-    private var scrollFlags: Int? = null
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -69,18 +69,18 @@ class SearchFragment: Fragment()  {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setHasOptionsMenu(true)
 
-        viewModel.searchQuery.value = ""//let it get data
+        //注意viewModel是懶加載, 第一次調用在不同線程會錯誤
+        refreshClipboardText()
 
-        this@SearchFragment.refreshClipboardText()
+        viewModel.searchQuery.value = ""
 
         viewModel.suggestionList.observe(viewLifecycleOwner){
-            lifecycleScope.launch { adapter.submitList(it) }
+             adapter.submitList(it)
         }
 
         viewModel.wordLiveData.observe(viewLifecycleOwner){
-            showWordCard(it)
+            showResult(it)
         }
 
         binding.wordCardItem.soundButton.setOnClickListener {
@@ -100,6 +100,7 @@ class SearchFragment: Fragment()  {
             }
         }
 
+
         binding.extendedFab.setOnClickListener {
             findNavController().navigate(
                 NavGraphDirections.actionGlobalDialogChooseBook(
@@ -113,10 +114,11 @@ class SearchFragment: Fragment()  {
         setFragmentResultListener("DialogChooseBook"){_, bundle ->
             viewModel.wordLiveData.value?.getOrNull()?.let {
                 it.bookId = bundle.getLong("bookId")
-                activityViewModel.insertWord(it)
+                viewModel.insertWord(it)
             }
         }
 
+        //可根據反白文字直接搜尋單字
         setSelectionTextCallback(object: SelectionTextCallback {
             override fun onSelectionTextChanged(text: String?) {
                 if(text.isNullOrBlank())
@@ -126,9 +128,34 @@ class SearchFragment: Fragment()  {
             }
         })
 
+        viewModel.databaseEvent.observe(this){ pair->
+            when(pair?.first){
+                "insertWord" -> pair.second?.let { showInsertMessage(it) }
+                "insertBook" -> "新增成功".showToast()
+            }
+        }
+
     }
 
-    fun setSelectionTextCallback(callback: SelectionTextCallback){
+    /**
+     * 新增單字後顯示Snackbar, 可點擊檢視跳轉
+     */
+    private fun showInsertMessage(bundle: Bundle) {
+        Snackbar.make(binding.root, "新增成功", Snackbar.LENGTH_LONG).run {
+            setAction("檢視") {
+                findNavController().navigate(
+                        NavGraphDirections.actionGlobalWordFragment(
+                                bookId = bundle.getLong("bookId"),
+                                wordId = bundle.getLong("wordId")
+                        )
+                )
+            }
+            setAnchorView(binding.extendedFab)
+            show()
+        }
+    }
+
+    private fun setSelectionTextCallback(callback: SelectionTextCallback){
         with(binding.wordCardItem){
             translationTextView.setSelectionTextCallback(callback)
             variationTextView.setSelectionTextCallback(callback)
@@ -150,9 +177,7 @@ class SearchFragment: Fragment()  {
     }
 
     private fun refreshClipboardText() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            viewModel.refreshClipboardText(requireActivity().getClipboardText())
-        }
+        viewModel.refreshClipboardText(requireActivity().getClipboardText())
     }
 
     /**
@@ -167,7 +192,8 @@ class SearchFragment: Fragment()  {
 
         with(searchView){
 
-            setPadding(-44, 0, 0, 0)//修改hint的位置
+            //前移hint的位置
+            setPadding(-44, 0, 0, 0)
 
             //移除搜尋框內的search_icon
             findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
@@ -195,7 +221,7 @@ class SearchFragment: Fragment()  {
 
                     query.trim().let {
                         viewModel.searchQuery.value = it
-                        adapter.refreshSearchQuery(it)//set span
+                        adapter.refreshSearchQuery(it)//for setting span
                     }
 
                     return false
@@ -209,19 +235,19 @@ class SearchFragment: Fragment()  {
             }
         }
 
+        //TODO 測試是否能從onRestoreState恢復
         //從別的fragment回彈後要回復狀態
         if(binding.wordCardItem.root.isVisible)
             searchView.setQuery(viewModel.lastSearchQuery, false)
 
 
-        if(args.query.isNotEmpty()) {
+        //從堆棧返回時會重複觸發, 須檢測
+        if(viewModel.lastSearchQuery.isNullOrBlank() && args.query.isNotEmpty()) {
             startSearch(args.query)
-            closeKeyboard()
         }
 
     }
 
-    //使用者可能關閉鍵盤而不是回上一頁
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             android.R.id.home -> {
@@ -239,71 +265,83 @@ class SearchFragment: Fragment()  {
 
     //此方法會在使用語音查詢時從MainActivity調用
     fun startSearch(query: String){
-        binding.wordCardItem.scrollView.scrollTo(0, 0)
         binding.progressBar.visibility = View.VISIBLE
         searchView.setQuery(query, false)
-        searchView.clearFocus()//顯示結果時關閉鍵盤
+        searchView.clearFocus()
+        closeKeyboard()//顯示結果時關閉鍵盤
         viewModel.addOneSearchHistory(query.trim())//紀錄搜尋結果
         viewModel.getWordPage(query)
         if(!hasNetwork())
             "目前沒有網路連接".showToast()
     }
 
-    //FAB會隨word-card一起出現, 且在建議列表出現時消失
-    private fun showWordCard(result: Result<Word>) {
-        val word = result.getOrNull()
+    private fun showResult(result: Result<Word>?) {
         binding.progressBar.isVisible = false
         binding.recyclerView.isVisible = false
-        if(word != null){
-            binding.wordCardItem.let {
-                it.root.visibility = View.VISIBLE
-                it.word = word
-                it.wordInfo.text = "Dr.eye 譯典通"
-            }
-            binding.extendedFab.isVisible = true
-        }else{
-            binding.wordCardItem.root.isVisible = false
-            binding.searchNotFound.root.isVisible = true
-        }
+
+        val word = result?.getOrNull()
+        if(word != null)
+            showWordCard(word)
+        else
+            showSearchNotFound()
     }
-    private fun showSearchSuggestion(){
-        binding.recyclerView.visibility = View.VISIBLE
-        binding.wordCardItem.root.visibility = View.INVISIBLE
+
+
+    //FAB會隨word-card一起出現, 且在建議列表出現時消失
+    private fun showWordCard(word: Word) {
+        resetUi(word)
+        binding.wordCardItem.let {
+            it.root.isVisible = true
+            it.word = word
+            it.wordInfo.text = "Dr.eye 譯典通"
+        }
+        binding.extendedFab.isVisible = true
+    }
+
+    private fun showSearchNotFound(){
+        binding.wordCardItem.root.isVisible = false
         binding.extendedFab.isVisible = false
-        binding.searchNotFound.root.visibility = View.INVISIBLE
+        binding.searchNotFound.root.isVisible = true
+    }
+
+    private fun showSearchSuggestion(){
+        binding.wordCardItem.root.isVisible = false
+        binding.extendedFab.isVisible = false
+        binding.searchNotFound.root.isVisible = false
+        binding.recyclerView.isVisible = true
+
     }
 
 
 
     /**
-     * 結果頁(包含搜尋不到而顯示的背景圖)的返回就是上一頁(題庫頁或其他)
+     * 結果頁(包含無搜尋結果的背景圖)的返回就是離開堆棧(題庫頁或其他)
      * 如果目前顯示搜尋建議列表, 且使用者第一次進入SearchFragment, 就同結果頁的行為,
      * 如果使用者不是第一次進入, 則應顯示上一次搜尋結果
+     *
+     * popBackStack會發送到消息隊列執行, 不是立即性的
      */
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
         requireActivity().onBackPressedDispatcher.addCallback(this){
             if(binding.searchNotFound.root.isVisible ||
-               binding.wordCardItem.root.isVisible
+                    binding.wordCardItem.root.isVisible||
+                    viewModel.lastSearchQuery.isNullOrBlank()
             ){
                 findNavController().popBackStack()
+                return@addCallback
             }
 
-            if(viewModel.lastSearchQuery == "")
-                findNavController().popBackStack()
-            else{
-                searchView.setQuery(viewModel.lastSearchQuery, false)
-                if(viewModel.wordLiveData.value == null)
-                    binding.searchNotFound.root.visibility = View.VISIBLE
-                else
-                    showWordCard(viewModel.wordLiveData.value!!)
-            }
+            searchView.setQuery(viewModel.lastSearchQuery, false)
+            showResult(viewModel.wordLiveData.value)
         }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        setHasOptionsMenu(true)
 
         (activity as MainActivity).let {
             it.setSupportActionBar(binding.toolbar)
@@ -314,17 +352,31 @@ class SearchFragment: Fragment()  {
 
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        if (scrollFlags == null)
-            return
 
-        val layout = requireActivity().findViewById<MaterialToolbar>(R.id.toolbar)
-        val params = layout.layoutParams as AppBarLayout.LayoutParams
-
-        params.scrollFlags = scrollFlags!!
-
-        scrollFlags = null
+    private fun setChildIsVisible(word: Word) {
+        binding.wordCardItem.run {
+            soundButton.isVisible = word.audioFilePath.isNotEmpty()
+            translationTextView.isVisible = word.translation.isNotEmpty()
+            variationTextView.isVisible = word.variation.isNotEmpty()
+            exampleTextView.isVisible = word.example.isNotEmpty()
+            synonymsTextView.isVisible = word.synonyms.isNotEmpty()
+            noteTextView.isVisible = word.note.isNotEmpty()
+        }
     }
 
+    private fun resetUi(word: Word) {
+        setChildIsVisible(word)
+        resetExpandedState()
+        binding.wordCardItem.scrollView.scrollTo(0, 0)
+    }
+
+    private fun resetExpandedState(){
+        binding.wordCardItem.run {
+            translationTextView.expand(false)
+            variationTextView.expand(false)
+            exampleTextView.expand(false)
+            synonymsTextView.expand((false))
+            noteTextView.expand(false)
+        }
+    }
 }

@@ -91,82 +91,10 @@ class MainActivity : AppCompatActivity(){
          */
         navController.addOnDestinationChangedListener { _, destination, _ ->
 
-            /*特定頁才會顯示FABs
-            binding.speedDialView.isVisible =
-                    (destination.id == R.id.bookFragment) ||
-                    (destination.id == R.id.wordFragment)||
-                    (destination.id == R.id.archiveFragment) ||
-                    (destination.id == R.id.recentWordFragment) ||
-                    (destination.id == R.id.markFragment)*/
-
-
-            //特定頁面的Toolbar修改顏色(< 1 ms)
-            /*
-            when(destination.id){
-                R.id.wordFragment->{
-                    binding.toolbar.setTitleTextColor(Color.WHITE)
-                    binding.appBarLayout.background = resources.getDrawable(R.color.blue80)
-                    binding.toolbar.background = getDrawable(R.drawable.toolbar_background_color)
-                    binding.toolbar.overflowIcon?.setTint(Color.WHITE)
-                    binding.toolbar.navigationIcon?.colorFilter = PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC)
                     window.statusBarColor = resources.getColor(R.color.blue80)
 
-                    val lp = AppBarLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
-                    )
-                    binding.toolbar.layoutParams = lp
-
-                    val lp2 = CoordinatorLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
-                    )
-                    binding.appBarLayout.layoutParams = lp2
-
-                }
-                R.id.themeFragment, R.id.settingFragment, R.id.suggestFragment->{
                     val gary = resources.getColor(R.color.icon_black)
-                    binding.toolbar.setTitleTextColor(gary)
-                    binding.appBarLayout.background = resources.getDrawable(android.R.color.transparent)
-                    binding.toolbar.background = getDrawable(R.drawable.toolbar_background_corner)
-                    binding.toolbar.overflowIcon?.setTint(gary)
-                    binding.toolbar.navigationIcon?.colorFilter = PorterDuffColorFilter(gary, PorterDuff.Mode.SRC)
                     window.statusBarColor = gary
-
-
-                    val lp = AppBarLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
-                    )
-                    binding.toolbar.layoutParams = lp
-
-                    val lp2 = CoordinatorLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
-                    )
-                    binding.appBarLayout.layoutParams = lp2
-                }
-                else->{
-                    val gary = resources.getColor(R.color.icon_black)
-                    binding.toolbar.setTitleTextColor(gary)
-                    binding.appBarLayout.background = resources.getDrawable(android.R.color.transparent)
-                    binding.toolbar.background = getDrawable(R.drawable.toolbar_background_corner)
-                    binding.toolbar.overflowIcon?.setTint(gary)
-                    binding.toolbar.navigationIcon?.colorFilter = PorterDuffColorFilter(gary, PorterDuff.Mode.SRC)
-                    window.statusBarColor = gary
-
-
-                    val lp2 = CoordinatorLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT
-                    )
-                    lp2.setMargins(36, 24, 36, 0)
-                    binding.appBarLayout.layoutParams = lp2
-
-                    val lp = AppBarLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-                    lp.setMargins(12)
-
-                    binding.toolbar.layoutParams = lp
-
-                }
-            }*/
         }
 */
 

@@ -21,6 +21,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
@@ -29,6 +30,7 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.HORIZONTAL
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
+import com.bu.selfstudy.MainActivity
 import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.databinding.FragmentWordBinding
@@ -82,9 +84,6 @@ class WordFragment : Fragment() {
 
     private var tracker: SelectionTracker<Long>? = null
 
-
-    private lateinit var speedDialView: SpeedDialView
-
     companion object{
         const val TYPE_CARD = 0
         const val TYPE_LIST = 1
@@ -102,9 +101,6 @@ class WordFragment : Fragment() {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-         setHasOptionsMenu(true)
-
-
          lifecycleScope.launch {
              initLayoutManager()
              initRecyclerView(savedInstanceState)
@@ -196,7 +192,18 @@ class WordFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        setHasOptionsMenu(true)
+
+        (activity as MainActivity).let {
+            it.setSupportActionBar(binding.toolbar)
+
+            NavigationUI.setupActionBarWithNavController(
+                    it, findNavController(), it.appBarConfiguration)
+        }
+
         initSpeedDial()
+
     }
 
     override fun onDestroyView() {
@@ -245,10 +252,10 @@ class WordFragment : Fragment() {
         val oldActionItem = if(isMark) ActionItemCreator.markItem else ActionItemCreator.cancelMarkItem
         val newActionItem = if(isMark) ActionItemCreator.cancelMarkItem else ActionItemCreator.markItem
 
-        speedDialView.actionItems.firstOrNull{
+        binding.speedDialView.actionItems.firstOrNull{
             it == oldActionItem
         }?.let {
-            speedDialView.replaceActionItem(oldActionItem, newActionItem)
+            binding.speedDialView.replaceActionItem(oldActionItem, newActionItem)
         }
     }
 
@@ -494,9 +501,8 @@ class WordFragment : Fragment() {
     }
 
     private fun initSpeedDial() {
-        speedDialView = requireActivity().findViewById(R.id.speedDialView)
 
-        with(speedDialView){
+        with(binding.speedDialView){
             setMainFabClosedDrawable(resources.getDrawable(R.drawable.ic_baseline_edit_24))
 
             mainFab.setOnLongClickListener {
@@ -566,7 +572,7 @@ class WordFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(this){
             when {
-                speedDialView.isOpen -> speedDialView.close()
+                binding.speedDialView.isOpen -> binding.speedDialView.close()
 
                 binding.slideSheet.isDrawerOpen(GravityCompat.END) ->
                     binding.slideSheet.closeDrawer(GravityCompat.END)

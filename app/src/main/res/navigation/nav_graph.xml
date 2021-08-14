@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/bookFragment"
         android:name="com.bu.selfstudy.ui.book.BookFragment"
-        android:label="從字典搜尋" >
+        android:label="搜尋英文字典" >
 
         <action
             android:id="@+id/action_bookFragment_to_recentWordFragment"
@@ -92,12 +92,12 @@
     <fragment
         android:id="@+id/recentWordFragment"
         android:name="com.bu.selfstudy.ui.recentword.RecentWordFragment"
-        android:label="從字典搜尋" />
+        android:label="搜尋英文字典" />
 
     <fragment
         android:id="@+id/archiveFragment"
         android:name="com.bu.selfstudy.ui.archive.ArchiveFragment"
-        android:label="從字典搜尋" >
+        android:label="搜尋英文字典" >
         <action
             android:id="@+id/action_archiveFragment_to_editBookFragment"
             app:destination="@id/editBookFragment" />
@@ -105,7 +105,7 @@
     <fragment
         android:id="@+id/markFragment"
         android:name="com.bu.selfstudy.ui.mark.MarkFragment"
-        android:label="從字典搜尋" />
+        android:label="搜尋英文字典" />
     <fragment
         android:id="@+id/addBookFragment"
         android:name="com.bu.selfstudy.ui.dialog.AddBookFragment"
