@@ -9,7 +9,8 @@
 實作方式
 * 語言: Kotlin
 * 相關套件: Jetpack, Material Components
-* 架構: 單一Activity(採用Navigation), Room+LiveData+ViewModel, databindnig
+* Android架構: 單一Activity(採用Navigation), Room+LiveData+ViewModel, databindnig
+* Firebase: 使用者資料之備份與還原, 下載預建立題庫
 
 版面設計工具 Figma
 
