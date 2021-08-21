@@ -8,12 +8,19 @@
 
 實作方式
 * 語言: Kotlin
-* 相關套件: Jetpack
+* 相關套件: Jetpack, Material Components
+* 架構: 單一Activity(採用Navigation), Room+LiveData+ViewModel, databindnig
 
 版面設計工具 Figma
 
-<img src="https://user-images.githubusercontent.com/45554149/130317581-71cecc51-82e9-4514-ad25-691c92e966d5.PNG" alt="Your image title" width="250"/>
+<img src="https://user-images.githubusercontent.com/45554149/130317581-71cecc51-82e9-4514-ad25-691c92e966d5.PNG" alt="版面設計工具 Figma
+" width="250"/>
 
+新增題庫
+
+新增單字
+
+瀏覽單字
 
 
 
