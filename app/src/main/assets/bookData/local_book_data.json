@@ -1,0 +1,104 @@
+[
+	{
+		"bookName": "全民英檢初級",
+		"size": "2190",
+		"fileSize": "2.56 MB",
+		"explanation": "全民英語能力分級檢定測驗-初級"
+	},
+	{
+		"bookName": "全民英檢中級",
+		"size": "2670",
+		"fileSize": "2.63 MB",
+		"explanation": "全民英語能力分級檢定測驗-中級"
+	},
+	{
+		"bookName": "全民英檢中高級",
+		"size": "3225",
+		"fileSize": "2.55 MB",
+		"explanation": "全民英語能力分級檢定測驗-中高級"
+	},
+	{
+		"bookName": "托福單字精選",
+		"size": "2908",
+		"fileSize": "2.62 MB",
+		"explanation": "檢定非英語為母語者的英語能力考試(TOEFL)"
+	},
+	{
+		"bookName": "雅思單字精選",
+		"size": "4547",
+		"fileSize": "4.24 MB",
+		"explanation": "國際英語測試系統(IELTS)"
+	},
+	{
+		"bookName": "新多益核心單字",
+		"size": "1259",
+		"fileSize": "0.975 MB",
+		"explanation": "TOEIC由美國教育學習服務社（ETS）所研發, 針對在英語社會求職之需要"
+	},
+	{
+		"bookName": "新多益高頻單字",
+		"size": "1631",
+		"fileSize": "1.33 MB",
+		"explanation": "TOEIC由美國教育學習服務社（ETS）所研發, 針對在英語社會求職之需要"
+	},
+	{
+		"bookName": "學測高頻單字",
+		"size": "2000",
+		"fileSize": "2.09 MB",
+		"explanation": "大學入學學科能力測驗"
+	},
+	{
+		"bookName": "高中分級level1",
+		"size": "396",
+		"fileSize": "0.558 MB",
+		"explanation": "大學入學考試中心英文分級"
+	},
+	{
+		"bookName": "高中分級level2",
+		"size": "769",
+		"fileSize": "0.918 MB",
+		"explanation": "大學入學考試中心英文分級"
+	},
+	{
+		"bookName": "高中分級level3",
+		"size": "711",
+		"fileSize": "0.836 MB",
+		"explanation": "大學入學考試中心英文分級"
+	},
+	{
+		"bookName": "高中分級level4",
+		"size": "723",
+		"fileSize": "0.735 MB",
+		"explanation": "大學入學考試中心英文分級"
+	},
+	{
+		"bookName": "高中分級level5",
+		"size": "277",
+		"fileSize": "0.286 MB",
+		"explanation": "大學入學考試中心英文分級"
+	},
+	{
+		"bookName": "高中分級level6",
+		"size": "342",
+		"fileSize": "0.305 MB",
+		"explanation": "大學入學考試中心英文分級"
+	},
+	{
+		"bookName": "國小基礎單字",
+		"size": "1024",
+		"fileSize": "1.23 MB",
+		"explanation": "國小基礎"
+	},
+	{
+		"bookName": "國中基礎單字",
+		"size": "1200",
+		"fileSize": "1.46 MB",
+		"explanation": "國中基礎"
+	},
+	{
+		"bookName": "國中進階單字",
+		"size": "787",
+		"fileSize": "0.885 MB",
+		"explanation": "國中進階"
+	}
+]

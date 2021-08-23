@@ -19,7 +19,6 @@
             style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:layout_marginBottom="24dp"
             android:padding="16dp"
             app:icon="@drawable/ic_baseline_bookmark_24"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -61,7 +60,6 @@
             android:layout_marginTop="4dp"
             android:paddingEnd="16dp"
             android:paddingBottom="16dp"
-            android:text="有關於多益的考試精選單字有關於多益的考試精選單字"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             android:textColor="@color/black60"
             app:layout_constraintEnd_toStartOf="@id/moreIcon"
@@ -74,10 +72,10 @@
             style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:layout_marginBottom="24dp"
             android:padding="16dp"
             app:icon="@drawable/ic_baseline_more_vert_24"
             app:iconTint="@color/icon_black"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 

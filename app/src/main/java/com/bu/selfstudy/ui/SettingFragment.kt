@@ -16,6 +16,7 @@ import com.bu.selfstudy.data.repository.SearchRepository
 import com.bu.selfstudy.databinding.FragmentSettingBinding
 import com.bu.selfstudy.tool.showToast
 import com.bu.selfstudy.tool.viewBinding
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -59,6 +60,24 @@ class SettingFragment : Fragment() {
                     findPreference<Preference>("clear_search")?.isEnabled = it.isNotEmpty()
                 }
             }
+
+            findPreference<Preference>("backup")?.setOnPreferenceClickListener {
+                if(FirebaseAuth.getInstance().currentUser == null)
+                    (requireActivity() as MainActivity).signInWithFirebase()
+                else{
+                    (requireActivity() as MainActivity).backupUserData()
+                }
+                return@setOnPreferenceClickListener true
+            }
+            findPreference<Preference>("restore")?.setOnPreferenceClickListener {
+                if(FirebaseAuth.getInstance().currentUser == null)
+                    (requireActivity() as MainActivity).signInWithFirebase()
+                else{
+                    (requireActivity() as MainActivity).restoreUserData()
+                }
+                return@setOnPreferenceClickListener true
+            }
+
 
             findPreference<Preference>("clear_search")?.setOnPreferenceClickListener {
                 lifecycleScope.launch {

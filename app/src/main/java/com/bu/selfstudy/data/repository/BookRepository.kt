@@ -7,6 +7,7 @@ import com.bu.selfstudy.data.AppDatabase.Companion.getDatabase
 import com.bu.selfstudy.data.local.LoadLocalBook
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 
 //use coroutine, try-catch, don't write many code here
 object BookRepository {
@@ -38,24 +39,26 @@ object BookRepository {
     }
 
 
-    suspend fun insertLocalBook(bookName: String) = withContext(Dispatchers.IO) {
+    suspend fun insertLocalBook(bookName: String,explanation: String, file: File) = withContext(Dispatchers.IO) {
         val bookId = insertBook(
             Book(
                 memberId = SelfStudyApplication.memberId,
-                bookName = bookName
+                bookName = bookName,
+                explanation = explanation
             )
         )[0]
 
-        LoadLocalBook.loadBookData(bookName).let { wordList->
+        LoadLocalBook.loadBookData(file).let { wordList->
             wordList.forEach { it.bookId = bookId }
 
             WordRepository.insertWord(*wordList.toTypedArray()).also { idList->
-                return@withContext if(idList.isNotEmpty())
-                    "新增成功"
-                else
-                    "新增失敗"
+                updateBookSize(bookId = bookId)
+                file.delete()
+                return@withContext idList.isNotEmpty()
             }
         }
+
+        return@withContext false
     }
 
     //update
@@ -67,8 +70,11 @@ object BookRepository {
         bookDao.updatePosition(bookId, position)
     }
 
-    suspend fun updateBookSize() = withContext(Dispatchers.IO){
-        bookDao.updateSize()
+    suspend fun updateBookSize(bookId: Long = 0L) = withContext(Dispatchers.IO){
+        if(bookId > 0L)
+            bookDao.updateSize(bookId)
+        else
+            bookDao.updateSizeAllBook()
     }
 
     suspend fun updateIsArchive(bookId: Long, isArchive: Boolean) = withContext(Dispatchers.IO){

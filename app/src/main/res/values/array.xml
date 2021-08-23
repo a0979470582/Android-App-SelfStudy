@@ -15,10 +15,6 @@
         <item>@color/book_color_10</item>
     </array>
 
-    <string-array name="local_book_list">
-        <item></item>
-    </string-array>
-
     <!--preference-->
     <string-array name="theme_keys" >
         <item>day</item>

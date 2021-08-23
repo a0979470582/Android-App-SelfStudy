@@ -14,8 +14,8 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/closeIcon"
             style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:paddingTop="9dp"
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/closeIcon"
             android:paddingStart="12dp"
-            android:paddingTop="16dp"
+            android:paddingTop="15dp"
             android:paddingEnd="12dp"
             android:text="檢視"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
@@ -38,10 +38,23 @@
             android:textStyle="normal" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/searchIcon"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingTop="6dp"
+            app:icon="@drawable/ic_baseline_manage_search_24"
+            app:iconGravity="textStart"
+            app:iconTint="@color/black60"
+            android:layout_toStartOf="@id/resetIcon"/>
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/resetIcon"
             style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:paddingTop="6dp"
@@ -57,7 +70,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
+        android:paddingTop="22dp"
         android:paddingStart="16dp"
         android:paddingBottom="8dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"

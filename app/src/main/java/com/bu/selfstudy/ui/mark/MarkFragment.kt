@@ -200,7 +200,7 @@ class MarkFragment : Fragment() {
 
 
     fun updateMarkWord(wordId:Long, isMark: Boolean){
-        viewModel.updateMarkWord(wordId, isMark)
+        viewModel.updateMarkWord(wordId, isMark = isMark)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -3,37 +3,42 @@ package com.bu.selfstudy
 import android.app.Activity
 import android.app.SearchManager
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.MenuRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
-import androidx.core.view.setMargins
 import androidx.databinding.DataBindingUtil
-import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.*
+import androidx.sqlite.db.SimpleSQLiteQuery
+import com.bu.selfstudy.data.AppDatabase
+import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.ActivityMainBinding
 import com.bu.selfstudy.databinding.ActivityNavHeaderBinding
 import com.bu.selfstudy.tool.*
+import com.bu.selfstudy.ui.archive.ArchiveFragmentDirections
+import com.bu.selfstudy.ui.book.BookFragmentDirections
 import com.bu.selfstudy.ui.search.SearchFragment
+import com.bu.selfstudy.ui.word.WordFragment
 import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
-import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
+import kotlin.math.roundToInt
 
 
 /**
@@ -98,11 +103,7 @@ class MainActivity : AppCompatActivity(){
         }
 */
 
-        val authProvider = listOf(
-                AuthUI.IdpConfig.GoogleBuilder().build(),
-                AuthUI.IdpConfig.FacebookBuilder().build(),
-                AuthUI.IdpConfig.EmailBuilder().build()
-        )
+
 
         val authListener: FirebaseAuth.AuthStateListener =
                 FirebaseAuth.AuthStateListener { auth: FirebaseAuth ->
@@ -111,13 +112,20 @@ class MainActivity : AppCompatActivity(){
                         _binding.mailField.text = ""
                         _binding.userNameField.text = "點擊登入"
                         _binding.iconImage.setImageResource(R.drawable.ic_shooting_star)
+                        _binding.moreIcon.isVisible = false
                     } else {
                         _binding.mailField.text = user.email
                         _binding.userNameField.text = user.displayName
-                        Picasso.get()
-                                .load(user.photoUrl)
-                                .error(R.drawable.app_icon)
-                                .into(_binding.iconImage)
+                        _binding.moreIcon.isVisible = true
+                        if(user.photoUrl == null)
+                            _binding.iconImage.setImageResource(R.drawable.ic_shooting_star)
+                        else{
+                            user.photoUrl
+                            Picasso.get()
+                                    .load(user.photoUrl)
+                                    .error(R.drawable.app_icon)
+                                    .into(_binding.iconImage)
+                        }
                     }
                 }
 
@@ -126,20 +134,122 @@ class MainActivity : AppCompatActivity(){
 
         _binding.linearLayout.setOnClickListener {
             if(FirebaseAuth.getInstance().currentUser == null){
-                val intent = AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(authProvider)
-                        .setAlwaysShowSignInMethodScreen(true)
-                        .setIsSmartLockEnabled(false)
-                        .setLogo(R.drawable.app_icon)
-                        .setTosAndPrivacyPolicyUrls("https://policies.google.com/terms?hl=zh-TW",
-                                "https://policies.google.com/privacy?hl=zh-TW")
-                        .setTheme(R.style.LoginTheme)
-                        .build()
-                startActivityForResult(intent, SIGN_IN)
+                signInWithFirebase()
             }
         }
+        _binding.moreIcon.setOnClickListener {
+            val popup = PopupMenu(this, it)
 
+            popup.menuInflater.inflate(R.menu.activity_nav_view_more, popup.menu)
+
+            popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+                when (menuItem.itemId) {
+                    R.id.action_backup -> {
+                        backupUserData()
+                    }
+                    R.id.action_logout -> {
+                        signOutWithFirebase()
+                    }
+                }
+                true
+            }
+
+            popup.show()
+
+        }
+
+    }
+
+    fun backupUserData(){
+
+        if(FirebaseAuth.getInstance().currentUser == null) {
+            signInWithFirebase()
+            return
+        }
+
+        val storageReference = FirebaseStorage.getInstance().reference
+
+        val file1 = Uri.fromFile(getDatabasePath("app_database"))
+        val file2 = Uri.fromFile(getDatabasePath("app_database-wal"))
+        val file3 = Uri.fromFile(getDatabasePath("app_database-shm"))
+
+
+        "備份中...請稍後".showToast()
+        lifecycleScope.launchWhenStarted() {
+            launch(Dispatchers.IO) {
+                AppDatabase.getDatabase().appDatabaseDao().checkpoint(
+                        SimpleSQLiteQuery("pragma wal_checkpoint(full)")
+                ).log()
+            }
+        }
+        /*storageReference.child("user_backup_file/${file1.lastPathSegment}").putFile(file1)
+                .addOnFailureListener {
+                    it.toString().log()
+                }.addOnSuccessListener { taskSnapshot ->
+                    "備份成功".showToast()
+                }.addOnProgressListener {
+                    val number = it.bytesTransferred.toDouble()
+                            .div(it.totalByteCount)
+                            .times(100)
+                            .roundToInt()
+                    "備份中...${number}%".showToast()
+                }
+        storageReference.child("user_backup_file/${file2.lastPathSegment}").putFile(file2)
+        storageReference.child("user_backup_file/${file3.lastPathSegment}").putFile(file3)*/
+    }
+    fun restoreUserData(){
+        if(FirebaseAuth.getInstance().currentUser == null) {
+            signInWithFirebase()
+            return
+        }
+
+        val storageReference = FirebaseStorage.getInstance().reference
+
+        val file1 = Uri.fromFile(getDatabasePath("app_database"))
+        val file2 = Uri.fromFile(getDatabasePath("app_database-wal"))
+        val file3 = Uri.fromFile(getDatabasePath("app_database-shm"))
+
+        "還原檔案下載中...".showToast()
+        storageReference.child("user_backup_file/${file2.lastPathSegment}").getFile(file2)
+        storageReference.child("user_backup_file/${file3.lastPathSegment}").getFile(file3)
+        storageReference.child("user_backup_file/${file1.lastPathSegment}")
+                .getFile(file1).addOnSuccessListener {
+                    "還原成功".showToast()
+                }.addOnFailureListener {
+                    if(!hasNetwork())
+                        "開啟網路來進行還原".showToast()
+                    else
+                        "還原未完成".showToast()
+                }
+
+    }
+
+    fun signOutWithFirebase(){
+        AuthUI.getInstance().signOut(this).addOnCompleteListener {
+            if(it.isSuccessful)
+                "登出成功".showToast()
+        }
+    }
+
+
+    fun signInWithFirebase(){
+        val authProvider = listOf(
+                AuthUI.IdpConfig.GoogleBuilder().build(),
+                AuthUI.IdpConfig.FacebookBuilder().build(),
+                AuthUI.IdpConfig.EmailBuilder().build()
+        )
+
+        val intent = AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setAvailableProviders(authProvider)
+                .setAlwaysShowSignInMethodScreen(true)
+                .setIsSmartLockEnabled(false)
+                .setLogo(R.drawable.ic_astronaut)
+                .setTosAndPrivacyPolicyUrls("https://policies.google.com/terms?hl=zh-TW",
+                        "https://policies.google.com/privacy?hl=zh-TW")
+                .setTheme(R.style.LoginTheme)
+                .build()
+        startActivityForResult(intent, SIGN_IN)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -147,7 +257,17 @@ class MainActivity : AppCompatActivity(){
         if (requestCode == SIGN_IN) {
             if (resultCode != Activity.RESULT_OK) {
                 val response = IdpResponse.fromResultIntent(data)
-                Toast.makeText(applicationContext, response?.error?.errorCode.toString(), Toast.LENGTH_SHORT).show()
+                response?.error?.errorCode?.let {
+                    when(it){
+                        ErrorCodes.NO_NETWORK -> "開啟網路連接更多內容".showToast()
+                        ErrorCodes.EMAIL_MISMATCH_ERROR -> "Email 帳號或密碼有誤".showToast()
+                        ErrorCodes.PROVIDER_ERROR->"第三方錯誤".showToast()
+                        ErrorCodes.UNKNOWN_ERROR->"未知錯誤".showToast()
+                        else->"$it".log()
+                    }
+                }
+            }else{
+                "登入成功".showToast()
             }
         }
     }

@@ -5,6 +5,7 @@
         android:id="@+id/action_save"
         android:icon="@drawable/ic_baseline_save_24"
         android:title="@string/icon_save"
+        app:tint="@color/black60"
         app:showAsAction="always"/>
 
 </menu>

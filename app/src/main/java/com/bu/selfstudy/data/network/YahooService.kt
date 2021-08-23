@@ -156,7 +156,8 @@ object YahooService {
 
 
         word.wordName?.let{ wordName->
-            Regex("https:.{10,100}${wordName}.mp3").find(document.html())?.let { result->
+            val audioName = if(" " in wordName) wordName.replace(" ", "_") else wordName
+            Regex("https:.{10,100}${audioName}.mp3", RegexOption.IGNORE_CASE).find(document.html())?.let { result->
                 word.audioFilePath = result.value.replace("\\", "")
             }
 

@@ -9,13 +9,16 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import com.bu.selfstudy.ActivityViewModel
+import com.bu.selfstudy.MainActivity
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.FragmentAddBookBinding
 import com.bu.selfstudy.tool.closeKeyboard
 import com.bu.selfstudy.tool.openKeyboard
 import com.bu.selfstudy.tool.viewBinding
+import com.bu.selfstudy.ui.SettingFragment
 
 class AddBookFragment: Fragment()  {
 
@@ -31,8 +34,6 @@ class AddBookFragment: Fragment()  {
     ) = binding.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setHasOptionsMenu(true)
-
         /**
          * 1. bookname輸入完按下確認後, 可跳到輸入explanation處
          */
@@ -59,6 +60,19 @@ class AddBookFragment: Fragment()  {
         openKeyboard()
 
     }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        setHasOptionsMenu(true)
+
+        (activity as MainActivity).let {
+            it.setSupportActionBar(binding.toolbar)
+
+            NavigationUI.setupActionBarWithNavController(
+                    it, findNavController(), it.appBarConfiguration)
+        }
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()

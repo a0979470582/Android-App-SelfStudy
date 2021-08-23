@@ -16,20 +16,18 @@ import androidx.core.view.isVisible
 import androidx.customview.widget.ViewDragHelper
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.HORIZONTAL
-import androidx.recyclerview.widget.RecyclerView.VERTICAL
+import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.MainActivity
 import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
@@ -40,7 +38,6 @@ import com.bu.selfstudy.tool.myselectiontracker.IdItemKeyProvider
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.leinardi.android.speeddial.SpeedDialView
-import kotlinx.coroutines.launch
 
 
 /**
@@ -64,24 +61,21 @@ import kotlinx.coroutines.launch
 class WordFragment : Fragment() {
     private val args: WordFragmentArgs by navArgs()
     private val viewModel: WordViewModel by viewModels()
+    private val activityViewModel: ActivityViewModel by activityViewModels()
     private val binding: FragmentWordBinding by viewBinding()
 
-    private val cardAdapter = CardAdapter(fragment = this)
-    private val listAdapter = ListAdapter(fragment = this)
-    private val listAdapter2 = ListAdapter2(fragment = this)
-
-
-    private val pagerSnapHelper = PagerSnapHelper()
-
-
-    private var actionMode: ActionMode? = null
-    private var h_LayoutManager: LinearLayoutManager? = null
-    private var v_LayoutManager: LinearLayoutManager? = null
-
-    private var onScrollListener: RecyclerView.OnScrollListener? = null
     private var drawerListener: DrawerLayout.DrawerListener? = null
-    private var fastScroll: FastScroller? = null
+    private val linearLayoutManager by lazy { LinearLayoutManagerWrapper(requireContext()) }
 
+    //card
+    private val cardAdapter by lazy { CardAdapter(fragment = this) }
+    private val pagerSnapHelper by lazy { PagerSnapHelper() }
+    private var onScrollListener: RecyclerView.OnScrollListener? = null
+
+    //list
+    private val listAdapter by lazy { ListAdapter(fragment = this) }
+    private var actionMode: ActionMode? = null
+    private var fastScroll: FastScroller? = null
     private var tracker: SelectionTracker<Long>? = null
 
     companion object{
@@ -101,12 +95,11 @@ class WordFragment : Fragment() {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-         lifecycleScope.launch {
-             initLayoutManager()
-             initRecyclerView(savedInstanceState)
-             setSlideSheetListener()
-             setDialogResultListener()
-         }
+
+         initRecyclerView()
+
+         setSlideSheetListener()
+         setDialogResultListener()
 
          viewModel.bookIdLiveData.value = args.bookId
 
@@ -118,17 +111,17 @@ class WordFragment : Fragment() {
          //觸發wordList變更有可能是傳入初始值, 修改, 刪除, 新增等情況,
          //假如刪除一列, 建議只notifyItem
          viewModel.wordListLiveData.observe(viewLifecycleOwner) {
-             binding.explainImage.visibility = if(it.isEmpty()) View.VISIBLE else View.INVISIBLE
-             binding.explainText.visibility = if(it.isEmpty()) View.VISIBLE else View.INVISIBLE
+             binding.wordNotFound.root.isVisible = it.isEmpty()
 
-             cardAdapter.submitList(it)
-             setPagerViewItem()
+             if(viewModel.getLastBackStack() == TYPE_CARD){
+                 cardAdapter.submitList(it)
+                 setPagerViewItem()
+             }else {
+                 listAdapter.submitList(it)
+             }
 
-             listAdapter.submitList(it)
              viewModel.refreshWordIdList(it)
-
-             listAdapter2.submitList(it)
-
+             viewModel.refreshMarkedWordIdList(it)
          }
 
          viewModel.markLiveData.observe(viewLifecycleOwner){
@@ -142,6 +135,10 @@ class WordFragment : Fragment() {
                  "mark" -> return@observe
                  "cancelMark" -> return@observe
                  "update" -> "更新已保存".showToast()
+                 "copy"-> ("已複製 ${it.second?.get("count")} 個單字到 「${activityViewModel.getBookName(
+                         it.second?.get("bookId") as Long)}」").showToast()
+                 "move"-> ("已轉移 ${it.second?.get("count")} 個單字到 「${activityViewModel.getBookName(
+                         it.second?.get("bookId") as Long)}」").showToast()
              }
         }
 
@@ -156,7 +153,7 @@ class WordFragment : Fragment() {
                 if (viewModel.getLastBackStack() != TYPE_CARD)
                     return
 
-                val position = h_LayoutManager!!.findFirstCompletelyVisibleItemPosition()
+                val position = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
 
                 if(position == -1)
                     return
@@ -201,25 +198,15 @@ class WordFragment : Fragment() {
             NavigationUI.setupActionBarWithNavController(
                     it, findNavController(), it.appBarConfiguration)
         }
-
-        initSpeedDial()
-
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        setDrawerLock(false)
         binding.recyclerView.removeOnScrollListener(onScrollListener!!)
         onScrollListener = null
         binding.slideSheet.removeDrawerListener(drawerListener!!)
         drawerListener = null
-    }
-
-    private fun initLayoutManager() {
-        if(h_LayoutManager == null)
-            h_LayoutManager = LinearLayoutManagerWrapper(requireContext(), HORIZONTAL, false)
-        if(v_LayoutManager == null)
-            v_LayoutManager = LinearLayoutManagerWrapper(requireContext(), VERTICAL, false)
-
     }
 
 
@@ -260,92 +247,92 @@ class WordFragment : Fragment() {
     }
 
     fun updateMarkWord(wordId: Long, isMark: Boolean){
-        viewModel.updateMarkWord(wordId, isMark)
+        viewModel.updateMarkWord(wordId, isMark = isMark)
     }
 
 
-    private fun initRecyclerView(savedInstanceState: Bundle?){
-        if(savedInstanceState == null)
+    private fun initRecyclerView(){
+        binding.recyclerView.layoutManager = linearLayoutManager
+
+        if(viewModel.getLastBackStack() == null)
             switchRecyclerView(args.type)
         else
             switchRecyclerView(
-                savedInstanceState["type"] as Int,
-                viewModel.currentPosition ?: -1,
+                type = viewModel.getLastBackStack()!!,
+                position = viewModel.currentPosition ?: -1,
             )
     }
 
     fun switchRecyclerView(type: Int, position:Int = -1) {
-
-        if(type != viewModel.getLastBackStack())
-            actionMode?.finish()
-
         viewModel.addBackStack(type)
 
         with(binding.recyclerView) {
             when (type) {
                 TYPE_CARD -> {
-                    layoutManager = h_LayoutManager
-                    adapter = cardAdapter
-                    pagerSnapHelper.attachToRecyclerView(binding.recyclerView)
-                    setChipState(R.id.chipCard, true)
                     fastScroll?.destroyCallbacks()
+                    pagerSnapHelper.attachToRecyclerView(binding.recyclerView)
+                    linearLayoutManager.orientation = RecyclerView.HORIZONTAL
+                    adapter = cardAdapter
+                    viewModel.wordListLiveData.value?.let {
+                        cardAdapter.submitList(it)
+                    }
+                    setChipState(R.id.chipCard, true)
+                    initSpeedDial()
                 }
-                TYPE_LIST -> {
-                    layoutManager = v_LayoutManager
-                    adapter = listAdapter2
-                    pagerSnapHelper.attachToRecyclerView(null)
-                    setChipState(R.id.chipList, true)
+                TYPE_LIST, TYPE_SIMPLE  -> {
                     fastScroll?.attachToRecyclerView(binding.recyclerView)
-                }
-                TYPE_SIMPLE -> {
-                    layoutManager = v_LayoutManager
+                    pagerSnapHelper.attachToRecyclerView(null)
+                    linearLayoutManager.orientation = RecyclerView.VERTICAL
                     adapter = listAdapter
-                    pagerSnapHelper.attachToRecyclerView(null)
-                    setChipState(R.id.chipSimple, true)
-                    fastScroll?.attachToRecyclerView(binding.recyclerView)
+                    listAdapter.setTranslationIsVisible(type == TYPE_LIST)
+                    viewModel.wordListLiveData.value?.let {
+                        listAdapter.submitList(it)
+                    }
+                    setChipState(if(type== TYPE_LIST) R.id.chipList else R.id.chipSimple, true)
                 }
             }
+        }
 
-            runRecyclerViewAnimation()
-
-            if(position != -1){
-                if(type == TYPE_CARD)
-                    setPagerViewCurrentItem(position)
-                else {
-                    scrollToPosition(position + 1)
-                }
+        if(position != -1){
+            if(type == TYPE_CARD)
+                setPagerViewCurrentItem(position)
+            else {
+                binding.recyclerView.scrollToPosition(if(position==0) 0 else position+1)
             }
+        }
 
-            setFabIsVisible(
-                    type == TYPE_CARD &&
-                    !binding.slideSheet.isDrawerOpen(GravityCompat.END)
-            )
+        runRecyclerViewAnimation()
 
-            if(type!= TYPE_CARD){
-                if(tracker == null)
-                    initTracker()
 
-                if(fastScroll == null )
-                    initFastScroll()
+        if(type!= TYPE_CARD){
+            if(tracker == null)
+                initTracker()
 
-            }
+            if(fastScroll == null )
+                initFastScroll()
+        }
 
-            if(type == TYPE_CARD){
-                activity?.findViewById<DrawerLayout>(R.id.drawerLayout)?.setDrawerLockMode(
-                        DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-                binding.slideSheet.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-            }else{
-                activity?.findViewById<DrawerLayout>(R.id.drawerLayout)?.setDrawerLockMode(
-                        DrawerLayout.LOCK_MODE_UNLOCKED)
-                binding.slideSheet.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        setFabIsVisible(
+            type == TYPE_CARD && !binding.slideSheet.isDrawerOpen(GravityCompat.END)
+        )
 
-            }
+        setDrawerLock(type == TYPE_CARD)
+    }
+
+    private fun setDrawerLock(isLock: Boolean){
+        if(isLock){
+            binding.slideSheet.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            activity?.findViewById<DrawerLayout>(R.id.drawerLayout)?.setDrawerLockMode(
+                    DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+        }else{
+            binding.slideSheet.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+            activity?.findViewById<DrawerLayout>(R.id.drawerLayout)?.setDrawerLockMode(
+                    DrawerLayout.LOCK_MODE_UNLOCKED)
         }
     }
 
     fun setFabIsVisible(isVisible: Boolean){
-        requireActivity().findViewById<SpeedDialView>(
-                R.id.speedDialView)?.isVisible = isVisible
+        binding.speedDialView.isVisible = isVisible
     }
 
     fun setChipState(chipId: Int, isChecked: Boolean){
@@ -386,9 +373,18 @@ class WordFragment : Fragment() {
                 }
             else
                 viewModel.longPressedWordIdList.let {
-                    if(it.isNotEmpty())
+                    if(it.isNotEmpty()) {
+                        actionMode?.finish()
                         viewModel.deleteWord(*it.toLongArray())
+                    }
                 }
+        }
+        setFragmentResultListener("DialogChooseBook"){ string, bundle->
+            actionMode?.finish()
+            when(viewModel.actionType){
+                "copy"->viewModel.copyWord(bundle.getLong("bookId"))
+                "move"->viewModel.moveWord(bundle.getLong("bookId"))
+            }
         }
     }
 
@@ -414,6 +410,7 @@ class WordFragment : Fragment() {
                     switchRecyclerView(type, viewModel.currentPosition ?: 0)
             }
             findViewById<RadioGroup>(R.id.radioGroupLabel).setOnCheckedChangeListener { _, checkedId ->
+                actionMode?.finish()
                 viewModel.onlyMarkLiveData.value = when(checkedId){
                     R.id.buttonAll -> false
                     R.id.buttonMark -> true
@@ -452,8 +449,10 @@ class WordFragment : Fragment() {
     }
 
     /**
-     * SelectionTracker內部使用EventBridge類來連接RecyclerView, 它無法動態更改Adapter,
+     * 1. SelectionTracker內部使用EventBridge類來連接RecyclerView, 它無法動態更改Adapter,
      * 因此在使用正確的Adapter時再初始化SelectionTracker
+     *
+     * 2. 批量移除與tracker連接的資料時要先將其關閉, 它會浪費資源走訪被移除的資料列, 及有機率拋出異常
      */
     private fun initTracker() {
         if(tracker != null)
@@ -468,7 +467,6 @@ class WordFragment : Fragment() {
         ).withSelectionPredicate(SelectionPredicates.createSelectAnything())
                 .build().also {
                     listAdapter.tracker = it
-                    listAdapter2.tracker = it
                 }
 
         val selectionObserver = object : SelectionTracker.SelectionObserver<Long>() {
@@ -481,12 +479,13 @@ class WordFragment : Fragment() {
                 if (!tracker!!.hasSelection()) {
                     actionMode?.finish()
                 } else {
-                    viewModel.refreshLongPressedWord(tracker!!.selection.toList())
+                    viewModel.refreshLongPressedWord(tracker!!.selection.toList())//ArrayList
                     if (actionMode == null) {
                         actionMode = (activity as AppCompatActivity)
                                 .startSupportActionMode(actionModeCallback)
                     }
                     actionMode?.title = "${tracker!!.selection.size()}/${viewModel.wordListLiveData.value?.size}"
+                    actionMode?.invalidate()
                 }
             }
 
@@ -501,6 +500,8 @@ class WordFragment : Fragment() {
     }
 
     private fun initSpeedDial() {
+        if(binding.speedDialView.actionItems.isNotEmpty())
+            return
 
         with(binding.speedDialView){
             setMainFabClosedDrawable(resources.getDrawable(R.drawable.ic_baseline_edit_24))
@@ -523,7 +524,11 @@ class WordFragment : Fragment() {
             // Set option fabs click listeners.
             this.setOnActionSelectedListener { actionItem ->
                 if(actionItem.id == R.id.fab_add_word)
-                    findNavController().navigate(R.id.searchFragment)
+                    findNavController().navigate(
+                            NavGraphDirections.actionGlobalSearchFragment(
+                                    bookId = viewModel.bookIdLiveData.value?:0
+                            )
+                    )
 
                 if(viewModel.wordListLiveData.value.isNullOrEmpty())
                     return@setOnActionSelectedListener false
@@ -549,14 +554,14 @@ class WordFragment : Fragment() {
                     R.id.fab_mark_word -> {
                         viewModel.currentOpenWord?.let {
                             replaceActionItem(actionItem, ActionItemCreator.cancelMarkItem)
-                            viewModel.updateMarkWord(it.id, true)
+                            viewModel.updateMarkWord(it.id, isMark = true)
                             resources.getString(R.string.toast_success_mark).showToast()
                         }
                     }
                     R.id.fab_cancel_mark_word -> {
                         viewModel.currentOpenWord?.let {
                             replaceActionItem(actionItem, ActionItemCreator.markItem)
-                            viewModel.updateMarkWord(it.id, false)
+                            viewModel.updateMarkWord(it.id, isMark =false)
                             resources.getString(R.string.toast_cancel_mark).showToast()
                         }
                     }
@@ -623,7 +628,6 @@ class WordFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         tracker?.onSaveInstanceState(outState)
-        outState.putInt("type", viewModel.getLastBackStack()!!)
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
@@ -642,7 +646,12 @@ class WordFragment : Fragment() {
             return true
         }
 
-        override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = false
+        override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean{
+            menu.findItem(R.id.action_edit).isEnabled =
+                    (viewModel.longPressedWordIdList.size == 1)
+
+            return true
+        }
 
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
             actionModeMenuCallback(item.itemId)
@@ -657,30 +666,48 @@ class WordFragment : Fragment() {
 
     private fun actionModeMenuCallback(itemId: Int){
         when (itemId) {
-            R.id.action_delete -> {
-                findNavController().navigate(
+            R.id.action_delete -> findNavController().navigate(
                     NavGraphDirections.actionGlobalDialogDeleteCommon(
                         "刪除單字",
                         "是否刪除 ${viewModel.longPressedWordIdList.size} 個單字?"
                     )
                 )
-            }
-            R.id.action_choose_all -> {
-                tracker!!.setItemsSelected(
+            R.id.action_choose_all -> tracker!!.setItemsSelected(
                     viewModel.wordIdList,
                     viewModel.wordIdList.size != tracker!!.selection.size()
                 )
-            }
+            R.id.action_mark-> viewModel.updateMarkWord(
+                    *viewModel.longPressedWordIdList.toLongArray(),
+                    isMark = viewModel.longPressedWordIdList.any {
+                        !viewModel.markedWordIdList.contains(it)
+                    }
+                )
 
             R.id.action_copy -> {
-                //navigateToChooseBookDialog("copy")
+                viewModel.actionType = "copy"
+                findNavController().navigate(
+                        NavGraphDirections.actionGlobalDialogChooseBook(
+                                title = "複製到題庫",
+                                bookId = viewModel.bookIdLiveData.value!!
+                        )
+                )
             }
             R.id.action_move -> {
-                //navigateToChooseBookDialog("move")
-                /*viewModel.ChoosedBook?.let {
-                    val action = BookFragmentDirections.actionBookFragmentToEditBookDialog(it.bookName)
-                    findNavController().navigate(action)
-                }*/
+                viewModel.actionType = "move"
+                findNavController().navigate(
+                        NavGraphDirections.actionGlobalDialogChooseBook(
+                                title = "轉移到題庫",
+                                bookId = viewModel.bookIdLiveData.value!!
+                        )
+                )
+            }
+            R.id.action_edit->{
+                viewModel.getWord(viewModel.longPressedWordIdList.first())?.let { word->
+                    actionMode?.finish()
+                    findNavController().navigate(
+                            NavGraphDirections.actionGlobalEditWordFragment(word)
+                    )
+                }
             }
         }
     }

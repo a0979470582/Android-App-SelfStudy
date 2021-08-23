@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.textview.MaterialTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/notFoundTextView"
+    android:layout_width="match_parent"
+    android:layout_height="350dp"
+    android:layout_marginBottom="16dp"
+    android:layout_gravity="center_vertical"
+    android:drawableTop="@drawable/ic_astronomy"
+    android:drawablePadding="32dp"
+    android:gravity="center"
+    android:text="搜尋單字來加入更多內容"
+    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+    android:textColor="@color/black60"
+    android:textSize="20sp" />

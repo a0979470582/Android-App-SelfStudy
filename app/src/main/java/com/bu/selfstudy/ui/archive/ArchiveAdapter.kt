@@ -11,6 +11,8 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -18,6 +20,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.recyclerview.widget.RecyclerView.Adapter
+import androidx.transition.TransitionManager
 import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
@@ -195,6 +198,7 @@ class ArchiveAdapter(val fragment: ArchiveFragment): Adapter<ViewHolder>() {
                 with(holder.itemBinding){
                     bookNameTextView.text = book.bookName
                     bookSizeTextView.text = "${book.size}"
+                    explanationTextView.text = book.explanation
 
                     bookIcon.iconTint = ColorStateList.valueOf(book.colorInt)
                 }

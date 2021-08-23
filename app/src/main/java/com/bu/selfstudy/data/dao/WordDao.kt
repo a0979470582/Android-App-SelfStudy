@@ -1,15 +1,17 @@
 package com.bu.selfstudy.data.dao
 
-import androidx.paging.DataSource
 import androidx.room.*
-import androidx.sqlite.db.SimpleSQLiteQuery
-import androidx.sqlite.db.SupportSQLiteQuery
+import androidx.room.util.StringUtil
+import androidx.sqlite.db.SupportSQLiteStatement
+import com.bu.selfstudy.data.AppDatabase
 import com.bu.selfstudy.data.model.Word
-import com.bu.selfstudy.data.model.WordTuple
-import com.bu.selfstudy.data.repository.WordRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
+import java.util.concurrent.Callable
+import kotlin.coroutines.Continuation
 
+/**
+ * 注意一個Statement後面所帶變量最多999
+ */
 @Dao
 interface WordDao : BaseDao<Word>{
     companion object{
@@ -21,12 +23,11 @@ interface WordDao : BaseDao<Word>{
 
     //select with one wordId
     @Query("SELECT * FROM Word WHERE id=:wordId")
-    fun loadOneWord(wordId:Long): Flow<Word>
+    fun loadOneWord(wordId: Long): Flow<Word>
 
     //all book, query
-    @Query("SELECT wordName FROM Word WHERE wordName LIKE :query || '%'")
+    @Query("SELECT wordName FROM Word WHERE wordName>=:query AND wordName<=:query||'z'")
     fun searchWords(query: String): Flow<List<String>>
-
 
     @Query("""SELECT * FROM Word WHERE bookId=:bookId AND isMark in (:markList) Order by
         CASE WHEN :sortState=0 THEN timestamp END ASC,
@@ -46,15 +47,96 @@ interface WordDao : BaseDao<Word>{
 
 
     //update
-    @Query("UPDATE Word SET isMark = :isMark WHERE id =:wordId")
-    suspend fun updateMark(wordId:Long, isMark: Boolean): Int
+    @Query("UPDATE Word SET isMark = :isMark WHERE id IN (:wordId)")
+    suspend fun updateMark(vararg wordId: Long, isMark: Boolean): Int
+
+    suspend fun updateMarkBigSize(vararg wordId: Long, isMark: Boolean): Int{
+        return doUpdateDelete(
+                wordId = wordId,
+                baseSql = "UPDATE Word SET isMark=${if(isMark) 1 else 0} WHERE id IN "
+        )
+    }
+
 
     @Query("UPDATE Word SET audioFilePath = :filePath WHERE id = :wordId")
     suspend fun updateAudioFilePath(wordId: Long, filePath: String): Int
+
+    @Query("UPDATE Word SET bookId = :bookId WHERE id IN (:wordId)")
+    suspend fun updateBookId(vararg wordId: Long, bookId: Long): Int
+
+    suspend fun updateBookIdBigSize(vararg wordId: Long, bookId: Long): Int{
+        return doUpdateDelete(
+                wordId = wordId,
+                baseSql = "UPDATE Word SET bookId=${bookId} WHERE id IN "
+        )
+    }
 
     //delete
     @Query("DELETE FROM Word WHERE id IN (:wordId)")
     suspend fun delete(vararg wordId: Long): Int
 
+    /** 同一個任務應在一個Transaction完成, 否則先完成的子任務要返回資料庫現況時,
+     *  會受下一個子任務影響 */
+    suspend fun deleteBigSize(vararg wordId: Long): Int {
+        return doUpdateDelete(
+                wordId = wordId,
+                baseSql = "DELETE FROM Word WHERE id IN "
+        )
+    }
 
+    //tool
+
+    //return 0..900, 900..1800, 1800..2136(exclusive)
+    private fun chopArray(idList: LongArray): ArrayList<LongArray>{
+        val count = 900
+        val arrayList = ArrayList<LongArray>()
+        if(idList.size > count) {
+            var startIndex = 0
+
+            while (true) {
+                if (startIndex + count < idList.size) {
+                    arrayList.add(idList.copyOfRange(startIndex, startIndex + count))
+                    startIndex += count
+                } else {
+                    arrayList.add(idList.copyOfRange(startIndex, idList.size))
+                    break
+                }
+            }
+        }
+
+        return arrayList
+    }
+
+    private fun doUpdateDelete(wordId: LongArray, baseSql: String): Int{
+        val db: AppDatabase = AppDatabase.getDatabase()
+
+        db.beginTransaction()
+        try {
+            val result = chopArray(wordId).map { idList->
+                val stringBuilder = StringBuilder().append(baseSql).append(" (")
+                for (i in idList.indices) {
+                    if(i == idList.lastIndex)
+                        stringBuilder.append("?")
+                    else
+                        stringBuilder.append("?,")
+                }
+                stringBuilder.append(")")
+
+                val stmt: SupportSQLiteStatement = db.compileStatement(stringBuilder.toString())
+                var index = 1
+                for(id in idList){
+                    stmt.bindLong(index, id)
+                    index++
+                }
+
+                val result = stmt.executeUpdateDelete()
+                result
+            }.reduce { acc, unit -> acc + unit }
+
+            db.setTransactionSuccessful()
+            return result
+        }finally {
+            db.endTransaction()
+        }
+    }
 }

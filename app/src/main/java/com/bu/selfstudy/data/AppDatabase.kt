@@ -4,7 +4,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.bu.selfstudy.SelfStudyApplication.Companion.context
 import com.bu.selfstudy.data.dao.*
@@ -31,6 +30,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun searchHistoryDao(): SearchHistoryDao
     abstract fun searchAutoCompleteDao(): SearchAutoCompleteDao
     abstract fun recentWordDao():RecentWordDao
+    abstract fun appDatabaseDao():AppDatabaseDao
+
 
 
 
@@ -43,13 +44,13 @@ abstract class AppDatabase : RoomDatabase() {
                 return it
             }
             return  Room.databaseBuilder(context, AppDatabase::class.java, "app_database")
-                    .fallbackToDestructiveMigration()
-                    //.createFromAsset("database/app_database")
+                    //.fallbackToDestructiveMigration()
+                    .createFromAsset("database/app_database")
                     .addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
                             Executors.newSingleThreadExecutor().execute {
-                                instance?.initialize()
+                                //instance?.initialize()
                             }
                         }
                     })
@@ -74,10 +75,7 @@ abstract class AppDatabase : RoomDatabase() {
         scope.launch{
             Thread.currentThread().name.log()
             member.id = memberDao().insert(member)[0]
-            BookRepository.loadLocalBookNames()?.forEach {
-                BookRepository.insertLocalBook(it)
-            }
-            SearchRepository.insertLocalAutoComplete()
+            SearchRepository.insertLocalAutoComplete("bookData/no_repeat_word.txt")
         }
     }
 }

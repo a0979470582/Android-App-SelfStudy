@@ -28,7 +28,6 @@ data class Book(
         var colorInt: Int = 0,
         var explanation: String="",
 
-
         var timestamp: Date = Date(),
         var isArchive: Boolean = false
 )

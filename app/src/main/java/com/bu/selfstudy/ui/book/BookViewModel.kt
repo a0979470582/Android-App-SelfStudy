@@ -7,6 +7,7 @@ import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.tool.SingleLiveData
 import com.bu.selfstudy.tool.putBundle
 import kotlinx.coroutines.launch
+import java.io.File
 
 
 class BookViewModel : ViewModel(){
@@ -59,6 +60,13 @@ class BookViewModel : ViewModel(){
             chosenBook?.let {
                 BookRepository.updateColor(it.id, colorInt)
             }
+        }
+    }
+
+    fun insertLocalBook(bookName:String, explanation: String, file: File){
+        viewModelScope.launch {
+            if(BookRepository.insertLocalBook(bookName, explanation, file))
+                databaseEvent.postValue("insertLocal" to putBundle("bookName", bookName))
         }
     }
 

@@ -25,8 +25,11 @@ interface BookDao : BaseDao<Book>{
     @Query("UPDATE Book SET isArchive = :isArchive WHERE id=:bookId")
     suspend fun updateIsArchive(bookId: Long, isArchive: Boolean): Int
 
+    @Query("UPDATE Book SET size=(SELECT COUNT(Word.id) FROM Word WHERE bookId=:bookId) WHERE Book.id=:bookId")
+    suspend fun updateSize(bookId: Long): Int
+
     @Query("UPDATE Book SET size=(SELECT COUNT(Word.id) FROM Word WHERE bookId=Book.id)")
-    suspend fun updateSize(): Int
+    suspend fun updateSizeAllBook(): Int
 
     @Query("UPDATE Book SET position=:position WHERE id=:bookId")
     suspend fun updatePosition(bookId: Long, position: Int): Int

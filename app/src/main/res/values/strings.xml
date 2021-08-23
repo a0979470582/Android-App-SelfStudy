@@ -19,6 +19,7 @@
 
     <string name="icon_pronounce">發音</string>
     <string name="icon_search">搜尋</string>
+    <string name="icon_search_local">搜尋本地單字</string>
     <string name="icon_test">測驗</string>
     <string name="icon_background">切換背景</string>
     <string name="icon_send">保存</string>

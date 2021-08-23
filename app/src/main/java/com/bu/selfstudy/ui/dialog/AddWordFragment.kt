@@ -11,7 +11,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.navigation.ui.NavigationUI
 import com.bu.selfstudy.ActivityViewModel
+import com.bu.selfstudy.MainActivity
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.FragmentAddWordBinding
@@ -36,8 +38,19 @@ class AddWordFragment: Fragment() {
         savedInstanceState: Bundle?
     ) = binding.root
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
+
+        (activity as MainActivity).let {
+            it.setSupportActionBar(binding.toolbar)
+
+            NavigationUI.setupActionBarWithNavController(
+                    it, findNavController(), it.appBarConfiguration)
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         //監聽從DialogChooseBook返回的bookId
         setFragmentResultListener("DialogChooseBook"){_, bundle ->

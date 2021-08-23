@@ -44,8 +44,7 @@
         <item name="android:textColor">@color/chip_text_color</item>
     </style>
 
-
-    <!--FirebaseUI-->
+    <!--User Auth FirebaseUI-->
     <style name="LoginTheme" parent="FirebaseUI">
         <!--設置背景圖片-->
         <item name="android:windowBackground">@drawable/app_icon_background2</item>

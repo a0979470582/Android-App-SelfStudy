@@ -79,7 +79,7 @@
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.bu.selfstudy.ui.search.SearchFragment"
-        android:label="從字典搜尋" >
+        android:label="搜尋英文字典" >
         <argument
             android:name="bookId"
             app:argType="long"
@@ -149,7 +149,7 @@
         app:launchSingleTop="true" />
     <fragment
         android:id="@+id/editBookFragment"
-        android:name="com.bu.selfstudy.ui.editword.EditBookFragment"
+        android:name="com.bu.selfstudy.ui.dialog.EditBookFragment"
         android:label="編輯題庫" >
         <argument
             android:name="bookName"
@@ -157,6 +157,10 @@
         <argument android:name="explanation"
             app:argType="string" />
     </fragment>
+    <dialog
+        android:id="@+id/dialogChooseLocalBook"
+        android:name="com.bu.selfstudy.ui.dialog.DialogChooseLocalBook"
+        android:label="DialogChooseLocalBook" />
 
 
 </navigation>

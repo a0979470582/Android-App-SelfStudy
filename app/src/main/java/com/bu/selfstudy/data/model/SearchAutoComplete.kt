@@ -11,6 +11,5 @@ data class SearchAutoComplete (
         @PrimaryKey(autoGenerate = true)
         override var id:Long = 0,
         override var searchName: String,
-        override var timestamp: Date = Date(),
         var isHistory: Boolean = false
 ):SearchRow()

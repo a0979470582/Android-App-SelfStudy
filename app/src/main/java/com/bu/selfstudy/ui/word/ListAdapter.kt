@@ -1,19 +1,16 @@
 package com.bu.selfstudy.ui.word
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
+import androidx.core.view.isVisible
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.WordListItemBinding
 import com.bu.selfstudy.databinding.RecyclerviewHeaderBinding
-import com.bu.selfstudy.tool.log
 
 /**
  * About SelectionTracker
@@ -57,6 +54,7 @@ class ListAdapter(val fragment: WordFragment):RecyclerView.Adapter<RecyclerView.
     private val HEADER_VIEW_TYPE = 0
     private val ITEM_VIEW_TYPE = 1
 
+    private var translationIsVisible = true
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if(viewType == ITEM_VIEW_TYPE){
@@ -85,6 +83,8 @@ class ListAdapter(val fragment: WordFragment):RecyclerView.Adapter<RecyclerView.
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when(holder){
             is ItemViewHolder -> {
+                holder.binding.contentTextView.isVisible = translationIsVisible
+
                 val word = asyncListDiffer.currentList[position]
                 holder.binding.word = word
                 holder.binding.markButton.setIconResource(
@@ -121,7 +121,8 @@ class ListAdapter(val fragment: WordFragment):RecyclerView.Adapter<RecyclerView.
             return oldItem.wordName == newItem.wordName &&
                     oldItem.pronunciation == newItem.pronunciation &&
                     oldItem.isMark == newItem.isMark &&
-                    oldItem.audioFilePath == newItem.audioFilePath
+                    oldItem.audioFilePath == newItem.audioFilePath&&
+                    oldItem.translation == newItem.translation
         }
     }
 
@@ -133,5 +134,9 @@ class ListAdapter(val fragment: WordFragment):RecyclerView.Adapter<RecyclerView.
             asyncListDiffer.submitList(words)
         else
             asyncListDiffer.submitList(listOf(Word()).plus(words))
+    }
+
+    fun setTranslationIsVisible(isVisible: Boolean) {
+        translationIsVisible = isVisible
     }
 }

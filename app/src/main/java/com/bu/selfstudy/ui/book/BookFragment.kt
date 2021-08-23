@@ -7,27 +7,23 @@ import android.view.*
 import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
-import androidx.navigation.ui.setupWithNavController
-import androidx.recyclerview.widget.RecyclerView
-import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.MainActivity
-import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.FragmentBookBinding
 import com.bu.selfstudy.tool.*
-import com.google.android.material.navigation.NavigationView
-import com.leinardi.android.speeddial.SpeedDialView
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.*
 
 class BookFragment : Fragment() {
@@ -100,6 +96,30 @@ class BookFragment : Fragment() {
             val bookName = bundle.getString("bookName")!!
             val explanation = bundle.getString("explanation")!!
             viewModel.editBook(bookName, explanation)
+        }
+        setFragmentResultListener("DialogChooseLocalBook"){_, bundle->
+            "下載題庫中...".showToast()
+            val bookName = bundle.getString("bookName")!!
+            val explanation = bundle.getString("explanation")!!
+            val storageRef = FirebaseStorage
+                    .getInstance()
+                    .reference
+                    .child("local_book/${bookName}.json")
+
+
+            val file = File.createTempFile("test", "json")
+
+            storageRef.getFile(file).addOnSuccessListener {
+                "加入題庫中...".showToast()
+                viewModel.insertLocalBook(bookName, explanation, file)
+            }.addOnFailureListener {
+                if(!hasNetwork())
+                    "開啟網路來下載更多內容".showToast()
+                else
+                    "下載未完成".showToast()
+            }
+
+
         }
     }
 

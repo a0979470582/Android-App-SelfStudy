@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 interface SearchHistoryDao: BaseDao<SearchHistory>{
     //select
     @Query("""SELECT * FROM SearchHistory
-                    WHERE searchName LIKE :query || '%'
+                    WHERE searchName>=:query AND searchName<=:query||'z'
                     ORDER BY timestamp DESC""")
     fun loadHistory(query: String): Flow<List<SearchHistory>>
 
@@ -22,4 +22,8 @@ interface SearchHistoryDao: BaseDao<SearchHistory>{
     //insert
     @Insert(onConflict = OnConflictStrategy.REPLACE)//new search replace old
     suspend fun insertHistory(history: SearchHistory): Long
+
+    //delete
+    @Query("DELETE FROM SearchHistory")
+    suspend fun deleteAll(): Int
 }

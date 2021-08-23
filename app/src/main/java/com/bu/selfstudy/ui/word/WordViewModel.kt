@@ -78,6 +78,14 @@ class WordViewModel : ViewModel(){
         }
     }
 
+    val markedWordIdList = ArrayList<Long>()
+    fun refreshMarkedWordIdList(wordList: List<Word>){
+        viewModelScope.launch {
+            markedWordIdList.clear()
+            markedWordIdList.addAll(wordList.filter { it.isMark }.map { it.id })
+        }
+    }
+
     //將當前頁面同步到資料庫
     var currentOpenWord: Word? = null
     var currentPosition: Int? = null
@@ -99,7 +107,7 @@ class WordViewModel : ViewModel(){
 
     var longPressedWordIdList = ArrayList<Long>()
     fun refreshLongPressedWord(wordIdList: List<Long>){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             longPressedWordIdList.clear()
             longPressedWordIdList.addAll(wordIdList)
         }
@@ -122,10 +130,13 @@ class WordViewModel : ViewModel(){
         it.id==wordId
     }
 
+    fun getWord(wordId: Long) = wordListLiveData.value!!.firstOrNull {
+        it.id==wordId
+    }
 
-    fun updateMarkWord(wordId:Long, isMark: Boolean){
+    fun updateMarkWord(vararg wordId:Long, isMark: Boolean){
         viewModelScope.launch(Dispatchers.IO) {
-            if(WordRepository.updateMark(wordId, isMark)>0){
+            if(WordRepository.updateMark(*wordId, isMark = isMark)>0){
                 databaseEvent.postValue((if(isMark) "mark" else "cancelMark") to null)
             }
         }
@@ -155,4 +166,27 @@ class WordViewModel : ViewModel(){
         }
     }
 
+    var actionType = ""
+    fun copyWord(bookId: Long){
+        viewModelScope.launch {
+            val count = longPressedWordIdList.size
+            if(WordRepository.copyWord(longPressedWordIdList, bookId)>0)
+                databaseEvent.postValue("copy" to (
+                        putBundle("bookId", bookId)
+                                .putBundle("count", count)
+                        )
+                )
+        }
+    }
+    fun moveWord(bookId: Long){
+        viewModelScope.launch {
+            val count = longPressedWordIdList.size
+            if(WordRepository.moveWord(longPressedWordIdList, bookId)>0)
+                databaseEvent.postValue("move" to (
+                            putBundle("bookId", bookId)
+                            .putBundle("count", count)
+                        )
+                )
+        }
+    }
 }

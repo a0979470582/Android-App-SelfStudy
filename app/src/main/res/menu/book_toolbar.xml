@@ -14,8 +14,14 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/importBookFragment"
+        android:id="@+id/dialogChooseLocalBook"
         android:icon="@drawable/ic_baseline_archive_24"
         android:title="@string/icon_download_book"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/searchLocalFragment"
+        android:icon="@drawable/ic_baseline_manage_search_24"
+        android:title="@string/icon_search_local"
         app:showAsAction="never"/>
 </menu>

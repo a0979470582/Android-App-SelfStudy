@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 interface SearchAutoCompleteDao: BaseDao<SearchAutoComplete>{
     //select
     @Query("""SELECT * FROM SearchAutoComplete
-                 WHERE searchName LIKE :query || '%' AND isHistory=0
+                 WHERE searchName>=:query AND searchName<=:query||'z' AND isHistory=0
                 ORDER BY searchName ASC""")
     fun loadAutoComplete(query: String): Flow<List<SearchAutoComplete>>
 
@@ -23,4 +23,8 @@ interface SearchAutoCompleteDao: BaseDao<SearchAutoComplete>{
     //update
     @Query("UPDATE SearchAutoComplete SET isHistory=:isHistory WHERE searchName IN (:searchName)")
     suspend fun setIsHistory(vararg searchName: String, isHistory: Boolean): Int
+
+    @Query("""UPDATE SearchAutoComplete SET isHistory=0
+                    WHERE searchName IN (SELECT searchName FROM SearchHistory)""")
+    suspend fun detachAllHistory(): Int
 }

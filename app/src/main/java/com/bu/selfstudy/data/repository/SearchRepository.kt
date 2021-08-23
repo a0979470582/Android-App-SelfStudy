@@ -30,14 +30,12 @@ object SearchRepository {
 
 
     //prepare DB
-    suspend fun insertLocalAutoComplete() = withContext(Dispatchers.IO){
-        for(filename in LoadSearchAutoComplete.filenameList){
-            val autoCompleteList = LoadSearchAutoComplete.loadData(filename)
-            autoCompleteList.iterator().forEach {
-                it.isHistory = historyDao.checkHistoryExists(it.searchName)
-            }
-            autoCompleteDao.insertAutoComplete(*autoCompleteList.toTypedArray())
+    suspend fun insertLocalAutoComplete(fileName: String) = withContext(Dispatchers.IO){
+        val autoCompleteList = LoadSearchAutoComplete.loadData(fileName)
+        autoCompleteList.iterator().forEach {
+            it.isHistory = historyDao.checkHistoryExists(it.searchName)
         }
+        autoCompleteDao.insertAutoComplete(*autoCompleteList.toTypedArray())
     }
 
     //delete
@@ -48,14 +46,11 @@ object SearchRepository {
     }
 
     suspend fun clearAllHistory() = withContext(Dispatchers.IO){
-        val historyList  = historyDao.loadHistory("").first()
-        autoCompleteDao.setIsHistory(
-                searchName = historyList.map { it.searchName }.toTypedArray(),
-                isHistory = false
-        )
-        historyDao.delete(*historyList.toTypedArray())
+        autoCompleteDao.detachAllHistory()
+        historyDao.deleteAll()
     }
 
+    //prepare db
     suspend fun checkAutoComplete() = withContext(Dispatchers.IO){
         val autoCompleteList  = autoCompleteDao.loadAutoComplete("").first()
 

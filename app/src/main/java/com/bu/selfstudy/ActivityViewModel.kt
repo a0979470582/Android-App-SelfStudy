@@ -51,4 +51,6 @@ class ActivityViewModel : ViewModel() {
             }
         }
     }
+
+    fun getBookName(bookId: Long) = bookListLiveData.value!!.firstOrNull { it.id==bookId }?.bookName?:""
 }

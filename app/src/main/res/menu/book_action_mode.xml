@@ -5,13 +5,13 @@
     <item
         android:id="@+id/action_list"
         android:icon="@drawable/ic_baseline_view_list_24"
-        android:title="列表"
+        android:title="查看列表"
         app:iconTint="@color/black60"/>
 
     <item
         android:id="@+id/action_edit"
         android:icon="@drawable/ic_round_edit_24"
-        android:title="編輯"
+        android:title="修改名稱"
         app:iconTint="@color/black60" />
 
     <item

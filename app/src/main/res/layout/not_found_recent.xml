@@ -7,7 +7,7 @@
         android:text="沒有觀看過的單字"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:textSize="20sp"
-        android:textColor="@color/black75"
+        android:textColor="@color/black60"
         android:layout_gravity="center_vertical"
         android:gravity="center"
         android:layout_margin="48dp"

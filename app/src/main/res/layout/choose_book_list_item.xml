@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+    </data>
+
+    <!--主題用以更改RadioButton按鈕的顏色-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:theme="@style/Theme.SelfStudy"
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="8dp"
+        android:clickable="true"
+        android:background="@drawable/item_background">
+
+
+        <RadioButton
+            android:id="@+id/radioButton"
+            android:layout_marginStart="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:buttonTint="@color/blue80"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <ImageView
+            android:id="@+id/bookIcon"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="16dp"
+            android:src="@drawable/ic_baseline_bookmark_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/radioButton"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/bookNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:textColor="@color/black87"
+            app:layout_constraintStart_toEndOf="@id/bookIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="多益核心單字" />
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/bookSizeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            android:textColor="#979797"
+            android:textSize="11.45sp"
+            app:layout_constraintStart_toEndOf="@id/bookNameTextView"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="1253" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/explanationTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textColor="@color/black60"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/bookIcon"
+            app:layout_constraintTop_toBottomOf="@id/bookNameTextView" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+</layout>

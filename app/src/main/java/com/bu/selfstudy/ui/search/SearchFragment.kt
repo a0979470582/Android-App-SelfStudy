@@ -235,7 +235,6 @@ class SearchFragment: Fragment()  {
             }
         }
 
-        //TODO 測試是否能從onRestoreState恢復
         //從別的fragment回彈後要回復狀態
         if(binding.wordCardItem.root.isVisible)
             searchView.setQuery(viewModel.lastSearchQuery, false)

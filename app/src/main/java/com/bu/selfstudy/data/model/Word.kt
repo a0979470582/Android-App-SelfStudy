@@ -7,9 +7,9 @@ import java.util.*
 
 @Entity(indices = [
         Index(value=["wordName"]),
-        Index(value=["translation"]),
-        Index(value=["variation"]),
-        Index(value=["example"])
+        Index(value=["example"]),
+        Index(value=["bookId", "wordName"]),
+        Index(value=["bookId", "timestamp"])
     ],
     foreignKeys = [
         ForeignKey(entity = Book::class,

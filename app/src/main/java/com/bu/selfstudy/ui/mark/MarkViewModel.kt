@@ -36,9 +36,9 @@ class MarkViewModel() : ViewModel() {
         }
     }
 
-    fun updateMarkWord(wordId: Long, isMark: Boolean){
+    fun updateMarkWord(vararg wordId: Long, isMark: Boolean){
         viewModelScope.launch(Dispatchers.IO) {
-            if(WordRepository.updateMark(wordId, isMark)>0){
+            if(WordRepository.updateMark(*wordId, isMark = isMark)>0){
                 databaseEvent.postValue((if(isMark) "mark" else "cancelMark") to null)
             }
         }
