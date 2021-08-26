@@ -12,7 +12,7 @@
 * Android架構: 單一Activity(採用Navigation), Room+LiveData+ViewModel, databindnig
 * Firebase: 使用者資料之備份與還原, 下載預建立題庫
 
-版面設計工具 Figma
+版面設計工具 Figma(點開看大圖)
 
 <img src="https://user-images.githubusercontent.com/45554149/130317581-71cecc51-82e9-4514-ad25-691c92e966d5.PNG" alt="版面設計工具 Figma
 " width="250"/>
