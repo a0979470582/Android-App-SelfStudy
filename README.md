@@ -1,4 +1,3 @@
-![szoo4-50l9i](https://user-images.githubusercontent.com/45554149/131150331-effd4ca2-05c0-4e7d-97ae-83e8c1329436.gif)
 # SelfStudy
 **這是一款可以方便的管理單字的APP**
 
@@ -20,7 +19,7 @@
 
 新增題庫
 
-
+<img src="https://user-images.githubusercontent.com/45554149/131150331-effd4ca2-05c0-4e7d-97ae-83e8c1329436.gif" width="496" height="960"/>
 
 
 https://user-images.githubusercontent.com/45554149/131149155-c564b181-b4f0-4a6a-8b9d-b7c2752e4016.mp4
