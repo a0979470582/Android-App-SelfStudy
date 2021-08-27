@@ -19,8 +19,8 @@
 
 新增題庫
 
-
-https://user-images.githubusercontent.com/45554149/131146515-5c9bebf9-a7b6-4786-83e3-4ca08731b55a.mp4
+<video src="https://user-images.githubusercontent.com/45554149/131146515-5c9bebf9-a7b6-4786-83e3-4ca08731b55a.mp4
+" width="320" />
 
 
 
