@@ -19,25 +19,15 @@
 
 新增題庫
 
-<img src="https://user-images.githubusercontent.com/45554149/131150331-effd4ca2-05c0-4e7d-97ae-83e8c1329436.gif" width="200"/>
+<img src="https://user-images.githubusercontent.com/45554149/131150331-effd4ca2-05c0-4e7d-97ae-83e8c1329436.gif" width="250" height="400"/>
 
-
-https://user-images.githubusercontent.com/45554149/131149155-c564b181-b4f0-4a6a-8b9d-b7c2752e4016.mp4
-
-
-
-
-https://user-images.githubusercontent.com/45554149/131146551-ce3406e3-993d-4a55-bde7-d6a4838f34ca.mp4
-
-
-
-https://user-images.githubusercontent.com/45554149/131146568-fdf8b3aa-6708-4b1a-8b4a-3c72d071dc8d.mp4
+<img src="https://user-images.githubusercontent.com/45554149/131154511-4b754a5e-13bb-4845-bff6-fcbbd5e6a7b9.gif" width="250" height="400"/>
 
 
 新增單字
 
 刪除單字
 
-
+https://user-images.githubusercontent.com/45554149/131154709-a089c9ad-f8f4-4e57-8773-96e5a63de75a.mp4
 
 
