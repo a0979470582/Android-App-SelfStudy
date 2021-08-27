@@ -1,3 +1,7 @@
+
+
+https://user-images.githubusercontent.com/45554149/131149328-59d57d03-3e5e-44fc-ab0b-55ac09565ca2.mp4
+
 # SelfStudy
 **這是一款可以方便的管理單字的APP**
 
