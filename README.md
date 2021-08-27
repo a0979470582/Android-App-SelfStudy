@@ -1,3 +1,4 @@
+![szoo4-50l9i](https://user-images.githubusercontent.com/45554149/131150331-effd4ca2-05c0-4e7d-97ae-83e8c1329436.gif)
 # SelfStudy
 **這是一款可以方便的管理單字的APP**
 
