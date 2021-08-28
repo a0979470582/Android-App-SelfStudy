@@ -1,5 +1,6 @@
 package com.bu.selfstudy.ui.dialog
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -9,23 +10,16 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatDialogFragment
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.transition.TransitionManager
-import com.bu.selfstudy.ActivityViewModel
+import com.bu.selfstudy.ui.main.ActivityViewModel
 import com.bu.selfstudy.R
 import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.model.Book
-import com.bu.selfstudy.data.model.LocalBook
-import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.databinding.ChooseBookListItemBinding
-import com.bu.selfstudy.databinding.LocalBookListItemBinding
-import com.bu.selfstudy.tool.log
 import com.bu.selfstudy.tool.putBundle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -94,7 +88,6 @@ class DialogChooseBook : AppCompatDialogFragment() {
             }
         }
 
-
         listView = ListView(SelfStudyApplication.context).also {
 
             it.setPadding(0, 32,0,0)
@@ -114,7 +107,7 @@ class DialogChooseBook : AppCompatDialogFragment() {
         }
 
 
-        return MaterialAlertDialogBuilder(requireActivity())
+        val alertDialog =  MaterialAlertDialogBuilder(requireActivity())
             .setTitle(args.title)
             .setView(listView)
             .setPositiveButton("確認"){ _, _ ->
@@ -123,6 +116,18 @@ class DialogChooseBook : AppCompatDialogFragment() {
             }
             .setNegativeButton("取消"){ _, _ ->
             }
+            .setNeutralButton("新增題庫"){_, _ ->
+                findNavController().navigate(R.id.addBookFragment)
+            }
             .create()
+
+
+        alertDialog.show()
+
+        activityViewModel.bookListLiveData.observe(this){
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = it.isNotEmpty()
+        }
+
+        return alertDialog
     }
 }

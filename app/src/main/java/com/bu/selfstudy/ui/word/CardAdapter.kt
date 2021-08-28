@@ -1,5 +1,6 @@
 package com.bu.selfstudy.ui.word
 
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.view.LayoutInflater
 import android.view.Menu
@@ -41,7 +42,7 @@ class CardAdapter(
         private val wordList: ArrayList<Word> = ArrayList()
 ) : RecyclerView.Adapter<CardAdapter.ViewHolder>(), LifecycleObserver{
 
-    var mediaPlayer: MediaPlayer? = null
+    private val mediaPlayer by lazy { MediaPlayer() }
 
     inner class ViewHolder(
             val binding: WordCardItemBinding
@@ -94,8 +95,18 @@ class CardAdapter(
 
 
         holder.binding.soundButton.setOnClickListener {
-            val word = wordList[mapToRealPosition(holder.adapterPosition)]
-            prepareMediaPlayer(word.audioFilePath)
+            wordList[mapToRealPosition(holder.adapterPosition)]?.let { word ->
+                mediaPlayer.apply {
+                    reset()
+                    setDataSource(word.audioFilePath)
+                    setAudioStreamType(AudioManager.STREAM_MUSIC)
+                    setOnPreparedListener{
+                        it.start()
+                    }
+                    prepareAsync()
+                }
+            }
+            //prepareMediaPlayer(word.audioFilePath)
         }
 
         holder.setSelectionTextCallback(selectionTextCallback)
@@ -171,18 +182,6 @@ class CardAdapter(
     }
     override fun getItemId(position: Int): Long = wordList[mapToRealPosition(position)].id
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    private fun createMediaPlayer(){
-        if(mediaPlayer == null){
-            mediaPlayer = MediaPlayer()
-        }
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    private fun releaseMediaPlayer(){
-        mediaPlayer?.release()
-        mediaPlayer = null
-    }
 
     fun notifyRemoveOneWord(realPosition: Int){
         wordList.removeAt(realPosition)

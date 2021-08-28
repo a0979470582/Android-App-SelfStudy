@@ -19,10 +19,9 @@
     </fragment>
 
     <fragment
-        android:id="@+id/suggestFragment"
-        android:name="com.bu.selfstudy.ui.SuggestFragment"
-        android:label="使用者建議"
-        tools:layout="@layout/fragment_suggest"/>
+        android:id="@+id/suggestionFragment"
+        android:name="com.bu.selfstudy.ui.SuggestionFragment"
+        android:label="聯絡我們"/>
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.bu.selfstudy.ui.SettingFragment"

@@ -5,6 +5,8 @@
         android:id="@+id/action_done"
         android:icon="@drawable/ic_baseline_done_24"
         android:title="@string/icon_done"
-        app:showAsAction="always"/>
+        app:showAsAction="always"
+        app:iconTint="?attr/primary_icon_tint"/>
+
 
 </menu>

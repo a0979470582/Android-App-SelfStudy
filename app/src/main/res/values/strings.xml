@@ -1,8 +1,9 @@
 <resources>
-    <!--供Firebase第三方登入畫面模組使用-->
-    <string name="facebook_application_id">2291570764422514</string>
     <!--供Facebook登入模組使用-->
-    <string name="facebook_app_id">2291570764422514</string>
+    <string name="facebook_application_id">538484070690621</string>
+    <string name="facebook_app_id">538484070690621</string>
+    <string name="fb_login_protocol_scheme">fb538484070690621</string>
+
 
     <string name="app_name">SelfStudy</string>
 

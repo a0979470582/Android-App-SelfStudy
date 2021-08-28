@@ -2,15 +2,10 @@ package com.bu.selfstudy.ui.editword
 
 import android.app.Dialog
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
-import com.bu.selfstudy.ActivityViewModel
 import com.bu.selfstudy.R
-import com.bu.selfstudy.tool.putBundle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class DialogSaveAndExit() : AppCompatDialogFragment() {

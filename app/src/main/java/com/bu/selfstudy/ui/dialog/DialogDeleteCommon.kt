@@ -2,12 +2,9 @@ package com.bu.selfstudy.ui.dialog
 
 import android.app.Dialog
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.navArgs
-import com.bu.selfstudy.ActivityViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class DialogDeleteCommon : AppCompatDialogFragment() {

@@ -6,25 +6,17 @@ import android.view.*
 import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
-import com.bu.selfstudy.ActivityViewModel
-import com.bu.selfstudy.MainActivity
-import com.bu.selfstudy.NavGraphDirections
+import com.bu.selfstudy.ui.main.MainActivity
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.FragmentArchiveBinding
-import com.bu.selfstudy.databinding.FragmentBookBinding
 import com.bu.selfstudy.tool.*
 import com.bu.selfstudy.ui.book.ActionItemCreator
-import com.leinardi.android.speeddial.SpeedDialView
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.*
 
 class ArchiveFragment : Fragment() {

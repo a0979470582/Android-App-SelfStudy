@@ -8,14 +8,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
+import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.bu.selfstudy.MainActivity
+import com.bu.selfstudy.ui.main.MainActivity
 import com.bu.selfstudy.R
+import com.bu.selfstudy.SelfStudyApplication
 import com.bu.selfstudy.data.repository.SearchRepository
 import com.bu.selfstudy.databinding.FragmentSettingBinding
-import com.bu.selfstudy.tool.showToast
-import com.bu.selfstudy.tool.viewBinding
+import com.bu.selfstudy.tool.*
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -51,6 +52,8 @@ class SettingFragment : Fragment() {
 
 
     class InternalSettingsFragment : PreferenceFragmentCompat() {
+
+
         @InternalCoroutinesApi
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.setting_preference, rootKey)
@@ -61,20 +64,34 @@ class SettingFragment : Fragment() {
                 }
             }
 
+
+            findPreference<Preference>("backup")!!.summary =
+                    if(FirebaseAuth.getInstance().currentUser == null)
+                         "未登入"
+                    else
+                         SelfStudyApplication.backupMetadata.value?.backupTimeString
+
             findPreference<Preference>("backup")?.setOnPreferenceClickListener {
-                if(FirebaseAuth.getInstance().currentUser == null)
-                    (requireActivity() as MainActivity).signInWithFirebase()
-                else{
-                    (requireActivity() as MainActivity).backupUserData()
+                with((requireActivity() as MainActivity)){
+                    if(FirebaseAuth.getInstance().currentUser == null) {
+                        signInWithFirebase()
+                    }
+                    else{
+                        backupUserData()
+                    }
                 }
+
                 return@setOnPreferenceClickListener true
             }
             findPreference<Preference>("restore")?.setOnPreferenceClickListener {
-                if(FirebaseAuth.getInstance().currentUser == null)
-                    (requireActivity() as MainActivity).signInWithFirebase()
-                else{
-                    (requireActivity() as MainActivity).restoreUserData()
+                with((requireActivity() as MainActivity)){
+                    if(FirebaseAuth.getInstance().currentUser == null)
+                        signInWithFirebase()
+                    else{
+                        restoreUserData()
+                    }
                 }
+
                 return@setOnPreferenceClickListener true
             }
 
@@ -88,6 +105,36 @@ class SettingFragment : Fragment() {
                 }
                 return@setOnPreferenceClickListener true
             }
+
+            findPreference<ListPreference>("theme_list")?.setValueIndex(
+                    resources.getStringArray(R.array.theme_keys)
+                            .indexOf((requireActivity() as MainActivity).getCurrentTheme())
+            )
+
+
+            findPreference<Preference>("theme_list")?.setOnPreferenceChangeListener { _, newValue ->
+
+                (requireActivity() as MainActivity).setActivityTheme(newValue.toString())
+
+                return@setOnPreferenceChangeListener true
+            }
+        }
+
+
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+
+            SelfStudyApplication.backupMetadata.observe(viewLifecycleOwner){
+                findPreference<Preference>("backup")!!.summary =
+                        if(FirebaseAuth.getInstance().currentUser == null)
+                            "未登入"
+                        else
+                            SelfStudyApplication.backupMetadata.value?.backupTimeString
+
+                findPreference<Preference>("restore")?.isEnabled = it.hasBackup
+
+            }
+
         }
     }
 }

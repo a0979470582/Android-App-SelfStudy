@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <!-- Pressed state -->
+    <item android:drawable="@drawable/ic_baseline_save_24"
+        android:state_enabled="true" />
+
+    <!-- Default state -->
+    <item android:drawable="@drawable/ic_baseline_save_24_disable"/>
+
+
+</selector>

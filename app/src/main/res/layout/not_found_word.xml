@@ -10,5 +10,5 @@
     android:gravity="center"
     android:text="搜尋單字來加入更多內容"
     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-    android:textColor="@color/black60"
+    android:textColor="@color/primary_text_color_60"
     android:textSize="20sp" />

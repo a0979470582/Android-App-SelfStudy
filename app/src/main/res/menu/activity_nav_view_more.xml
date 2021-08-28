@@ -4,7 +4,7 @@
     <item
         android:id="@+id/action_backup"
         android:icon="@drawable/ic_round_edit_24"
-        android:title="備份"/>
+        android:title="線上備份"/>
     <item
         android:id="@+id/action_logout"
         android:icon="@drawable/ic_baseline_view_list_24"

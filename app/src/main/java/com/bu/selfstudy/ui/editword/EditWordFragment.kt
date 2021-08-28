@@ -15,7 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.NavigationUI
-import com.bu.selfstudy.MainActivity
+import com.bu.selfstudy.ui.main.MainActivity
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.FragmentAddWordBinding
@@ -65,6 +65,8 @@ class EditWordFragment: Fragment() {
             findNavController().popBackStack()
         }
 
+        binding.wordField.requestFocus()
+        openKeyboard()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -179,10 +181,11 @@ class EditWordFragment: Fragment() {
     }
 
     private fun navigateToBackOrDialog() {
-        if(viewModel.hasEditLiveData.value!!) {
-            val action = EditWordFragmentDirections.actionEditWordFragmentToExitEditingDialog()
-            findNavController().navigate(action)
-        } else
+        if(viewModel.hasEditLiveData.value!!)
+            findNavController().navigate(
+                    EditWordFragmentDirections.actionEditWordFragmentToExitEditingDialog()
+            )
+        else
             findNavController().popBackStack()
     }
 
@@ -206,13 +209,13 @@ class EditWordFragment: Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
+        super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.only_save_toolbar, menu)
-        menu.findItem(R.id.action_save).isEnabled = viewModel.hasEditLiveData.value?:false
+        menu.findItem(R.id.action_save).isEnabled = viewModel.hasEditLiveData.value!!
     }
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.action_save).isEnabled = viewModel.hasEditLiveData.value?:false
+        menu.findItem(R.id.action_save).isEnabled = viewModel.hasEditLiveData.value!!
     }
 
 }

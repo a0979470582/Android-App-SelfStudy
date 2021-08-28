@@ -17,6 +17,8 @@ import androidx.annotation.VisibleForTesting;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bu.selfstudy.ui.word.ListAdapter;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -296,7 +298,8 @@ public class FastScroller extends RecyclerView.ItemDecoration implements Recycle
         int verticalContentLength = mRecyclerView.computeVerticalScrollRange();
         int verticalVisibleLength = mRecyclerViewHeight;
         mNeedVerticalScrollbar = verticalContentLength - verticalVisibleLength > 0
-                && mRecyclerViewHeight >= mScrollbarMinimumRange;
+                && mRecyclerViewHeight >= mScrollbarMinimumRange
+                && verticalContentLength > mRecyclerViewHeight * 3;
         int horizontalContentLength = mRecyclerView.computeHorizontalScrollRange();
         int horizontalVisibleLength = mRecyclerViewWidth;
         mNeedHorizontalScrollbar = horizontalContentLength - horizontalVisibleLength > 0
@@ -406,31 +409,32 @@ public class FastScroller extends RecyclerView.ItemDecoration implements Recycle
     private void verticalScrollTo(float y) {
         final int[] scrollbarRange = getVerticalRange();
         y = Math.max(scrollbarRange[0], Math.min(scrollbarRange[1], y));
-        if (Math.abs(mVerticalThumbCenterY - y) < 2) {
-            return;
-        }
+
+
+        //if (Math.abs(mVerticalThumbCenterY - y) < 2) {
+        //    return;
+        //}
+
+
+
         int scrollingBy = scrollTo(mVerticalDragY, y, scrollbarRange,
                 mRecyclerView.computeVerticalScrollRange(),
                 mRecyclerView.computeVerticalScrollOffset(), mRecyclerViewHeight);
+
+        /*
+        System.out.println(scrollingBy);
+        if(scrollingBy > mRecyclerViewHeight*3){
+            ListAdapter adapter = (ListAdapter) mRecyclerView.getAdapter();
+            adapter.setScrollingIsVeryFast(true);
+        }*/
+
+
         if (scrollingBy != 0) {
             mRecyclerView.scrollBy(0, scrollingBy);
         }
         mVerticalDragY = y;
     }
-    private void horizontalScrollTo(float x) {
-        final int[] scrollbarRange = getHorizontalRange();
-        x = Math.max(scrollbarRange[0], Math.min(scrollbarRange[1], x));
-        if (Math.abs(mHorizontalThumbCenterX - x) < 2) {
-            return;
-        }
-        int scrollingBy = scrollTo(mHorizontalDragX, x, scrollbarRange,
-                mRecyclerView.computeHorizontalScrollRange(),
-                mRecyclerView.computeHorizontalScrollOffset(), mRecyclerViewWidth);
-        if (scrollingBy != 0) {
-            mRecyclerView.scrollBy(scrollingBy, 0);
-        }
-        mHorizontalDragX = x;
-    }
+
     private int scrollTo(float oldDragPos, float newDragPos, int[] scrollbarRange, int scrollRange,
                          int scrollOffset, int viewLength) {
         int scrollbarLength = scrollbarRange[1] - scrollbarRange[0];
@@ -447,6 +451,22 @@ public class FastScroller extends RecyclerView.ItemDecoration implements Recycle
             return 0;
         }
     }
+
+    private void horizontalScrollTo(float x) {
+        final int[] scrollbarRange = getHorizontalRange();
+        x = Math.max(scrollbarRange[0], Math.min(scrollbarRange[1], x));
+        if (Math.abs(mHorizontalThumbCenterX - x) < 2) {
+            return;
+        }
+        int scrollingBy = scrollTo(mHorizontalDragX, x, scrollbarRange,
+                mRecyclerView.computeHorizontalScrollRange(),
+                mRecyclerView.computeHorizontalScrollOffset(), mRecyclerViewWidth);
+        if (scrollingBy != 0) {
+            mRecyclerView.scrollBy(scrollingBy, 0);
+        }
+        mHorizontalDragX = x;
+    }
+
     @VisibleForTesting
     boolean isPointInsideVerticalThumb(float x, float y) {
         /*

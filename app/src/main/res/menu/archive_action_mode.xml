@@ -6,25 +6,25 @@
         android:id="@+id/action_list"
         android:icon="@drawable/ic_baseline_view_list_24"
         android:title="查看列表"
-        app:iconTint="@color/black60"/>
+        app:iconTint="?attr/primary_icon_tint"/>
 
     <item
         android:id="@+id/action_edit"
         android:icon="@drawable/ic_round_edit_24"
         android:title="修改名稱"
-        app:iconTint="@color/black60" />
+        app:iconTint="?attr/primary_icon_tint"/>
 
     <item
         android:id="@+id/action_archive"
         android:icon="@drawable/ic_baseline_unarchive_24"
         android:title="取消封存"
-        app:iconTint="@color/black60" />
+        app:iconTint="?attr/primary_icon_tint"/>
 
     <item
         android:id="@+id/action_delete"
         android:icon="@drawable/ic_round_delete_24"
         android:title="刪除"
-        app:iconTint="@color/black60" />
+        app:iconTint="?attr/primary_icon_tint"/>
 
 
 

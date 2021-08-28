@@ -7,6 +7,7 @@ import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.data.repository.WordRepository
 import com.bu.selfstudy.tool.SingleLiveData
+import com.bu.selfstudy.tool.putBundle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -19,6 +20,8 @@ class MarkViewModel() : ViewModel() {
     val databaseEvent = SingleLiveData<Pair<String, Bundle?>>()
 
     val wordListLiveData = WordRepository.loadMarkWords().asLiveData()
+
+    var actionType = ""
 
     val wordIdList = ArrayList<Long>()
     fun refreshWordIdList(wordList: List<Word>){
@@ -49,5 +52,31 @@ class MarkViewModel() : ViewModel() {
             if(WordRepository.delete(*wordIdList.toLongArray()) > 0)
                 databaseEvent.postValue("delete" to null)
         }
+    }
+
+    fun copyWord(bookId: Long){
+        viewModelScope.launch {
+            val count = longPressedWordIdList.size
+            if(WordRepository.copyWord(longPressedWordIdList, bookId)>0)
+                databaseEvent.postValue("copy" to (
+                        putBundle("bookId", bookId)
+                                .putBundle("count", count)
+                        )
+                )
+        }
+    }
+    fun moveWord(bookId: Long){
+        viewModelScope.launch {
+            val count = longPressedWordIdList.size
+            if(WordRepository.moveWord(longPressedWordIdList, bookId)>0)
+                databaseEvent.postValue("move" to (
+                        putBundle("bookId", bookId)
+                                .putBundle("count", count)
+                        )
+                )
+        }
+    }
+    fun getWord(wordId: Long) = wordListLiveData.value!!.firstOrNull {
+        it.id==wordId
     }
 }

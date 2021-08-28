@@ -28,7 +28,7 @@
             android:title="@string/activity_menu_setting" />
 
         <item
-            android:id="@+id/suggestFragment"
+            android:id="@+id/suggestionFragment"
             android:icon="@drawable/ic_baseline_comment_24"
             android:title="@string/activity_menu_suggest" />
     </group>

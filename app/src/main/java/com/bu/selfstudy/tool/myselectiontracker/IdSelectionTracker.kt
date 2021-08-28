@@ -1,13 +1,5 @@
 package com.bu.selfstudy.tool.myselectiontracker
 
-import android.view.*
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.selection.*
-import androidx.recyclerview.widget.RecyclerView
-import com.bu.selfstudy.MainActivity
-import com.bu.selfstudy.R
-import com.bu.selfstudy.tool.closeKeyboard
-
 /*fun Fragment.buildIdSelectionTracker(
         recyclerView: RecyclerView,
         idList: List<Long>,

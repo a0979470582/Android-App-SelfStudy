@@ -12,8 +12,8 @@ import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.NavigationUI
-import com.bu.selfstudy.ActivityViewModel
-import com.bu.selfstudy.MainActivity
+import com.bu.selfstudy.ui.main.ActivityViewModel
+import com.bu.selfstudy.ui.main.MainActivity
 import com.bu.selfstudy.R
 import com.bu.selfstudy.databinding.FragmentAddBookBinding
 import com.bu.selfstudy.tool.closeKeyboard

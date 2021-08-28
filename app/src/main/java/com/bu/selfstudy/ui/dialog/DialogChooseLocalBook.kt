@@ -1,35 +1,21 @@
 package com.bu.selfstudy.ui.dialog
 
 import android.app.Dialog
-import android.content.DialogInterface
-import android.database.DataSetObserver
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatDialogFragment
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.TransitionManager
-import com.bu.selfstudy.ActivityViewModel
-import com.bu.selfstudy.R
 import com.bu.selfstudy.SelfStudyApplication
-import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.data.model.LocalBook
 import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.databinding.LocalBookListItemBinding
-import com.bu.selfstudy.tool.log
 import com.bu.selfstudy.tool.putBundle
-import com.bu.selfstudy.ui.book.BookAdapter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textview.MaterialTextView
 
 class DialogChooseLocalBook : AppCompatDialogFragment() {
     private var selectedItem = 0

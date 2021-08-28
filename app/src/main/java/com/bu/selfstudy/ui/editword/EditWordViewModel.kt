@@ -30,18 +30,6 @@ class EditWordViewModel(val word: Word) : ViewModel()  {
         }
     }
 
-    private fun compareWord(word1:Word, word2:Word): Boolean{
-        return (
-            word1.id == word2.id &&
-            word1.wordName == word2.wordName &&
-            word1.pronunciation == word2.pronunciation &&
-            word1.translation == word2.translation &&
-            word1.variation == word2.variation &&
-            word1.example == word2.example &&
-            word1.note == word2.note
-        )
-    }
-
     companion object {
         fun provideFactory(word: Word): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")

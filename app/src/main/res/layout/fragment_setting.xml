@@ -16,11 +16,11 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
-            android:theme="@style/ThemeOverlay.AppCompat.Light"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:backgroundTint="?attr/toolbar_color"
+            android:theme="@style/ThemeOverlay.AppCompat.DayNight"
+            app:titleTextColor="@color/primary_text_color_87"
             app:titleTextAppearance="@style/title_text_style"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
-            android:background="@color/white"/>
+            app:layout_scrollFlags="scroll|enterAlways|snap"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 

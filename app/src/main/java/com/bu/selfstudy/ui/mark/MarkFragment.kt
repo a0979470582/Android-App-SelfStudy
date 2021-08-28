@@ -7,34 +7,33 @@ import android.os.Bundle
 import android.view.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
-import com.bu.selfstudy.MainActivity
+import com.bu.selfstudy.ui.main.ActivityViewModel
+import com.bu.selfstudy.ui.main.MainActivity
 import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
-import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.FragmentMarkBinding
 import com.bu.selfstudy.tool.*
 import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
 import com.bu.selfstudy.tool.myselectiontracker.IdItemKeyProvider
 import com.bu.selfstudy.ui.book.ActionItemCreator
-import kotlinx.coroutines.launch
 
 
 class MarkFragment : Fragment() {
     private val viewModel: MarkViewModel by viewModels()
     private val binding: FragmentMarkBinding by viewBinding()
     private val adapter = MarkAdapter(fragment = this)
+    private val activityViewModel: ActivityViewModel by activityViewModels()
 
     private lateinit var tracker: SelectionTracker<Long>
 
@@ -67,6 +66,11 @@ class MarkFragment : Fragment() {
                  "delete" -> return@observe
                  "mark" -> return@observe
                  "cancelMark" -> return@observe
+                 "update" -> "更新已保存".showToast()
+                 "copy"-> ("已複製 ${it.second?.get("count")} 個單字到 「${activityViewModel.getBookName(
+                         it.second?.get("bookId") as Long)}」").showToast()
+                 "move"-> ("已轉移 ${it.second?.get("count")} 個單字到 「${activityViewModel.getBookName(
+                         it.second?.get("bookId") as Long)}」").showToast()
              }
          }
 
@@ -185,7 +189,8 @@ class MarkFragment : Fragment() {
                         actionMode = (activity as AppCompatActivity)
                                 .startSupportActionMode(actionModeCallback)
                     }
-                    actionMode?.title = "${tracker.selection.size()}/${viewModel.wordListLiveData.value?.size}"
+                    actionMode?.title = "${tracker!!.selection.size()}/${viewModel.wordListLiveData.value?.size}"
+                    actionMode?.invalidate()
                 }
             }
             override fun onSelectionRestored() {
@@ -235,7 +240,12 @@ class MarkFragment : Fragment() {
             return true
         }
 
-        override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = false
+        override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean{
+            menu.findItem(R.id.action_edit).isEnabled =
+                    (viewModel.longPressedWordIdList.size == 1)
+
+            return true
+        }
 
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
             actionModeMenuCallback(item.itemId)
@@ -243,34 +253,53 @@ class MarkFragment : Fragment() {
         }
 
         override fun onDestroyActionMode(mode: ActionMode) {
-            tracker.clearSelection()
+            tracker?.clearSelection()
             actionMode = null
         }
     }
 
-    private fun actionModeMenuCallback(itemId:Int){
+    private fun actionModeMenuCallback(itemId: Int){
         when (itemId) {
-            R.id.action_delete -> {
-                val title = "刪除單字"
-                val message = "是否刪除 ${viewModel.longPressedWordIdList.size} 個單字?"
-                val action = NavGraphDirections.actionGlobalDialogDeleteCommon(title, message)
-                findNavController().navigate(action)
-            }
-            R.id.action_choose_all -> {
-                viewModel.wordIdList.let {
-                    tracker.setItemsSelected(it, it.size != tracker.selection.size())
-                }
-            }
+            R.id.action_delete -> findNavController().navigate(
+                    NavGraphDirections.actionGlobalDialogDeleteCommon(
+                            "刪除單字",
+                            "是否刪除 ${viewModel.longPressedWordIdList.size} 個單字?"
+                    )
+            )
+            R.id.action_choose_all -> tracker!!.setItemsSelected(
+                    viewModel.wordIdList,
+                    viewModel.wordIdList.size != tracker!!.selection.size()
+            )
+            R.id.action_mark-> viewModel.updateMarkWord(
+                    *viewModel.longPressedWordIdList.toLongArray(),
+                    isMark = viewModel.longPressedWordIdList.any {
+                        !viewModel.wordIdList.contains(it)
+                    }
+            )
 
             R.id.action_copy -> {
-                //navigateToChooseBookDialog("copy")
+                viewModel.actionType = "copy"
+                findNavController().navigate(
+                        NavGraphDirections.actionGlobalDialogChooseBook(
+                                title = "複製到題庫"
+                        )
+                )
             }
             R.id.action_move -> {
-                //navigateToChooseBookDialog("move")
-                /*viewModel.ChoosedBook?.let {
-                    val action = BookFragmentDirections.actionBookFragmentToEditBookDialog(it.bookName)
-                    findNavController().navigate(action)
-                }*/
+                viewModel.actionType = "move"
+                findNavController().navigate(
+                        NavGraphDirections.actionGlobalDialogChooseBook(
+                                title = "轉移到題庫"
+                        )
+                )
+            }
+            R.id.action_edit->{
+                viewModel.getWord(viewModel.longPressedWordIdList.first())?.let { word->
+                    actionMode?.finish()
+                    findNavController().navigate(
+                            NavGraphDirections.actionGlobalEditWordFragment(word)
+                    )
+                }
             }
         }
     }

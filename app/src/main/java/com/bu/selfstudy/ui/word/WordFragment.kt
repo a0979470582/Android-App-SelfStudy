@@ -27,8 +27,8 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.bu.selfstudy.ActivityViewModel
-import com.bu.selfstudy.MainActivity
+import com.bu.selfstudy.ui.main.ActivityViewModel
+import com.bu.selfstudy.ui.main.MainActivity
 import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.databinding.FragmentWordBinding
@@ -37,7 +37,6 @@ import com.bu.selfstudy.tool.myselectiontracker.IdItemDetailsLookup
 import com.bu.selfstudy.tool.myselectiontracker.IdItemKeyProvider
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.leinardi.android.speeddial.SpeedDialView
 
 
 /**
@@ -89,6 +88,8 @@ class WordFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        binding.recyclerView.setHasFixedSize(true)
 
         return binding.root
     }

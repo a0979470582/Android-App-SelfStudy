@@ -28,6 +28,8 @@ class WordViewModel : ViewModel(){
     val SortStateEnum = WordRepository.SortStateEnum
     var firstLoad = true
 
+    var actionType = ""
+
     val backStack = ArrayList<Int>()
 
     val bookIdLiveData = MutableLiveData<Long>()
@@ -35,7 +37,6 @@ class WordViewModel : ViewModel(){
     val bookLiveData = bookIdLiveData.switchMap {
         BookRepository.loadOneBook(it).asLiveData()
     }
-
 
 
     val onlyMarkLiveData = MutableLiveData<Boolean>(false)
@@ -166,7 +167,7 @@ class WordViewModel : ViewModel(){
         }
     }
 
-    var actionType = ""
+
     fun copyWord(bookId: Long){
         viewModelScope.launch {
             val count = longPressedWordIdList.size

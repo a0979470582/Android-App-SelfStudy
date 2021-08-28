@@ -25,7 +25,7 @@
 
         <Preference
             app:key="backup"
-            app:title="備份"
+            app:title="線上備份"
             app:icon="@drawable/ic_baseline_backup_24"
             />
 

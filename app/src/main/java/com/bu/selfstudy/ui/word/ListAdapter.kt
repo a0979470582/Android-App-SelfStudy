@@ -1,5 +1,7 @@
 package com.bu.selfstudy.ui.word
 
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -11,6 +13,7 @@ import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.WordListItemBinding
 import com.bu.selfstudy.databinding.RecyclerviewHeaderBinding
+import com.bu.selfstudy.tool.log
 
 /**
  * About SelectionTracker
@@ -56,6 +59,10 @@ class ListAdapter(val fragment: WordFragment):RecyclerView.Adapter<RecyclerView.
 
     private var translationIsVisible = true
 
+    private var isVeryFast = false
+
+    private val mediaPlayer by lazy { MediaPlayer() }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if(viewType == ITEM_VIEW_TYPE){
             val binding = WordListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -66,9 +73,23 @@ class ListAdapter(val fragment: WordFragment):RecyclerView.Adapter<RecyclerView.
             }
 
             holder.binding.markButton.setOnClickListener{
-                val word = asyncListDiffer.currentList[holder.adapterPosition]
-                if(word != null)
+                asyncListDiffer.currentList[holder.adapterPosition]?.let { word->
                     fragment.updateMarkWord(word.id, !word.isMark)
+                }
+            }
+
+            binding.soundButton.setOnClickListener {
+                asyncListDiffer.currentList[holder.adapterPosition]?.let { word ->
+                    mediaPlayer.apply {
+                        reset()
+                        setDataSource(word.audioFilePath)
+                        setAudioStreamType(AudioManager.STREAM_MUSIC)
+                        setOnPreparedListener{
+                            it.start()
+                        }
+                        prepareAsync()
+                    }
+                }
             }
 
             return holder
@@ -88,21 +109,22 @@ class ListAdapter(val fragment: WordFragment):RecyclerView.Adapter<RecyclerView.
                 val word = asyncListDiffer.currentList[position]
                 holder.binding.word = word
                 holder.binding.markButton.setIconResource(
-                        if (word.isMark)
-                            R.drawable.ic_baseline_star_24
-                        else
-                            R.drawable.ic_round_star_border_24
+                    if (word.isMark)
+                        R.drawable.ic_baseline_star_24
+                    else
+                        R.drawable.ic_round_star_border_24
                 )
                 tracker?.let {
                     holder.itemView.isActivated = it.isSelected(word.id)
                 }
-
             }
             is HeaderViewHolder ->{
                 holder.headerBinding.firstRow.text = "單字列表"
             }
         }
     }
+
+
 
     override fun getItemViewType(position: Int) =
         if(position == 0) HEADER_VIEW_TYPE else ITEM_VIEW_TYPE
@@ -138,5 +160,9 @@ class ListAdapter(val fragment: WordFragment):RecyclerView.Adapter<RecyclerView.
 
     fun setTranslationIsVisible(isVisible: Boolean) {
         translationIsVisible = isVisible
+    }
+
+    fun setScrollingIsVeryFast(isVeryFast: Boolean){
+        this.isVeryFast = isVeryFast
     }
 }

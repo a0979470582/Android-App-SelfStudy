@@ -5,6 +5,7 @@
         android:id="@+id/searchFragment"
         android:icon="@drawable/ic_baseline_search_24"
         android:title="@string/icon_search"
+        app:iconTint="?attr/primary_icon_tint"
         app:showAsAction="ifRoom"/>
 
     <item

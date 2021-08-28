@@ -5,7 +5,7 @@
     <style name="Divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
-        <item name="android:background">@color/divide_color</item>
+        <item name="android:background">?attr/primary_divide_color</item>
     </style>
 
 
@@ -28,7 +28,6 @@
 
     <style name="title_text_style" parent="@style/TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/icon_black</item>
         <item name="android:background">@android:color/transparent</item>
     </style>
 
@@ -64,4 +63,10 @@
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
     </style>
+
+    <!--SplashActivity-->
+    <style name="SplashScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_screen_drawable</item>
+    </style>
+
 </resources>

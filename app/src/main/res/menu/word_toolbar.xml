@@ -5,14 +5,14 @@
         android:id="@+id/action_search"
         android:icon="@drawable/ic_baseline_search_24"
         android:title="@string/icon_search"
-        app:iconTint="@color/white"
+        app:iconTint="?attr/primary_icon_tint"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_filter"
         android:icon="@drawable/ic_baseline_filter_list_24"
         android:title="過濾"
-        app:iconTint="@color/white"
+        app:iconTint="?attr/primary_icon_tint"
         app:showAsAction="ifRoom" />
 
 

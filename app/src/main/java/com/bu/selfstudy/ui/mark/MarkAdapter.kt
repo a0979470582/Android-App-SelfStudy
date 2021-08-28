@@ -1,5 +1,7 @@
 package com.bu.selfstudy.ui.mark
 
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,6 +60,7 @@ class MarkAdapter(val fragment: MarkFragment):RecyclerView.Adapter<RecyclerView.
     private val HEADER_VIEW_HOLDER = 0
     private val ITEM_VIEW_HOLDER = 1
 
+    private val mediaPlayer by lazy { MediaPlayer() }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if(viewType == ITEM_VIEW_HOLDER){
@@ -66,13 +69,14 @@ class MarkAdapter(val fragment: MarkFragment):RecyclerView.Adapter<RecyclerView.
             val holder = ItemViewHolder(binding)
 
             binding.root.setOnClickListener {
-                val word = asyncListDiffer.currentList[holder.adapterPosition]
-                fragment.findNavController().navigate(
-                    NavGraphDirections.actionGlobalWordFragment(
-                        bookId = word.bookId,
-                        wordId = word.id
+                asyncListDiffer.currentList[holder.adapterPosition]?.let { word ->
+                    fragment.findNavController().navigate(
+                        NavGraphDirections.actionGlobalWordFragment(
+                                bookId = word.bookId,
+                                wordId = word.id
+                        )
                     )
-                )
+                }
             }
 
             binding.markButton.setOnClickListener{
@@ -80,8 +84,23 @@ class MarkAdapter(val fragment: MarkFragment):RecyclerView.Adapter<RecyclerView.
                 if(holder.adapterPosition < 0)
                     return@setOnClickListener
 
-                val word = asyncListDiffer.currentList[holder.adapterPosition]
-                fragment.updateMarkWord(word.id, !word.isMark)
+                asyncListDiffer.currentList[holder.adapterPosition]?.let { word ->
+                    fragment.updateMarkWord(word.id, !word.isMark)
+                }
+            }
+
+            binding.soundButton.setOnClickListener {
+                asyncListDiffer.currentList[holder.adapterPosition]?.let { word ->
+                    mediaPlayer.apply {
+                        reset()
+                        setDataSource(word.audioFilePath)
+                        setAudioStreamType(AudioManager.STREAM_MUSIC)
+                        setOnPreparedListener{
+                            it.start()
+                        }
+                        prepareAsync()
+                    }
+                }
             }
 
             return holder

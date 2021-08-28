@@ -1,4 +1,4 @@
-package com.bu.selfstudy
+package com.bu.selfstudy.ui.main
 
 import android.os.Bundle
 import androidx.lifecycle.*
@@ -8,7 +8,6 @@ import com.bu.selfstudy.data.repository.BookRepository
 import com.bu.selfstudy.data.repository.MemberRepository
 import com.bu.selfstudy.data.repository.WordRepository
 import com.bu.selfstudy.tool.SingleLiveData
-import com.bu.selfstudy.tool.log
 import com.bu.selfstudy.tool.putBundle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

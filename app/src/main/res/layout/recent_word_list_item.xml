@@ -32,9 +32,9 @@
         tools:text="我的第一本題庫" />
 
     <View
+        style="@style/Divider"
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/divide_color"
         app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -193,15 +193,7 @@ class ArchiveAdapter(val fragment: ArchiveFragment): Adapter<ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when(holder){
             is ItemViewHolder->{
-                val book = asyncListDiffer.currentList[position]
-
-                with(holder.itemBinding){
-                    bookNameTextView.text = book.bookName
-                    bookSizeTextView.text = "${book.size}"
-                    explanationTextView.text = book.explanation
-
-                    bookIcon.iconTint = ColorStateList.valueOf(book.colorInt)
-                }
+                holder.itemBinding.book = asyncListDiffer.currentList[position]
             }
             is HeaderViewHolder->{
                 holder.headerBinding.firstRow.text = "封存"

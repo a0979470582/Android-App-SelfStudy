@@ -30,10 +30,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun searchHistoryDao(): SearchHistoryDao
     abstract fun searchAutoCompleteDao(): SearchAutoCompleteDao
     abstract fun recentWordDao():RecentWordDao
-    abstract fun appDatabaseDao():AppDatabaseDao
-
-
-
 
     companion object {
         private var instance: AppDatabase? = null
@@ -44,7 +40,6 @@ abstract class AppDatabase : RoomDatabase() {
                 return it
             }
             return  Room.databaseBuilder(context, AppDatabase::class.java, "app_database")
-                    //.fallbackToDestructiveMigration()
                     .createFromAsset("database/app_database")
                     .addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {

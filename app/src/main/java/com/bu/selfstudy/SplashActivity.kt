@@ -3,6 +3,7 @@ package com.bu.selfstudy
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.bu.selfstudy.ui.main.MainActivity
 
 /**
  * 此Activity的Theme設為一張背景圖, 直到MainActivity的setContentView()完成, 約3s

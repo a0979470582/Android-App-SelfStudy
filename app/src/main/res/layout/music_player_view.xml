@@ -33,7 +33,7 @@
         android:layout_height="52dp"
         android:insetTop="0dp"
         android:insetBottom="0dp"
-        app:icon="@drawable/ic_baseline_person_search_24"
+        app:icon="@drawable/ic_baseline_search_24"
         app:iconGravity="textStart"
         app:iconTint="@color/purple_500" />
 

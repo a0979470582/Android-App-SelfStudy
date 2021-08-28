@@ -14,25 +14,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.NavigationUI
-import com.bu.selfstudy.ActivityViewModel
-import com.bu.selfstudy.MainActivity
+import com.bu.selfstudy.ui.main.ActivityViewModel
+import com.bu.selfstudy.ui.main.MainActivity
 import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.SearchHistory
 import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.FragmentSearchBinding
 import com.bu.selfstudy.tool.*
-import com.bu.selfstudy.tool.dropdowntextview.DropdownTextView
 import com.bu.selfstudy.tool.dropdowntextview.SelectionTextCallback
-import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.*
 
 /**
@@ -116,6 +110,16 @@ class SearchFragment: Fragment()  {
                 it.bookId = bundle.getLong("bookId")
                 viewModel.insertWord(it)
             }
+        }
+
+        //上一個狀態是選擇題庫時, 進行新增題庫的動作
+        setFragmentResultListener("AddBookFragment"){_, _ ->
+            findNavController().navigate(
+                NavGraphDirections.actionGlobalDialogChooseBook(
+                    "加入至題庫",
+                    bookId = 0L
+                )
+            )
         }
 
         //可根據反白文字直接搜尋單字
@@ -202,8 +206,6 @@ class SearchFragment: Fragment()  {
 
 
             setIconifiedByDefault(false)//展開SearchView
-            requestFocus()//加入光標
-            openKeyboard()//開鍵盤
 
             //加入麥克風功能
             setSearchableInfo((requireActivity()
@@ -227,24 +229,21 @@ class SearchFragment: Fragment()  {
                     return false
                 }
             })
-
-            setOnQueryTextFocusChangeListener { _, hasFocus ->
-                if(hasFocus){
-                    showSearchSuggestion()
-                }
-            }
         }
 
-        //從別的fragment回彈後要回復狀態
-        if(binding.wordCardItem.root.isVisible)
+        if(binding.wordCardItem.root.isVisible) {
+            //從別的fragment回彈後要回復狀態
             searchView.setQuery(viewModel.lastSearchQuery, false)
-
-
-        //從堆棧返回時會重複觸發, 須檢測
-        if(viewModel.lastSearchQuery.isNullOrBlank() && args.query.isNotEmpty()) {
+        }
+        else if(viewModel.lastSearchQuery.isNullOrBlank() && args.query.isNotEmpty()) {
+            //從堆棧返回時會重複觸發, 須檢測
             startSearch(args.query)
         }
-
+        else{
+            //初始化頁面
+            searchView.requestFocus()//加入光標
+            openKeyboard()//開鍵盤
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

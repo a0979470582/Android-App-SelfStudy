@@ -8,17 +8,17 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
-import com.bu.selfstudy.ActivityViewModel
-import com.bu.selfstudy.MainActivity
+import com.bu.selfstudy.ui.main.ActivityViewModel
+import com.bu.selfstudy.ui.main.MainActivity
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.FragmentAddBookBinding
 import com.bu.selfstudy.tool.closeKeyboard
 import com.bu.selfstudy.tool.openKeyboard
 import com.bu.selfstudy.tool.viewBinding
-import com.bu.selfstudy.ui.SettingFragment
 
 class AddBookFragment: Fragment()  {
 
@@ -87,6 +87,9 @@ class AddBookFragment: Fragment()  {
                 if(bookName.isBlank())
                     binding.bookField.error = "請輸入正確的題庫名稱"
                 else{
+                    //為了告訴SearchFragment是從AddBookFragment返回的, 須重新開啟選擇題庫對話框
+                    setFragmentResult("AddBookFragment", Bundle())
+
                     activityViewModel.insertBook(
                             Book(
                                     bookName = bookName,
@@ -98,7 +101,6 @@ class AddBookFragment: Fragment()  {
                 }
             }
             android.R.id.home->{
-                //新增單字是否需要保存狀態?
                 findNavController().popBackStack()
                 closeKeyboard()
             }

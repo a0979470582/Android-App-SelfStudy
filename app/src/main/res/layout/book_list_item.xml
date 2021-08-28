@@ -5,6 +5,11 @@
     tools:showIn="@layout/activity_main">
 
     <data>
+        <import type="com.bu.selfstudy.data.model.Book"/>
+        <import type="android.content.res.ColorStateList"/>
+        <variable
+            name="book"
+            type="Book" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,6 +26,7 @@
             android:layout_height="56dp"
             android:padding="16dp"
             app:icon="@drawable/ic_baseline_bookmark_24"
+            app:iconTint="@{ColorStateList.valueOf(book.colorInt)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -33,7 +39,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:textColor="@color/black87"
+            android:text="@{book.bookName}"
+            android:textColor="@color/primary_text_color_87"
             app:layout_constraintStart_toEndOf="@id/bookIcon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="多益核心單字" />
@@ -48,6 +55,7 @@
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             android:textColor="#979797"
             android:textSize="11.45sp"
+            android:text="@{String.valueOf(book.size)}"
             app:layout_constraintStart_toEndOf="@id/bookNameTextView"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="1253" />
@@ -61,7 +69,8 @@
             android:paddingEnd="16dp"
             android:paddingBottom="16dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-            android:textColor="@color/black60"
+            android:text="@{book.explanation}"
+            android:textColor="@color/primary_text_color_60"
             app:layout_constraintEnd_toStartOf="@id/moreIcon"
             app:layout_constraintStart_toEndOf="@id/bookIcon"
             app:layout_constraintTop_toBottomOf="@id/bookNameTextView" />
@@ -74,17 +83,17 @@
             android:layout_height="56dp"
             android:padding="16dp"
             app:icon="@drawable/ic_baseline_more_vert_24"
-            app:iconTint="@color/icon_black"
+            app:iconTint="?attr/primary_icon_tint"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
 
         <View
+            style="@style/Divider"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginStart="16dp"
-            android:background="#14212121"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/bookIcon" />

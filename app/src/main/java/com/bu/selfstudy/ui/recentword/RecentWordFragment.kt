@@ -10,11 +10,10 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
-import com.bu.selfstudy.MainActivity
+import com.bu.selfstudy.ui.main.MainActivity
 import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.RecentWord
-import com.bu.selfstudy.databinding.FragmentMarkBinding
 import com.bu.selfstudy.databinding.FragmentRecentWordBinding
 import com.bu.selfstudy.tool.*
 import com.bu.selfstudy.ui.book.ActionItemCreator
