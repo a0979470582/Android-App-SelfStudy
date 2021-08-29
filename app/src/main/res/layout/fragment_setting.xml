@@ -16,7 +16,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
-            android:backgroundTint="?attr/toolbar_color"
+            android:background="?attr/toolbar_color"
             android:theme="@style/ThemeOverlay.AppCompat.DayNight"
             app:titleTextColor="@color/primary_text_color_87"
             app:titleTextAppearance="@style/title_text_style"

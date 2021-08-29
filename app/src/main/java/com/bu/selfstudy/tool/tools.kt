@@ -30,8 +30,8 @@ fun <T:Any> T.log(){
     Log.e("debug", this.toString())
 }
 
-fun <T:Any> T.showToast(duration:Int = Toast.LENGTH_SHORT){
-    Toast.makeText(SelfStudyApplication.context, this.toString(), duration).show()
+fun <T:Any> T.showToast(context: Context = SelfStudyApplication.context, duration:Int = Toast.LENGTH_SHORT){
+    Toast.makeText(context, this.toString(), duration).show()
 }
 
 fun View.showSnackbar(text: String, actionText: String? = null, duration: Int = Snackbar.LENGTH_LONG, block: (() -> Unit)? = null) {

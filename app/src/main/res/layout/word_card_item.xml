@@ -42,6 +42,7 @@
                 android:textIsSelectable="true"
                 android:text="@{word.wordName}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
+                android:textColor="?attr/word_card_wordName_color"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -70,7 +71,7 @@
                 android:insetBottom="0dp"
                 app:icon="@drawable/ic_baseline_volume_up_24"
                 app:iconGravity="textStart"
-                app:iconTint="@color/colorButtonEnabled"
+                app:iconTint="?attr/word_card_button_color"
                 app:layout_constraintBottom_toBottomOf="@+id/pronunciationTextView"
                 app:layout_constraintStart_toEndOf="@+id/pronunciationTextView"
                 app:layout_constraintTop_toTopOf="@+id/pronunciationTextView" />

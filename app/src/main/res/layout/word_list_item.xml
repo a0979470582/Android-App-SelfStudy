@@ -49,7 +49,7 @@
             android:insetBottom="0dp"
             app:icon="@drawable/ic_baseline_volume_up_24"
             app:iconGravity="textStart"
-            app:iconTint="@color/purple_500"
+            app:iconTint="?attr/word_card_button_color"
             app:layout_constraintStart_toEndOf="@id/pronunciationTextView"
             app:layout_constraintBottom_toBottomOf="@id/pronunciationTextView"
             app:layout_constraintTop_toTopOf="@id/pronunciationTextView" />
@@ -65,7 +65,7 @@
             android:insetBottom="0dp"
             app:icon="@drawable/ic_round_star_border_24"
             app:iconGravity="textStart"
-            app:iconTint="@color/purple_500"
+            app:iconTint="?attr/word_card_button_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

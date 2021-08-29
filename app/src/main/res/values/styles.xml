@@ -33,8 +33,13 @@
 
     <!--cancel underline in search view -->
     <style name="MySearchView" parent="Widget.AppCompat.Light.SearchView">
-        <item name="submitBackground">@android:color/white</item>
-        <item name="queryBackground">@android:color/white</item>
+        <item name="submitBackground">?attr/toolbar_color</item>
+        <item name="queryBackground">?attr/toolbar_color</item>
+        <item name="searchIcon">@null</item>
+        <item name="searchHintIcon">@null</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColorHint">@color/primary_text_color_60</item>
+
     </style>
 
     <!--chip color-->

@@ -30,6 +30,10 @@
         <item name="primary_icon_tint">@color/icon_black</item>
         <item name="primary_divide_color">@color/divide_color_black</item>
 
+        <item name="drop_down_background">@color/drop_down_background_white</item>
+        <item name="word_card_wordName_color">@color/black53</item>
+        <item name="word_card_button_color">@color/colorButtonEnabled</item>
+
     </style>
 
 </resources>

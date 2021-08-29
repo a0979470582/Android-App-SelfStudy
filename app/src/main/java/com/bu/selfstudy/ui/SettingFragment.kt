@@ -37,6 +37,8 @@ class SettingFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        setHasOptionsMenu(true)
+
         (activity as MainActivity).let {
             it.setSupportActionBar(binding.toolbar)
 
@@ -52,7 +54,6 @@ class SettingFragment : Fragment() {
 
 
     class InternalSettingsFragment : PreferenceFragmentCompat() {
-
 
         @InternalCoroutinesApi
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -107,14 +108,15 @@ class SettingFragment : Fragment() {
             }
 
             findPreference<ListPreference>("theme_list")?.setValueIndex(
-                    resources.getStringArray(R.array.theme_keys)
-                            .indexOf((requireActivity() as MainActivity).getCurrentTheme())
+                resources.getStringArray(R.array.theme_keys)
+                       .indexOf((SelfStudyApplication.context as SelfStudyApplication).getCurrentTheme())
             )
+
 
 
             findPreference<Preference>("theme_list")?.setOnPreferenceChangeListener { _, newValue ->
 
-                (requireActivity() as MainActivity).setActivityTheme(newValue.toString())
+                (SelfStudyApplication.context as SelfStudyApplication).setTheme(newValue.toString())
 
                 return@setOnPreferenceChangeListener true
             }

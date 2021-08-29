@@ -22,11 +22,11 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
-                android:theme="@style/ThemeOverlay.AppCompat.Light"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                android:theme="@style/ThemeOverlay.AppCompat.DayNight"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
                 app:titleTextAppearance="@style/title_text_style"
                 app:layout_scrollFlags="scroll|enterAlways|snap"
-                android:background="@color/white"/>
+                android:background="?attr/toolbar_color" />
 
         </com.google.android.material.appbar.AppBarLayout>
 

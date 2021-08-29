@@ -8,9 +8,14 @@
     </declare-styleable>
 
     <attr name="toolbar_color" type="color"/>
-    <attr name="word_card_toolbar_color" type="color"/>
     <attr name="primary_text_color" type="color"/>
     <attr name="primary_icon_tint" type="color"/>
     <attr name="primary_divide_color" type="color"/>
+
+    <!--word_card-->
+    <attr name="drop_down_background" type="color"/>
+    <attr name="word_card_wordName_color" type="color"/>
+    <attr name="word_card_toolbar_color" type="color"/>
+    <attr name="word_card_button_color" type="color"/>
 
 </resources>

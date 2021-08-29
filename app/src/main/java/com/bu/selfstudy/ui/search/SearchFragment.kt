@@ -199,12 +199,6 @@ class SearchFragment: Fragment()  {
             //前移hint的位置
             setPadding(-44, 0, 0, 0)
 
-            //移除搜尋框內的search_icon
-            findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
-                    ?.setImageDrawable(null)
-
-
-
             setIconifiedByDefault(false)//展開SearchView
 
             //加入麥克風功能

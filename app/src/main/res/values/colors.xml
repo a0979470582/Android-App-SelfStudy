@@ -28,6 +28,7 @@
     <color name="black87">#DE000000</color>
     <color name="black75">#BF000000</color>
     <color name="black60">#99000000</color>
+    <color name="black53">#87000000</color>
     <color name="black42">#6B000000</color>
     <color name="black33">#54000000</color>
     <color name="black17">#2B000000</color>
@@ -53,7 +54,8 @@
     <color name="divide_color_white">#404143</color>
 
     <!--drop_down_view-->
-    <color name="drop_down_background">#f5f5f5</color>
+    <color name="drop_down_background_white">#f5f5f5</color>
+    <color name="drop_down_background_black">@color/dark_toolbar_background</color>
 
     <!--fast_scroll-->
     <color name="fast_scroll_icon_bg">#f5f5f5</color>

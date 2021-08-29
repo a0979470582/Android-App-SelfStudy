@@ -36,7 +36,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:textColor="@color/black87"
+            android:textColor="@color/primary_text_color_87"
             app:layout_constraintStart_toEndOf="@id/radioButton"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="多益核心單字" />
@@ -64,7 +64,7 @@
             android:paddingEnd="16dp"
             android:paddingBottom="16dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-            android:textColor="@color/black60"
+            android:textColor="@color/primary_text_color_60"
             android:text="多益考試是國際間可以通用的..."
             app:layout_constraintEnd_toStartOf="@id/fileSizeTextView"
             app:layout_constraintStart_toEndOf="@id/radioButton"

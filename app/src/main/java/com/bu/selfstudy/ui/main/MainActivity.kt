@@ -60,7 +60,6 @@ class MainActivity : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initActivityTheme()
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
@@ -129,36 +128,6 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-    private fun initActivityTheme(){
-        val themeString = PreferenceManager
-                .getDefaultSharedPreferences(this)
-                .getString("theme_list", "day")
-
-        setActivityTheme(themeString!!)
-
-    }
-
-    fun setActivityTheme(themeString: String) {
-
-        val mode = when(themeString){
-
-            "day"-> AppCompatDelegate.MODE_NIGHT_NO
-            "night"-> AppCompatDelegate.MODE_NIGHT_YES
-
-            else-> AppCompatDelegate.MODE_NIGHT_NO
-        }
-
-        AppCompatDelegate.setDefaultNightMode(mode)
-
-    }
-
-    fun getCurrentTheme(): String{
-        return when (resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)) {
-            Configuration.UI_MODE_NIGHT_NO -> "day"
-            Configuration.UI_MODE_NIGHT_YES -> "night"
-            else-> "day"
-        }
-    }
 
     /**
      * 判斷登入是否成功, 告知使用者
