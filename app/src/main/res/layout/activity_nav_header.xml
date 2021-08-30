@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:focusable="true"
         android:clickable="true"
-        android:background="@color/blue80">
+        android:background="?attr/nav_view_background">
 
         <ImageView
             android:id="@+id/iconImage"

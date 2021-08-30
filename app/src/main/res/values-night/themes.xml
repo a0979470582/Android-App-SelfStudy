@@ -38,6 +38,9 @@
         <item name="drop_down_background">@color/drop_down_background_black</item>
         <item name="word_card_wordName_color">@color/white87</item>
         <item name="word_card_button_color">@color/iris80</item>
+
+        <item name="nav_view_background">@color/blue_nav_view</item>
+
     </style>
 
 

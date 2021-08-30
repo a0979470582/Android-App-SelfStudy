@@ -18,4 +18,6 @@
     <attr name="word_card_toolbar_color" type="color"/>
     <attr name="word_card_button_color" type="color"/>
 
+    <!--navigation view-->
+    <attr name="nav_view_background" type="color"/>
 </resources>

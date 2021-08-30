@@ -21,7 +21,7 @@
             android:paddingTop="9dp"
             app:icon="@drawable/ic_baseline_close_24"
             app:iconGravity="textStart"
-            app:iconTint="@color/black60"
+            app:iconTint="?attr/primary_icon_tint"
             android:layout_alignParentStart="true"/>
 
         <com.google.android.material.textview.MaterialTextView
@@ -33,7 +33,7 @@
             android:paddingEnd="12dp"
             android:text="檢視"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:textColor="@color/black75"
+            android:textColor="@color/primary_text_color_75"
             android:textSize="16sp"
             android:textStyle="normal" />
 
@@ -47,7 +47,7 @@
             android:paddingTop="6dp"
             app:icon="@drawable/ic_baseline_manage_search_24"
             app:iconGravity="textStart"
-            app:iconTint="@color/black60"
+            app:iconTint="?attr/primary_icon_tint"
             android:layout_toStartOf="@id/resetIcon"/>
 
         <com.google.android.material.button.MaterialButton
@@ -60,7 +60,7 @@
             android:paddingTop="6dp"
             app:icon="@drawable/ic_baseline_refresh_24"
             app:iconGravity="textStart"
-            app:iconTint="@color/black60"
+            app:iconTint="?attr/primary_icon_tint"
             android:layout_alignParentEnd="true"/>
     </RelativeLayout>
 
@@ -75,7 +75,7 @@
         android:paddingBottom="8dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:textSize="16sp"
-        android:textColor="@color/black60"
+        android:textColor="@color/primary_text_color_60"
         android:text="版面"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -127,7 +127,7 @@
         android:paddingBottom="8dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:textSize="16sp"
-        android:textColor="@color/black60"
+        android:textColor="@color/primary_text_color_60"
         android:text="標籤"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -159,7 +159,7 @@
         android:paddingStart="16dp"
         android:paddingBottom="8dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-        android:textColor="@color/black60"
+        android:textColor="@color/primary_text_color_60"
         android:textSize="16sp"
         android:text="排序方式"
         app:layout_constraintTop_toTopOf="parent"

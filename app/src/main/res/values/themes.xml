@@ -34,6 +34,7 @@
         <item name="word_card_wordName_color">@color/black53</item>
         <item name="word_card_button_color">@color/colorButtonEnabled</item>
 
+        <item name="nav_view_background">@color/blue80</item>
     </style>
 
 </resources>

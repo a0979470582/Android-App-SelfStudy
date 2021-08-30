@@ -63,8 +63,9 @@ class DialogChooseBook : AppCompatDialogFragment() {
             override fun getItemId(position: Int) = bookList[position].id
             override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
                 if(convertView == null){
+
                     val binding=  ChooseBookListItemBinding.inflate(
-                            LayoutInflater.from(SelfStudyApplication.context), parent, false
+                            LayoutInflater.from(requireActivity()), parent, false
                     )
                     val holder = ViewHolder(binding).also {
                         it.bindData(bookList[position], position)
@@ -88,7 +89,7 @@ class DialogChooseBook : AppCompatDialogFragment() {
             }
         }
 
-        listView = ListView(SelfStudyApplication.context).also {
+        listView = ListView(requireActivity()).also {
 
             it.setPadding(0, 32,0,0)
             it.adapter = adapter

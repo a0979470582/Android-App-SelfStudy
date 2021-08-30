@@ -86,6 +86,8 @@ class MainActivity : AppCompatActivity(){
             when(pair?.first){
                 "insertWord" -> pair.second?.let { showInsertMessage(it) }
                 "insertBook" -> "新增成功".showToast()
+                        //.showOnlyTextSnackbar(
+                        //view = binding.root, anchorView = binding.root)
             }
         }
 

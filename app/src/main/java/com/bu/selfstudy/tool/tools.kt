@@ -30,8 +30,24 @@ fun <T:Any> T.log(){
     Log.e("debug", this.toString())
 }
 
+/**
+ * Toast無法自適應主題, 建議改用Snackbar
+ */
 fun <T:Any> T.showToast(context: Context = SelfStudyApplication.context, duration:Int = Toast.LENGTH_SHORT){
     Toast.makeText(context, this.toString(), duration).show()
+}
+
+fun <T:Any> T.showOnlyTextSnackbar(
+        view: View,
+        duration: Int = Snackbar.LENGTH_SHORT,
+        anchorView: View? = null,
+){
+    if(anchorView == null)
+        Snackbar.make(view, this.toString(), duration).show()
+    else
+        Snackbar.make(view, this.toString(), duration)
+                .setAnchorView(anchorView)
+                .show()
 }
 
 fun View.showSnackbar(text: String, actionText: String? = null, duration: Int = Snackbar.LENGTH_LONG, block: (() -> Unit)? = null) {
