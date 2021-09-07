@@ -211,7 +211,10 @@ class ArchiveAdapter(val fragment: ArchiveFragment): Adapter<ViewHolder>() {
             return oldItem.id == newItem.id
         }
         override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean {
-            return oldItem == newItem
+            return oldItem.bookName == newItem.bookName &&
+                    oldItem.explanation == newItem.explanation &&
+                    oldItem.size == newItem.size &&
+                    oldItem.colorInt == newItem.colorInt
         }
     }
 

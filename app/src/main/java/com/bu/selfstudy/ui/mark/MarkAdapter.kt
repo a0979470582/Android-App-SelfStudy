@@ -157,7 +157,8 @@ class MarkAdapter(val fragment: MarkFragment):RecyclerView.Adapter<RecyclerView.
             return oldItem.wordName == newItem.wordName &&
                     oldItem.pronunciation == newItem.pronunciation &&
                     oldItem.isMark == newItem.isMark &&
-                    oldItem.audioFilePath == newItem.audioFilePath
+                    oldItem.audioFilePath == newItem.audioFilePath &&
+                    oldItem.translation == newItem.translation
         }
     }
 

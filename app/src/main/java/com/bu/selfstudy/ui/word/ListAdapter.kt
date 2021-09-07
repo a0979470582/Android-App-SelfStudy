@@ -140,11 +140,7 @@ class ListAdapter(val fragment: WordFragment):RecyclerView.Adapter<RecyclerView.
         }
 
         override fun areContentsTheSame(oldItem: Word, newItem: Word): Boolean {
-            return oldItem.wordName == newItem.wordName &&
-                    oldItem.pronunciation == newItem.pronunciation &&
-                    oldItem.isMark == newItem.isMark &&
-                    oldItem.audioFilePath == newItem.audioFilePath&&
-                    oldItem.translation == newItem.translation
+            return oldItem.isMark == newItem.isMark
         }
     }
 

@@ -27,14 +27,7 @@ class SuggestionFragment: Fragment()  {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        setHasOptionsMenu(true)
-
-        (activity as MainActivity).let {
-            it.setSupportActionBar(binding.toolbar)
-
-            NavigationUI.setupActionBarWithNavController(
-                    it, findNavController(), it.appBarConfiguration)
-        }
+        setNewToolbar(binding.toolbar)
 
         val userMail = FirebaseAuth.getInstance().currentUser?.email
 

@@ -114,12 +114,13 @@ class SearchFragment: Fragment()  {
 
         //上一個狀態是選擇題庫時, 進行新增題庫的動作
         setFragmentResultListener("AddBookFragment"){_, _ ->
-            findNavController().navigate(
-                NavGraphDirections.actionGlobalDialogChooseBook(
-                    "加入至題庫",
-                    bookId = 0L
+            if(viewModel.lastSearchQuery.isNotBlank())
+                findNavController().navigate(
+                    NavGraphDirections.actionGlobalDialogChooseBook(
+                        "加入至題庫",
+                        bookId = 0L
+                    )
                 )
-            )
         }
 
         //可根據反白文字直接搜尋單字

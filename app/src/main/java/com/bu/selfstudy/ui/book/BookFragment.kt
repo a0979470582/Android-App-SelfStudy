@@ -4,6 +4,7 @@ package com.bu.selfstudy.ui.book
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.view.animation.AnimationUtils
 import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -44,7 +45,6 @@ class BookFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         viewModel.bookListLiveData.observe(viewLifecycleOwner){
             binding.bookNotFound.root.isVisible = it.isEmpty()
             adapter.submitList(it)
@@ -54,28 +54,6 @@ class BookFragment : Fragment() {
             findNavController().navigate(R.id.searchFragment)
         }
 
-
-        setDialogResultListener()
-        setDatabaseListener()
-        initSpeedDial()
-    }
-
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        setHasOptionsMenu(true)
-
-        (activity as MainActivity).let {
-            it.setSupportActionBar(binding.toolbar)
-
-            NavigationUI.setupActionBarWithNavController(
-                it, findNavController(), it.appBarConfiguration)
-        }
-
-    }
-
-    private fun setDatabaseListener() {
         viewModel.databaseEvent.observe(viewLifecycleOwner){
             when(it?.first){
                 "delete" -> "已刪除「${it.second?.getString("bookName")}」".showToast()
@@ -84,7 +62,17 @@ class BookFragment : Fragment() {
                 "insertLocal" -> "已新增「${it.second?.getString("bookName")}」".showToast()
             }
         }
+
+        setDialogResultListener()
+        initSpeedDial()
     }
+
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        setNewToolbar(binding.toolbar)
+    }
+
 
     private fun setDialogResultListener() {
         setFragmentResultListener("DialogDeleteCommon") { _, _ ->
@@ -116,8 +104,6 @@ class BookFragment : Fragment() {
                 else
                     "下載未完成".showToast()
             }
-
-
         }
     }
 

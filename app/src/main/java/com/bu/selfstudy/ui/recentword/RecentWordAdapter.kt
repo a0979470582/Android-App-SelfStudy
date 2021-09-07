@@ -83,7 +83,10 @@ class RecentWordAdapter(val fragment: RecentWordFragment):
         }
 
         override fun areContentsTheSame(oldItem: RecentWord, newItem: RecentWord): Boolean {
-            return oldItem == newItem
+            return oldItem.bookId == newItem.bookId &&
+                    oldItem.bookName == newItem.bookName &&
+                    oldItem.wordId == newItem.wordId &&
+                    oldItem.wordName == newItem.wordName
         }
     }
 

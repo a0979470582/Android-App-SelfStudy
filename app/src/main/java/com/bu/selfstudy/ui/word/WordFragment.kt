@@ -77,6 +77,7 @@ class WordFragment : Fragment() {
     private var fastScroll: FastScroller? = null
     private var tracker: SelectionTracker<Long>? = null
 
+
     companion object{
         const val TYPE_CARD = 0
         const val TYPE_LIST = 1

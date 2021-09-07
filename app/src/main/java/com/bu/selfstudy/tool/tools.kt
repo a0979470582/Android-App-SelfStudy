@@ -9,8 +9,12 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import com.bu.selfstudy.SelfStudyApplication
+import com.bu.selfstudy.ui.main.MainActivity
 import com.google.android.material.snackbar.Snackbar
 
 fun Fragment.closeKeyboard(){
@@ -97,4 +101,16 @@ fun hasNetwork(): Boolean {
         val networkInfo = connectivityManager.activeNetworkInfo
         networkInfo != null && networkInfo.isAvailable
     }
+}
+
+fun Fragment.setNewToolbar(toolbar: Toolbar){
+    setHasOptionsMenu(true)
+
+    (activity as? MainActivity)?.let {
+        it.setSupportActionBar(toolbar)
+
+        NavigationUI.setupActionBarWithNavController(
+            it, findNavController(), it.appBarConfiguration)
+    }
+
 }

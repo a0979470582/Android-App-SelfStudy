@@ -25,7 +25,6 @@ import kotlin.reflect.KProperty
 
 
 
-
 inline fun <reified T : ViewBinding> Fragment.viewBinding():FragmentViewBindingProperty<T>{
     val cls:Class<T> = (T::class.java)
     val method: Method = cls.getMethod("inflate", LayoutInflater::class.java)

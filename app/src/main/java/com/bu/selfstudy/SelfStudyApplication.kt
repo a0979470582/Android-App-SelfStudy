@@ -18,13 +18,16 @@ import com.bu.selfstudy.tool.getSharedPreferences
 import com.bu.selfstudy.tool.setSharedPreferences
 
 class SelfStudyApplication : Application() {
+
+    private val sharedPreferencesFileName = "self_study_data"
+
     companion object{
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
-        val sharedPreferencesFileName = "self_study_data"
         var memberId = 1L
         val backupMetadata = MutableLiveData(BackupMetadata(hasBackup = false))
     }
+
     override fun onCreate() {
         super.onCreate()
         context = applicationContext
@@ -33,13 +36,12 @@ class SelfStudyApplication : Application() {
 
 
     private fun initTheme(){
-
-        setTheme(getCurrentTheme()!!)
+        setTheme(getCurrentTheme())
     }
 
     fun setTheme(themeString: String) {
 
-        setSharedPreferences("self_study_data"){
+        setSharedPreferences(sharedPreferencesFileName){
             putString("themeString", themeString)
         }
 
@@ -54,9 +56,18 @@ class SelfStudyApplication : Application() {
         AppCompatDelegate.setDefaultNightMode(mode)
     }
 
-    fun getCurrentTheme() = getSharedPreferences(sharedPreferencesFileName)
-                                .getString("themeString", "day")
+    fun getCurrentTheme(): String{
+        val themeString = getSharedPreferences(sharedPreferencesFileName)
+                .getString("themeString", "day")
 
+        return if(themeString == "night")
+            "night"
+        else
+            "day"
+    }
+
+
+    /*待更新, 暫時以APP內的主題設置為主
     fun getSystemTheme(): String{
         return when (resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)) {
             Configuration.UI_MODE_NIGHT_NO -> "day"
@@ -64,6 +75,6 @@ class SelfStudyApplication : Application() {
             Configuration.UI_MODE_NIGHT_UNDEFINED->"day"
             else-> "day"
         }
-    }
+    }*/
 
 }

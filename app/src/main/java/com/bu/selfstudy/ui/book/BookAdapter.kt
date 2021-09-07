@@ -26,6 +26,7 @@ import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.BookListItemBinding
 import com.bu.selfstudy.databinding.RecyclerviewHeaderBinding
+import com.bu.selfstudy.tool.testTaskTime
 import com.bu.selfstudy.ui.archive.ArchiveFragmentDirections
 import com.bu.selfstudy.ui.word.WordFragment
 import com.google.android.material.button.MaterialButton
@@ -187,7 +188,7 @@ class BookAdapter(val fragment: BookFragment): Adapter<ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when(holder){
-            is ItemViewHolder->{
+            is ItemViewHolder-> {
                 holder.itemBinding.book = asyncListDiffer.currentList[position]
             }
             is HeaderViewHolder->{
@@ -195,7 +196,6 @@ class BookAdapter(val fragment: BookFragment): Adapter<ViewHolder>() {
             }
         }
     }
-
 
     //沒數據時會顯示HeaderView
     override fun getItemCount() = asyncListDiffer.currentList.size
@@ -207,7 +207,10 @@ class BookAdapter(val fragment: BookFragment): Adapter<ViewHolder>() {
             return oldItem.id == newItem.id
         }
         override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean {
-            return oldItem == newItem
+            return oldItem.bookName == newItem.bookName &&
+                    oldItem.explanation == newItem.explanation &&
+                    oldItem.size == newItem.size &&
+                    oldItem.colorInt == newItem.colorInt
         }
     }
 
