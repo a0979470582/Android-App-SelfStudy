@@ -127,8 +127,7 @@
     </fragment>
     <action
         android:id="@+id/action_global_wordFragment"
-        app:destination="@id/wordFragment"
-        app:enterAnim="@android:anim/fade_in" />
+        app:destination="@id/wordFragment" />
     <dialog
         android:id="@+id/dialogChooseBook"
         android:name="com.bu.selfstudy.ui.dialog.DialogChooseBook"

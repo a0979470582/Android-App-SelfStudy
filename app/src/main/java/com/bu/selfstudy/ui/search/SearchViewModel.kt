@@ -73,7 +73,7 @@ class SearchViewModel : ViewModel() {
         if(text.isNullOrBlank() || text.length > 25)
             return null
 
-        return Regex("[a-zA-Z\\- ]{1,25}").find(text)?.value
+        return Regex("[a-zA-Z]{1,25}").find(text)?.value
     }
 
     fun addOneSearchHistory(searchName: String) {

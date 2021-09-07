@@ -18,6 +18,7 @@ import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.FragmentAddBookBinding
 import com.bu.selfstudy.tool.closeKeyboard
 import com.bu.selfstudy.tool.openKeyboard
+import com.bu.selfstudy.tool.setNewToolbar
 import com.bu.selfstudy.tool.viewBinding
 
 class AddBookFragment: Fragment()  {
@@ -63,14 +64,7 @@ class AddBookFragment: Fragment()  {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        setHasOptionsMenu(true)
-
-        (activity as MainActivity).let {
-            it.setSupportActionBar(binding.toolbar)
-
-            NavigationUI.setupActionBarWithNavController(
-                    it, findNavController(), it.appBarConfiguration)
-        }
+        setNewToolbar(binding.toolbar)
     }
 
 

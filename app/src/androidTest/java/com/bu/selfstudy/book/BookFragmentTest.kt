@@ -105,4 +105,9 @@ class BookFragmentTest {
         assertThat(navController.currentDestination?.id).isEqualTo(R.id.searchFragment)
     }
 
+    @Test
+    fun AddBookToDBThenRemove(){
+
+    }
+
 }

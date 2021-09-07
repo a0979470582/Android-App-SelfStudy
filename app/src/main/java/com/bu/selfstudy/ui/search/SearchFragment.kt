@@ -48,6 +48,8 @@ class SearchFragment: Fragment()  {
 
     private var mediaPlayer: MediaPlayer? = null
 
+    private var showingSnackbar: Snackbar? = null
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -112,15 +114,17 @@ class SearchFragment: Fragment()  {
             }
         }
 
-        //上一個狀態是選擇題庫時, 進行新增題庫的動作
+        //上一個狀態是新增題庫時, 進行選擇題庫的動作
         setFragmentResultListener("AddBookFragment"){_, _ ->
-            if(viewModel.lastSearchQuery.isNotBlank())
-                findNavController().navigate(
-                    NavGraphDirections.actionGlobalDialogChooseBook(
+            if(viewModel.lastSearchQuery.isBlank())
+                return@setFragmentResultListener
+
+            findNavController().navigate(
+                NavGraphDirections.actionGlobalDialogChooseBook(
                         "加入至題庫",
                         bookId = 0L
-                    )
                 )
+            )
         }
 
         //可根據反白文字直接搜尋單字
@@ -147,6 +151,7 @@ class SearchFragment: Fragment()  {
      */
     private fun showInsertMessage(bundle: Bundle) {
         Snackbar.make(binding.root, "新增成功", Snackbar.LENGTH_LONG).run {
+            showingSnackbar = this
             setAction("檢視") {
                 findNavController().navigate(
                         NavGraphDirections.actionGlobalWordFragment(
@@ -158,6 +163,11 @@ class SearchFragment: Fragment()  {
             setAnchorView(binding.extendedFab)
             show()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        showingSnackbar?.dismiss()
     }
 
     private fun setSelectionTextCallback(callback: SelectionTextCallback){
@@ -207,6 +217,11 @@ class SearchFragment: Fragment()  {
                     .getSystemService(Context.SEARCH_SERVICE) as SearchManager)
                     .getSearchableInfo(requireActivity().componentName))
 
+            setOnQueryTextFocusChangeListener { _, hasFocus ->
+                if(hasFocus){
+                    showSearchSuggestion()
+                }
+            }
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
                 override fun onQueryTextSubmit(query: String) = false
@@ -226,12 +241,17 @@ class SearchFragment: Fragment()  {
             })
         }
 
-        if(binding.wordCardItem.root.isVisible) {
-            //從別的fragment回彈後要回復狀態
+        /**
+         * 只有在搜尋結果頁面才會導向其他頁並返回
+         */
+        if(viewModel.lastSearchQuery.isNotBlank()) {
+            //回彈到此頁，從別的fragment回彈後要回復狀態
             searchView.setQuery(viewModel.lastSearchQuery, false)
+            showResult(viewModel.wordLiveData.value)
+            "ha".log()
         }
-        else if(viewModel.lastSearchQuery.isNullOrBlank() && args.query.isNotEmpty()) {
-            //從堆棧返回時會重複觸發, 須檢測
+        else if(args.query.isNotEmpty()) {
+            //初始化頁面
             startSearch(args.query)
         }
         else{
@@ -239,6 +259,7 @@ class SearchFragment: Fragment()  {
             searchView.requestFocus()//加入光標
             openKeyboard()//開鍵盤
         }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

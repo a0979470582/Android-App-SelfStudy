@@ -14,6 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.RecyclerView
 import com.bu.selfstudy.ui.main.MainActivity
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
@@ -21,30 +23,40 @@ import com.bu.selfstudy.databinding.FragmentBookBinding
 import com.bu.selfstudy.tool.*
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
 
+/**
+ * RecyclerView Item更新動畫重疊的原因:
+ * 1. 從後一頁面返回此頁時，若adapter還保有ViewHolder暫存，由於所有View重設值，子項的高度會先歸零再放大為內容高度
+ * 2. Item重設造成的，可以使用payloads對子項進行局部更新，也避免在判斷物件相等時花費太多時間
+ */
 class BookFragment : Fragment() {
 
     private val viewModel: BookViewModel by viewModels()
     private val binding : FragmentBookBinding by viewBinding()
-    private val adapter = BookAdapter(fragment = this)
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?):View{
 
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        val adapter = BookAdapter(fragment = this)
+
         binding.recyclerView.let {
             it.adapter = adapter
             it.setHasFixedSize(true)
         }
 
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.bookListLiveData.observe(viewLifecycleOwner){
             binding.bookNotFound.root.isVisible = it.isEmpty()
             adapter.submitList(it)
@@ -160,11 +172,6 @@ class BookFragment : Fragment() {
                 backPressedToExitOnce = false
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        viewModel.calculateBookSize()
     }
 
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Bundle
 import android.view.*
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -14,22 +15,32 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.transition.TransitionManager
+import bolts.Task
 import com.bu.selfstudy.NavGraphDirections
 import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
+import com.bu.selfstudy.data.model.Word
 import com.bu.selfstudy.databinding.BookListItemBinding
 import com.bu.selfstudy.databinding.RecyclerviewHeaderBinding
+import com.bu.selfstudy.tool.log
+import com.bu.selfstudy.tool.putBundle
 import com.bu.selfstudy.tool.testTaskTime
 import com.bu.selfstudy.ui.archive.ArchiveFragmentDirections
+import com.bu.selfstudy.ui.word.ListAdapter
 import com.bu.selfstudy.ui.word.WordFragment
 import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.delay
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class BookAdapter(val fragment: BookFragment): Adapter<ViewHolder>() {
@@ -41,6 +52,8 @@ class BookAdapter(val fragment: BookFragment): Adapter<ViewHolder>() {
 
     inner class ItemViewHolder(val itemBinding: BookListItemBinding): ViewHolder(itemBinding.root)
     inner class HeaderViewHolder(val headerBinding: RecyclerviewHeaderBinding) : ViewHolder(headerBinding.root)
+
+    val arrayList = ArrayList<List<Book>>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         if(viewType == ITEM_VIEW_HOLDER){
@@ -197,25 +210,58 @@ class BookAdapter(val fragment: BookFragment): Adapter<ViewHolder>() {
         }
     }
 
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isNotEmpty() && payloads[0] is Bundle) {
+
+            val bundle = payloads[0] as Bundle
+
+            (holder as ItemViewHolder).itemBinding.run {
+                bookSizeTextView.text = bundle.getInt("size").toString()
+                bookIcon.iconTint = ColorStateList.valueOf(bundle.getInt("colorInt"))
+            }
+
+            return
+        }
+        super.onBindViewHolder(holder, position, payloads)
+    }
+
     //沒數據時會顯示HeaderView
     override fun getItemCount() = asyncListDiffer.currentList.size
     override fun getItemViewType(position: Int) =
         if(position == 0) HEADER_VIEW_HOLDER else ITEM_VIEW_HOLDER
+
+    override fun setHasStableIds(hasStableIds: Boolean) {
+        super.setHasStableIds(true)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return asyncListDiffer.currentList[position].id
+    }
 
     companion object BookDiffCallback : DiffUtil.ItemCallback<Book>(){
         override fun areItemsTheSame(oldItem: Book, newItem: Book): Boolean {
             return oldItem.id == newItem.id
         }
         override fun areContentsTheSame(oldItem: Book, newItem: Book): Boolean {
-            return oldItem.bookName == newItem.bookName &&
-                    oldItem.explanation == newItem.explanation &&
+            return oldItem.colorInt == newItem.colorInt &&
                     oldItem.size == newItem.size &&
-                    oldItem.colorInt == newItem.colorInt
+                    oldItem.bookName == newItem.bookName &&
+                    oldItem.explanation == newItem.explanation
+        }
+        override fun getChangePayload(oldItem: Book, newItem: Book): Any? {
+            if(oldItem.size != newItem.size || oldItem.colorInt != newItem.colorInt) {
+                return putBundle("size", newItem.size)
+                        .putBundle("colorInt", newItem.colorInt)
+
+            }
+
+            return null
         }
     }
 
     fun submitList(books: List<Book>){
         asyncListDiffer.submitList(listOf(Book()).plus(books))
     }
+
 
 }

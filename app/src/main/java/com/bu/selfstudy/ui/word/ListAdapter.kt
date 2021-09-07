@@ -63,6 +63,7 @@ class ListAdapter(val fragment: WordFragment):RecyclerView.Adapter<RecyclerView.
 
     private val mediaPlayer by lazy { MediaPlayer() }
 
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if(viewType == ITEM_VIEW_TYPE){
             val binding = WordListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -124,7 +125,19 @@ class ListAdapter(val fragment: WordFragment):RecyclerView.Adapter<RecyclerView.
         }
     }
 
-
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isNotEmpty() && payloads[0] is Boolean) {
+            val isMark = payloads[0] as Boolean
+            (holder as ItemViewHolder).binding.markButton.setIconResource(
+                if (isMark)
+                    R.drawable.ic_baseline_star_24
+                else
+                    R.drawable.ic_round_star_border_24
+            )
+            return
+        }
+        super.onBindViewHolder(holder, position, payloads)
+    }
 
     override fun getItemViewType(position: Int) =
         if(position == 0) HEADER_VIEW_TYPE else ITEM_VIEW_TYPE
@@ -141,6 +154,13 @@ class ListAdapter(val fragment: WordFragment):RecyclerView.Adapter<RecyclerView.
 
         override fun areContentsTheSame(oldItem: Word, newItem: Word): Boolean {
             return oldItem.isMark == newItem.isMark
+        }
+
+        override fun getChangePayload(oldItem: Word, newItem: Word): Any? {
+            return if(oldItem.isMark == newItem.isMark)
+                null
+            else
+                newItem.isMark
         }
     }
 
