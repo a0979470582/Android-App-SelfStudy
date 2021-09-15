@@ -303,7 +303,8 @@ class SearchFragment: Fragment()  {
 
     //FAB會隨word-card一起出現, 且在建議列表出現時消失
     private fun showWordCard(word: Word) {
-        resetUi(word)
+        if(viewModel.lastSearchQuery.isNotBlank())
+            resetUi(word)
         binding.wordCardItem.let {
             it.root.isVisible = true
             it.word = word

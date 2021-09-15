@@ -41,6 +41,7 @@ object YahooService {
                     .first()
                     ?.text()
                     ?.replace("KK", "")//以中文來查詢字典, 其音標並非KK, 所以KK和[不能相連
+                    ?.replace("IPA", "")
                     ?.replace("[", "/ ")
                     ?.replace("]", " /")
                     ?:""

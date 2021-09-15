@@ -8,6 +8,7 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import androidx.annotation.IntDef;
@@ -408,20 +409,18 @@ public class FastScroller extends RecyclerView.ItemDecoration implements Recycle
 
     private void verticalScrollTo(float y) {
         final int[] scrollbarRange = getVerticalRange();
-        y = Math.max(scrollbarRange[0], Math.min(scrollbarRange[1], y));
-
+        //y = Math.max(scrollbarRange[0], Math.min(scrollbarRange[1], y));
 
         //if (Math.abs(mVerticalThumbCenterY - y) < 2) {
         //    return;
         //}
-
-
 
         int scrollingBy = scrollTo(mVerticalDragY, y, scrollbarRange,
                 mRecyclerView.computeVerticalScrollRange(),
                 mRecyclerView.computeVerticalScrollOffset(), mRecyclerViewHeight);
 
         /*
+        Log.e("fffff",String.valueOf(scrollingBy));
         System.out.println(scrollingBy);
         if(scrollingBy > mRecyclerViewHeight*3){
             ListAdapter adapter = (ListAdapter) mRecyclerView.getAdapter();
@@ -437,14 +436,25 @@ public class FastScroller extends RecyclerView.ItemDecoration implements Recycle
 
     private int scrollTo(float oldDragPos, float newDragPos, int[] scrollbarRange, int scrollRange,
                          int scrollOffset, int viewLength) {
+
         int scrollbarLength = scrollbarRange[1] - scrollbarRange[0];
         if (scrollbarLength == 0) {
             return 0;
         }
+
+        //移動了多少百分比的滾動條長度
         float percentage = ((newDragPos - oldDragPos) / (float) scrollbarLength);
+
+        //可滾動內容長度
         int totalPossibleOffset = scrollRange - viewLength;
+
+        //應改變內容長度
         int scrollingBy = (int) (percentage * totalPossibleOffset);
+
+        //絕對內容位置 = 已滾動內容長度+應改變內容長度
         int absoluteOffset = scrollOffset + scrollingBy;
+
+        //符合滾動條件: 可滾動內容長度大於絕對位置(幾乎會符合)以及絕對位置大於0
         if (absoluteOffset < totalPossibleOffset && absoluteOffset >= 0) {
             return scrollingBy;
         } else {
@@ -461,6 +471,7 @@ public class FastScroller extends RecyclerView.ItemDecoration implements Recycle
         int scrollingBy = scrollTo(mHorizontalDragX, x, scrollbarRange,
                 mRecyclerView.computeHorizontalScrollRange(),
                 mRecyclerView.computeHorizontalScrollOffset(), mRecyclerViewWidth);
+
         if (scrollingBy != 0) {
             mRecyclerView.scrollBy(scrollingBy, 0);
         }

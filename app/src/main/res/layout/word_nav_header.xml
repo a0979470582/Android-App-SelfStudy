@@ -37,6 +37,7 @@
             android:textSize="16sp"
             android:textStyle="normal" />
 
+        <!--
         <com.google.android.material.button.MaterialButton
             android:id="@+id/searchIcon"
             style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
@@ -48,7 +49,7 @@
             app:icon="@drawable/ic_baseline_manage_search_24"
             app:iconGravity="textStart"
             app:iconTint="?attr/primary_icon_tint"
-            android:layout_toStartOf="@id/resetIcon"/>
+            android:layout_toStartOf="@id/resetIcon"/>-->
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/resetIcon"

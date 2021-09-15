@@ -6,39 +6,39 @@
         android:id="@+id/action_delete"
         android:icon="@drawable/ic_round_delete_24"
         android:title="刪除"
-        app:iconTint="?attr/primary_icon_tint"
+        app:iconTint="@color/icon_white"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_choose_all"
         android:icon="@drawable/ic_baseline_check_circle_outline_24"
         android:title="全選"
-        app:iconTint="?attr/primary_icon_tint"
+        app:iconTint="@color/icon_white"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_mark"
         android:icon="@drawable/ic_round_star_border_24"
         android:title="標記"
-        app:iconTint="?attr/primary_icon_tint"
+        app:iconTint="@color/icon_white"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_copy"
         android:icon="@drawable/ic_baseline_content_copy_24"
         android:title="複製到題庫"
-        app:iconTint="?attr/primary_icon_tint"
+        app:iconTint="@color/icon_white"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_move"
         android:icon="@drawable/ic_baseline_drive_file_move_24"
         android:title="轉移到題庫"
-        app:iconTint="?attr/primary_icon_tint"
+        app:iconTint="@color/icon_white"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_edit"
         android:icon="@drawable/ic_baseline_edit_24"
         android:title="編輯"
-        app:iconTint="?attr/primary_icon_tint"
+        app:iconTint="@color/icon_white"
         app:showAsAction="ifRoom" />
 </menu>
