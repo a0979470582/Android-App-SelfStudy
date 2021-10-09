@@ -316,13 +316,13 @@ class SearchFragment: Fragment()  {
     private fun showSearchNotFound(){
         binding.wordCardItem.root.isVisible = false
         binding.extendedFab.isVisible = false
-        binding.searchNotFound.root.isVisible = true
+        binding.searchNotFound.isVisible = true
     }
 
     private fun showSearchSuggestion(){
         binding.wordCardItem.root.isVisible = false
         binding.extendedFab.isVisible = false
-        binding.searchNotFound.root.isVisible = false
+        binding.searchNotFound.isVisible = false
         binding.recyclerView.isVisible = true
 
     }
@@ -340,7 +340,7 @@ class SearchFragment: Fragment()  {
         super.onAttach(context)
 
         requireActivity().onBackPressedDispatcher.addCallback(this){
-            if(binding.searchNotFound.root.isVisible ||
+            if(binding.searchNotFound.isVisible ||
                     binding.wordCardItem.root.isVisible||
                     viewModel.lastSearchQuery.isNullOrBlank()
             ){

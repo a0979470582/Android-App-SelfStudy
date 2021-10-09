@@ -30,6 +30,10 @@
         <!--cancel underline in search view -->
         <item name="searchViewStyle">@style/MySearchView</item>
 
+        <!-- speed dial overlay-->
+        <item name="overlay_color">@color/overlay_color_dark</item>
+
+
         <!--common-->
         <item name="primary_text_color">@android:color/white</item>
         <item name="primary_icon_tint">@color/icon_white</item>

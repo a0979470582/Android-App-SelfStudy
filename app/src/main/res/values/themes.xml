@@ -25,6 +25,9 @@
         <!--cancel underline in search view -->
         <item name="searchViewStyle">@style/MySearchView</item>
 
+        <!-- speed dial overlay-->
+        <item name="overlay_color">@color/overlay_color_white</item>
+
         <!--common-->
         <item name="primary_text_color">@android:color/black</item>
         <item name="primary_icon_tint">@color/icon_black</item>
@@ -35,6 +38,8 @@
         <item name="word_card_button_color">@color/colorButtonEnabled</item>
 
         <item name="nav_view_background">@color/blue80</item>
+
+
     </style>
 
 </resources>

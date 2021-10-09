@@ -16,7 +16,6 @@ import com.bu.selfstudy.R
 import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.FragmentArchiveBinding
 import com.bu.selfstudy.tool.*
-import com.bu.selfstudy.ui.book.ActionItemCreator
 import java.util.*
 
 class ArchiveFragment : Fragment() {
@@ -40,7 +39,7 @@ class ArchiveFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         viewModel.bookListLiveData.observe(viewLifecycleOwner){
-            binding.archiveNotFound.root.isVisible = it.isEmpty()
+            binding.archiveNotFound.isVisible = it.isEmpty()
             adapter.submitList(it)
         }
 
@@ -92,8 +91,8 @@ class ArchiveFragment : Fragment() {
         super.onAttach(context)
 
         requireActivity().onBackPressedDispatcher.addCallback(this){
-            if(binding.speedDialView.isOpen){
-                binding.speedDialView.close()
+            if(binding.speedDialButton.mainButtonIsOpen){
+                binding.speedDialButton.toggleChange(true)
                 return@addCallback
             }
 
@@ -108,31 +107,25 @@ class ArchiveFragment : Fragment() {
     }
 
     private fun initSpeedDial() {
-        if(binding.speedDialView.actionItems.isNotEmpty())
-            return
-
-        with(binding.speedDialView){
-
-            mainFab.setOnLongClickListener {
-                resources.getString(com.bu.selfstudy.R.string.FAB_main).showToast()
-                return@setOnLongClickListener true
+        with(binding.speedDialButton){
+            createChildButtonAndText(
+                R.id.book_fragment_fab_add_word,
+                R.drawable.ic_baseline_search_24,
+                "新增單字"
+            ){ button, textView ->
+                findNavController().navigate(R.id.searchFragment)
             }
-
-            addActionItem(ActionItemCreator.addWordItem)
-            addActionItem(ActionItemCreator.addBookItem)
-
-            this.setOnActionSelectedListener { actionItem ->
-                when (actionItem.id) {
-                    R.id.book_fragment_fab_add_word -> {
-                        findNavController().navigate(R.id.searchFragment)
-                    }
-                    R.id.book_fragment_fab_add_book -> {
-                        findNavController().navigate(R.id.addBookFragment)
-                    }
-                }
-                return@setOnActionSelectedListener false //關閉小按鈕
+            createChildButtonAndText(
+                R.id.book_fragment_fab_add_book,
+                R.drawable.ic_baseline_bookmark_24,
+                "新增題庫"
+            ){ button, textView ->
+                findNavController().navigate(R.id.addBookFragment)
             }
-
+            mainButton.setOnLongClickListener {
+                resources.getString(R.string.FAB_main).showToast()
+                true
+            }
         }
     }
 

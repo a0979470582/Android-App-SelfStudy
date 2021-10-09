@@ -114,7 +114,7 @@ class WordFragment : Fragment() {
          //觸發wordList變更有可能是傳入初始值, 修改, 刪除, 新增等情況,
          //假如刪除一列, 建議只notifyItem
          viewModel.wordListLiveData.observe(viewLifecycleOwner) {
-             binding.wordNotFound.root.isVisible = it.isEmpty()
+             binding.wordNotFound.isVisible = it.isEmpty()
 
              if(viewModel.getLastBackStack() == TYPE_CARD){
                  cardAdapter.submitList(it)
@@ -135,8 +135,8 @@ class WordFragment : Fragment() {
         viewModel.databaseEvent.observe(viewLifecycleOwner) {
              when (it?.first) {
                  "delete" -> "您刪除了 ${it.second?.get("count")} 個單字".showToast()
-                 "mark" -> return@observe
-                 "cancelMark" -> return@observe
+                 "mark" -> resources.getString(R.string.toast_success_mark).showToast()
+                 "cancelMark" -> resources.getString(R.string.toast_cancel_mark).showToast()
                  "update" -> "更新已保存".showToast()
                  "copy"-> ("已複製 ${it.second?.get("count")} 個單字到 「${activityViewModel.getBookName(
                          it.second?.get("bookId") as Long)}」").showToast()
@@ -238,15 +238,11 @@ class WordFragment : Fragment() {
     }
 
     fun replaceMarkIcon(isMark: Boolean){
-
-        val oldActionItem = if(isMark) ActionItemCreator.markItem else ActionItemCreator.cancelMarkItem
-        val newActionItem = if(isMark) ActionItemCreator.cancelMarkItem else ActionItemCreator.markItem
-
-        binding.speedDialView.actionItems.firstOrNull{
-            it == oldActionItem
-        }?.let {
-            binding.speedDialView.replaceActionItem(oldActionItem, newActionItem)
-        }
+        binding.speedDialButton.changeIconAndText(
+            R.id.fab_mark_word,
+            if(isMark) R.drawable.ic_baseline_star_24 else R.drawable.ic_round_star_border_24,
+            if(isMark) "取消標記" else "標記"
+        )
     }
 
     fun updateMarkWord(wordId: Long, isMark: Boolean){
@@ -335,7 +331,7 @@ class WordFragment : Fragment() {
     }
 
     fun setFabIsVisible(isVisible: Boolean){
-        binding.speedDialView.isVisible = isVisible
+        binding.speedDialButton.isVisible = isVisible
     }
 
     fun setChipState(chipId: Int, isChecked: Boolean){
@@ -503,73 +499,59 @@ class WordFragment : Fragment() {
     }
 
     private fun initSpeedDial() {
-        if(binding.speedDialView.actionItems.isNotEmpty())
-            return
-
-        with(binding.speedDialView){
-            setMainFabClosedDrawable(resources.getDrawable(R.drawable.ic_baseline_edit_24))
-
-            mainFab.setOnLongClickListener {
+        with(binding.speedDialButton){
+            mainButton.setOnLongClickListener {
                 resources.getString(R.string.FAB_main).showToast()
-                return@setOnLongClickListener true
+                true
             }
 
-            clearActionItems()
-            addAllActionItems(
-                listOf(
-                    ActionItemCreator.addItem,
-                    ActionItemCreator.editItem,
-                    ActionItemCreator.deleteItem,
-                    ActionItemCreator.markItem
-                )
-            )
-
-            // Set option fabs click listeners.
-            this.setOnActionSelectedListener { actionItem ->
-                if(actionItem.id == R.id.fab_add_word)
-                    findNavController().navigate(
-                            NavGraphDirections.actionGlobalSearchFragment(
-                                    bookId = viewModel.bookIdLiveData.value?:0
-                            )
+            createChildButtonAndText(
+                R.id.fab_add_word,
+                R.drawable.ic_baseline_search_24,
+                "新增"
+            ){ button, textView ->
+                findNavController().navigate(
+                    NavGraphDirections.actionGlobalSearchFragment(
+                        bookId = viewModel.bookIdLiveData.value?:0
                     )
+                )
+            }
 
-                if(viewModel.wordListLiveData.value.isNullOrEmpty())
-                    return@setOnActionSelectedListener false
-
-                when (actionItem.id) {
-                    R.id.fab_edit_word -> {
-                        viewModel.currentOpenWord?.let {
-                            findNavController().navigate(
-                                NavGraphDirections.actionGlobalEditWordFragment(it)
-                            )
-                        }
-                    }
-                    R.id.fab_delete_word -> {
-                        viewModel.currentOpenWord?.let {
-                            findNavController().navigate(
-                                NavGraphDirections.actionGlobalDialogDeleteCommon(
-                                    "刪除單字",
-                                    "刪除此單字?"
-                                )
-                            )
-                        }
-                    }
-                    R.id.fab_mark_word -> {
-                        viewModel.currentOpenWord?.let {
-                            replaceActionItem(actionItem, ActionItemCreator.cancelMarkItem)
-                            viewModel.updateMarkWord(it.id, isMark = true)
-                            resources.getString(R.string.toast_success_mark).showToast()
-                        }
-                    }
-                    R.id.fab_cancel_mark_word -> {
-                        viewModel.currentOpenWord?.let {
-                            replaceActionItem(actionItem, ActionItemCreator.markItem)
-                            viewModel.updateMarkWord(it.id, isMark =false)
-                            resources.getString(R.string.toast_cancel_mark).showToast()
-                        }
-                    }
+            createChildButtonAndText(
+                R.id.fab_edit_word,
+                R.drawable.ic_baseline_edit_24,
+                "編輯"
+            ){ button, textView ->
+                viewModel.currentOpenWord?.let {
+                    findNavController().navigate(
+                        NavGraphDirections.actionGlobalEditWordFragment(it)
+                    )
                 }
-                return@setOnActionSelectedListener false //關閉小按鈕
+            }
+
+            createChildButtonAndText(
+                R.id.fab_delete_word,
+                R.drawable.ic_round_delete_24,
+                "刪除"
+            ){ button, textView ->
+                viewModel.currentOpenWord?.let {
+                    findNavController().navigate(
+                        NavGraphDirections.actionGlobalDialogDeleteCommon(
+                            "刪除單字",
+                            "刪除此單字?"
+                        )
+                    )
+                }
+            }
+
+            createChildButtonAndText(
+                R.id.fab_mark_word,
+                R.drawable.ic_round_star_border_24,
+                "標記"
+            ){ button, textView ->
+                viewModel.currentOpenWord?.let {
+                    viewModel.updateMarkWord(it.id, isMark = !viewModel.markLiveData.value!!)
+                }
             }
         }
     }
@@ -580,7 +562,8 @@ class WordFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(this){
             when {
-                binding.speedDialView.isOpen -> binding.speedDialView.close()
+                binding.speedDialButton.mainButtonIsOpen ->
+                    binding.speedDialButton.toggleChange(true)
 
                 binding.slideSheet.isDrawerOpen(GravityCompat.END) ->
                     binding.slideSheet.closeDrawer(GravityCompat.END)

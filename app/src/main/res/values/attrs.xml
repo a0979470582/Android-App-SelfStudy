@@ -7,7 +7,9 @@
         <attr name="expandDuration" format="integer"/>
     </declare-styleable>
 
-
+    <declare-styleable name="SpeedDialButton">
+        <attr name="mainIcon" format="reference"/>
+    </declare-styleable>
 
     <attr name="toolbar_color" type="color"/>
     <attr name="primary_text_color" type="color"/>
@@ -22,4 +24,7 @@
 
     <!--navigation view-->
     <attr name="nav_view_background" type="color"/>
+
+    <!-- speed dial overlay-->
+    <attr name="overlay_color" type="color"/>
 </resources>

@@ -53,14 +53,18 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
 
-        <include
+
+
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/NotFoundTextView"
             android:id="@+id/searchNotFound"
-            layout="@layout/not_found_search"
-            android:layout_width="match_parent"
-            android:layout_height="240dp"
+            android:text="找不到相符的搜尋結果"
+            android:drawableTop="@drawable/ic_search_not_found"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:visibility="gone"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"

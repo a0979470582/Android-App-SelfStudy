@@ -9,4 +9,7 @@
 
     <item name="book_fragment_fab_add_word" type="id"/>
     <item name="book_fragment_fab_add_book" type="id"/>
+
+    <item name="main_button" type="id"/>
+    <item name="overlay" type="id"/>
 </resources>

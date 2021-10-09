@@ -79,4 +79,7 @@
 
     <color name="toolbar_title_color">#8C8B8B</color>
 
+    <color name="overlay_color_white">#CCF3F3F3</color>
+    <color name="overlay_color_dark">#CC878787</color>
+
 </resources>

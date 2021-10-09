@@ -138,6 +138,7 @@ class WordViewModel : ViewModel(){
     fun updateMarkWord(vararg wordId:Long, isMark: Boolean){
         viewModelScope.launch(Dispatchers.IO) {
             if(WordRepository.updateMark(*wordId, isMark = isMark)>0){
+                markLiveData.postValue(isMark)
                 databaseEvent.postValue((if(isMark) "mark" else "cancelMark") to null)
             }
         }

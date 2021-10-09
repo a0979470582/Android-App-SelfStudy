@@ -40,15 +40,11 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-
-
-        <include
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/NotFoundTextView"
             android:id="@+id/markNotFound"
-            layout="@layout/not_found_mark"
-            android:layout_width="match_parent"
-            android:layout_height="240dp"
-            android:layout_gravity="center_vertical"
-            android:visibility="gone"/>
+            android:text="沒有標記的單字"
+            android:drawableTop="@drawable/ic_shooting_star" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -59,19 +55,12 @@
             tools:itemCount="5"
             tools:listitem="@layout/book_list_item"/>
 
-        <com.leinardi.android.speeddial.SpeedDialOverlayLayout
-            android:id="@+id/overlay2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:clickable_overlay="true" />
-        <com.leinardi.android.speeddial.SpeedDialView
-            android:id="@+id/speedDialView"
+        <com.bu.selfstudy.tool.speeddialbutton.SpeedDialButton
+            android:id="@+id/speedDialButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            app:sdMainFabClosedSrc="@drawable/ic_baseline_add_24"
-            app:sdMainFabOpenedSrc="@drawable/ic_baseline_close_24"
-            app:sdOverlayLayout="@id/overlay2" />
+            app:mainIcon="@drawable/ic_baseline_add_24"/>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>

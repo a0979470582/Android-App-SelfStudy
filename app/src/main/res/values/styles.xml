@@ -74,4 +74,18 @@
         <item name="android:windowBackground">@drawable/splash_screen_drawable</item>
     </style>
 
+    <!--not found TextView-->
+    <style name="NotFoundTextView">
+        <item name="android:visibility">gone</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">240dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.MaterialComponents.Subtitle1</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/primary_text_color_60</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">48dp</item>
+        <item name="android:drawablePadding">16dp</item>
+    </style>
+
 </resources>

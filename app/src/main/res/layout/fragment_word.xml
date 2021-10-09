@@ -28,6 +28,17 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/NotFoundTextView"
+            android:layout_height="260dp"
+            android:id="@+id/wordNotFound"
+            android:text="搜尋單字來加入更多內容"
+            android:drawableTop="@drawable/ic_astronomy"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
         <androidx.drawerlayout.widget.DrawerLayout
             android:id="@+id/slideSheet"
             android:layout_width="match_parent"
@@ -39,32 +50,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <include
-                    android:id="@+id/wordNotFound"
-                    layout="@layout/not_found_word"
-                    android:visibility="gone"/>
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     tools:listitem="@layout/word_list_item"/>
 
-                <com.leinardi.android.speeddial.SpeedDialOverlayLayout
-                    android:id="@+id/overlay5"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:clickable_overlay="true" />
-                <com.leinardi.android.speeddial.SpeedDialView
-                    android:id="@+id/speedDialView"
+                <com.bu.selfstudy.tool.speeddialbutton.SpeedDialButton
+                    android:id="@+id/speedDialButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|bottom"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:sdMainFabClosedSrc="@drawable/ic_baseline_add_24"
-                    app:sdMainFabOpenedSrc="@drawable/ic_baseline_close_24"
-                    app:sdOverlayLayout="@id/overlay5" />
+                    app:mainIcon="@drawable/ic_baseline_edit_24"/>
 
             </FrameLayout>
             <com.google.android.material.navigation.NavigationView

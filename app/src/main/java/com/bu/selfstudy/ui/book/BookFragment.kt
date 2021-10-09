@@ -22,6 +22,7 @@ import com.bu.selfstudy.data.model.Book
 import com.bu.selfstudy.databinding.FragmentBookBinding
 import com.bu.selfstudy.tool.*
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -52,13 +53,18 @@ class BookFragment : Fragment() {
 
         val adapter = BookAdapter(fragment = this)
 
+        lifecycleScope.launchWhenStarted{
+            delay(1000)
+            //continue...
+        }
+
         binding.recyclerView.let {
             it.adapter = adapter
             it.setHasFixedSize(true)
         }
 
         viewModel.bookListLiveData.observe(viewLifecycleOwner){
-            binding.bookNotFound.root.isVisible = it.isEmpty()
+            binding.bookNotFound.isVisible = it.isEmpty()
             adapter.submitList(it)
         }
 
@@ -120,31 +126,25 @@ class BookFragment : Fragment() {
     }
 
     private fun initSpeedDial() {
-        if(binding.speedDialView.actionItems.isNotEmpty())
-            return
-
-        with(binding.speedDialView){
-
-            mainFab.setOnLongClickListener {
+        with(binding.speedDialButton){
+            createChildButtonAndText(
+                R.id.book_fragment_fab_add_word,
+                R.drawable.ic_baseline_search_24,
+                "新增單字"
+            ){ button, textView ->
+                findNavController().navigate(R.id.searchFragment)
+            }
+            createChildButtonAndText(
+                R.id.book_fragment_fab_add_book,
+                R.drawable.ic_baseline_bookmark_24,
+                "新增題庫"
+            ){ button, textView ->
+                findNavController().navigate(R.id.addBookFragment)
+            }
+            mainButton.setOnLongClickListener {
                 resources.getString(R.string.FAB_main).showToast()
-                return@setOnLongClickListener true
+                true
             }
-
-            addActionItem(ActionItemCreator.addWordItem)
-            addActionItem(ActionItemCreator.addBookItem)
-
-            this.setOnActionSelectedListener { actionItem ->
-                when (actionItem.id) {
-                    R.id.book_fragment_fab_add_word -> {
-                        findNavController().navigate(R.id.searchFragment)
-                    }
-                    R.id.book_fragment_fab_add_book -> {
-                        findNavController().navigate(R.id.addBookFragment)
-                    }
-                }
-                return@setOnActionSelectedListener false //關閉小按鈕
-            }
-
         }
     }
 
@@ -155,8 +155,8 @@ class BookFragment : Fragment() {
 
 
         requireActivity().onBackPressedDispatcher.addCallback(this){
-            if(binding.speedDialView.isOpen){
-                binding.speedDialView.close()
+            if(binding.speedDialButton.mainButtonIsOpen){
+                binding.speedDialButton.toggleChange(true)
                 return@addCallback
             }
 
